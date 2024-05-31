@@ -3,7 +3,7 @@ import apiClient from '../axios';
 // GET
 export const getFlightList = async () => {
   try {
-    const response = await apiClient.get('/sales/flight');
+    const response = await apiClient.get('/sales/flight-list');
     return response.data;
   } catch (error) {
     console.error('Error fetching flight list:', error);

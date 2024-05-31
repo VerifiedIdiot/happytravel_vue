@@ -1,9 +1,11 @@
 import apiClient from '../axios'; 
 
 // GET
-export const getHotelList = async () => {
+export const getHotelList = async (empId) => {
   try {
-    const response = await apiClient.get('/sales/hotel-list');
+    const response = await apiClient.get('/sales/hotel-list', {
+      params: { empId }
+    });
     return response.data;
   } catch (error) {
     console.error('Error fetching hotel list:', error);

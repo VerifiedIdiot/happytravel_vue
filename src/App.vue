@@ -1,24 +1,21 @@
 <template>
   <div id="app">
-    
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> 컴포넌트 제거 -->
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/hr">HR Main</router-link> |
-      <router-link to="/sales">Sales Main</router-link>
-    </nav>
-    <router-view></router-view>
+    <MainHeader />
+    <router-view />
   </div>
 </template>
+
 <script>
+import MainHeader from './components/header/MainHeader.vue';
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
-  
+    MainHeader,
   }
 }
 </script>
 
 <style>
+
 </style>
