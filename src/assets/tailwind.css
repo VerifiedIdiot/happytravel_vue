@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  margin: 0;
+  padding: 0;
+}
+.header-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+  font-weight: bold;
+  background-color: #d9d9d9;
+}
+
+nav {
+  padding: 20px;
+  text-align: right;
+}
+
+nav a {
+  font-weight: bold;
+  text-decoration: none;
+  color: #dddddd;
+}
+
+nav a.router-link-exact-active {
+  color: #fff;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar {
+  /* display: flex; */
+  padding: 1rem;
+  background-color: #0075ff;
+  color: #fff;
+  gap: 1rem;
+}
+
+.user-info {
+  font-size: 1rem;
+  color: #333;
+}
