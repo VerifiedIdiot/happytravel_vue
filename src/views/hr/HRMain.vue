@@ -1,15 +1,15 @@
 <template>
-    <div>
-      <h1>HR Main Page</h1>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'HRMain'
-  };
-  </script>
-  
-  <style>
-  </style>
-  
+  <div>
+    <h1>Login Page</h1>
+    <button @click="login">Login</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'HrMain',
+}
+</script>
+
+<style scoped>
+</style>
