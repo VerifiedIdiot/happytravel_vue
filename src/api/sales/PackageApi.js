@@ -1,9 +1,9 @@
-import apiClient from '../axios'; 
+import apiClient from '../axios';
 
-// GET
-export const getPackageList = async () => {
+// GET Package List
+export const getPackageList = async (params) => {
   try {
-    const response = await apiClient.get('/sales/package-list');
+    const response = await apiClient.get('/sales/package-list', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching package list:', error);
@@ -11,7 +11,18 @@ export const getPackageList = async () => {
   }
 };
 
-// POST
+// GET Single Package
+export const getPackage = async (params) => {
+  try {
+    const response = await apiClient.get('/sales/package', { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching package:', error);
+    throw error;
+  }
+};
+
+// POST Insert Package
 export const insertPackage = async (packageItem) => {
   try {
     const response = await apiClient.post('/sales/package', packageItem);
@@ -22,10 +33,10 @@ export const insertPackage = async (packageItem) => {
   }
 };
 
-// PUT
-export const updatePackage = async (packageCode, packageItem) => {
+// PUT Update Package
+export const updatePackage = async (packageItem) => {
   try {
-    const response = await apiClient.put(`/sales/package/${packageCode}`, packageItem);
+    const response = await apiClient.put('/sales/package', packageItem);
     return response.data;
   } catch (error) {
     console.error('Error updating package:', error);
@@ -33,13 +44,24 @@ export const updatePackage = async (packageCode, packageItem) => {
   }
 };
 
-// DELETE
-export const deletePackage = async (packageCode) => {
+// PUT Update Package Y/N
+export const updatePackageYN = async (params) => {
   try {
-    const response = await apiClient.delete(`/sales/package/${packageCode}`);
+    const response = await apiClient.put('/sales/package-yn', null, { params });
     return response.data;
   } catch (error) {
-    console.error('Error deleting package:', error);
+    console.error('Error updating package Y/N:', error);
+    throw error;
+  }
+};
+
+// PUT Assign Package
+export const assignPackage = async (params) => {
+  try {
+    const response = await apiClient.put('/sales/package-assign', null, { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error assigning package:', error);
     throw error;
   }
 };
