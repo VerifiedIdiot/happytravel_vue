@@ -24,10 +24,7 @@ export default {
 
 <style></style>
 
-export default {
-  name: 'HrMain',
-}
-</script>
+
 
 <style scoped>
 </style>

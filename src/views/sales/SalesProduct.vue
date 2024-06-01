@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import PackageDashboard from "@/components/sales/PackageDashboard.vue";
+import PackageDashboard from '@/components/sales/package/PackageDashboard.vue';
 
 export default {
   name: "SalesProduct",
