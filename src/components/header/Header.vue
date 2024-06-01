@@ -1,0 +1,63 @@
+<template>
+  <header class="header-upper">
+    <div class="header-container">
+      <div class="header-box logo-box">
+        <router-link to="/" class="logo-link">
+          <img src="@/assets/img/logo-temp.png" alt="Logo" class="logo" />
+        </router-link>
+      </div>
+      <div class="header-box status-box">
+          <h1 class="status-text">{{ someVar }} 님</h1>
+          <img src="@/assets/img/pepe.png" alt="Profile-img" class="profile-img" />
+      </div>
+    </div>
+  </header>
+  <header class="header-under">
+    <div class="header-box nav-box">
+      <nav>
+        <ul class="nav-list">
+          <li @mouseenter="toggleDropdown('hr')" @mouseleave="toggleDropdown(null)">
+            <router-link to="/hr" class="nav-link">인사/급여</router-link>
+            <div v-if="dropdown === 'hr'" class="dropdown-content">
+              <router-link to="/hr/subpage1">페이지 1</router-link>
+              <router-link to="/hr/subpage2">페이지 2</router-link>
+            </div>
+          </li>
+          <li @mouseenter="toggleDropdown('accounting')" @mouseleave="toggleDropdown(null)">
+            <router-link to="/accounting" class="nav-link">회계/총무</router-link>
+            <div v-if="dropdown === 'accounting'" class="dropdown-content">
+              <router-link to="/accounting/subpage1">페이지 1</router-link>
+              <router-link to="/accounting/subpage2">페이지 2</router-link>
+            </div>
+          </li>
+          <li @mouseenter="toggleDropdown('sales')" @mouseleave="toggleDropdown(null)">
+            <router-link to="/sales" class="nav-link">영업관리</router-link>
+            <div v-if="dropdown === 'sales'" class="dropdown-content">
+              <router-link to="/sales/subpage1">페이지 1</router-link>
+              <router-link to="/sales/subpage2">페이지 2</router-link>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+</template>
+
+<script>
+export default {
+  name: "Header",
+  data() {
+    return {
+      someVar: "pepe",
+      dropdown: null,
+    };
+  },
+  methods: {
+    toggleDropdown(menu) {
+      this.dropdown = menu;
+    }
+  }
+};
+</script>
+
+<style src="./header.css"></style>
