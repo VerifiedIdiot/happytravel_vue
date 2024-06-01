@@ -3,7 +3,7 @@ import apiClient from '../axios';
 // GET
 export const getAgencyList = async () => {
   try {
-    const response = await apiClient.get('/sales/agency');
+    const response = await apiClient.get('/sales/agency-list');
     return response.data;
   } catch (error) {
     console.error('Error fetching agency list:', error);

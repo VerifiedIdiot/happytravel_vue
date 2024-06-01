@@ -1,36 +1,42 @@
 <template>
   <div>
-    <h2>Flight Dashboard</h2>
-    <table>
-      <thead>
-        <tr>
-          <!-- <th>Flight Code</th> -->
-          <th>Flight Number</th>
-          <th>Airline</th>
-          <th>Phone</th>
-          <th>Departure</th>
-          <th>Departure Time</th>
-          <th>Destination</th>
-          <th>Arrival Time</th>
-          <th>Price</th>
-          <th>Is Used</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="flight in flights" :key="flight.flight_code">
-          <!-- <td>{{ flight.flight_code }}</td> -->
-          <td>{{ flight.flight_number }}</td>
-          <td>{{ flight.airline }}</td>
-          <td>{{ flight.phone }}</td>
-          <td>{{ flight.departure }}</td>
-          <td>{{ flight.departure_time }}</td>
-          <td>{{ flight.destination }}</td>
-          <td>{{ flight.arrival_time }}</td>
-          <td>{{ formatPrice(flight.price) }}</td>
-          <td>{{ flight.is_used }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <h1>Flight Dashboard</h1>
+    <div>
+      <button>신규등록</button>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Flight Number</th>
+            <th>Airline</th>
+            <th>Phone</th>
+            <th>Departure</th>
+            <th>Departure Time</th>
+            <th>Destination</th>
+            <th>Arrival Time</th>
+            <th>Price</th>
+            <th>Is Used</th>
+            <th>Modify</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="flight in flights" :key="flight.flight_code">
+            <td>{{ flight.flight_number }}</td>
+            <td>{{ flight.airline }}</td>
+            <td>{{ flight.phone }}</td>
+            <td>{{ flight.departure }}</td>
+            <td>{{ flight.departure_time }}</td>
+            <td>{{ flight.destination }}</td>
+            <td>{{ flight.arrival_time }}</td>
+            <td>{{ formatPrice(flight.price) }}</td>
+            <td>{{ flight.is_used }}</td>
+            <td><button>수정</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </template>
 

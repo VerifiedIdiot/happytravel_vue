@@ -1,122 +1,197 @@
 <template>
   <div>
-    <h1>Hotel Management</h1>
-    <form @submit.prevent="insertHotelHandler">
-      <input v-model="newHotel.hotelName" placeholder="Hotel Name" required />
-      <input v-model="newHotel.phone" placeholder="Phone" required />
-      <input v-model="newHotel.country" placeholder="Country" required />
-      <input v-model="newHotel.region" placeholder="Region" required />
-      <input v-model="newHotel.address" placeholder="Address" required />
-      <input v-model="newHotel.price" placeholder="Price" type="number" required />
-      <input v-model="newHotel.isUsed" placeholder="Is Used" required />
-      <button type="submit">Add Hotel</button>
-    </form>
-    <h1>Hotel List</h1>
-    <ul>
-      <li v-for="hotel in hotels" :key="hotel.hotelCode">
-        <div v-if="editHotelCode === hotel.hotelCode">
-          <input v-model="hotel.hotelName" placeholder="Hotel Name" />
-          <input v-model="hotel.phone" placeholder="Phone" />
-          <input v-model="hotel.country" placeholder="Country" />
-          <input v-model="hotel.region" placeholder="Region" />
-          <input v-model="hotel.address" placeholder="Address" />
-          <input v-model="hotel.price" placeholder="Price" type="number" />
-          <input v-model="hotel.isUsed" placeholder="Is Used" />
-          <button @click="updateHotelHandler(hotel)">Save</button>
-          <button @click="editHotelCode = null">Cancel</button>
-        </div>
-        <div v-else>
-          <p><strong>Hotel Code:</strong> {{ hotel.hotelCode }}</p>
-          <p><strong>Hotel Name:</strong> {{ hotel.hotelName }}</p>
-          <p><strong>Phone:</strong> {{ hotel.phone }}</p>
-          <p><strong>Country:</strong> {{ hotel.country }}</p>
-          <p><strong>Region:</strong> {{ hotel.region }}</p>
-          <p><strong>Address:</strong> {{ hotel.address }}</p>
-          <p><strong>Price:</strong> {{ hotel.price }}</p>
-          <p><strong>Is Used:</strong> {{ hotel.isUsed }}</p>
-          <button @click="editHotelCode = hotel.hotelCode">Edit</button>
-          <button @click="deleteHotelHandler(hotel.hotelCode)">Delete</button>
-          <hr />
-        </div>
-      </li>
-    </ul>
+    <h1>Hotel Dashboard</h1>
+    <div>
+      <button>신규등록</button>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Hotel Name</th>
+            <th>Phone</th>
+            <th>Country</th>
+            <th>Region</th>
+            <th>Address</th>
+            <th>Price</th>
+            <th>Is Used</th>
+            <th>Modify</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="hotel in hotels" :key="hotel.hotel_code">
+            <td>{{ hotel.hotel_name }}</td>
+            <td>{{ hotel.phone }}</td>
+            <td>{{ hotel.country }}</td>
+            <td>{{ hotel.region }}</td>
+            <td>{{ hotel.address }}</td>
+            <td>{{ formatPrice(hotel.price) }}</td>
+            <td>{{ hotel.is_used }}</td>
+            <td><button @click="openModal(hotel)">수정</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>Hotel 수정</h2>
+        <form @submit.prevent="saveHotel">
+          <div>
+            <label for="hotel_name">Hotel Name:</label>
+            <input type="text" v-model="currentHotel.hotel_name" required>
+          </div>
+          <div>
+            <label for="phone">Phone:</label>
+            <input type="text" v-model="currentHotel.phone" required>
+          </div>
+          <div>
+            <label for="country">Country:</label>
+            <input type="text" v-model="currentHotel.country" required>
+          </div>
+          <div>
+            <label for="region">Region:</label>
+            <input type="text" v-model="currentHotel.region" required>
+          </div>
+          <div>
+            <label for="address">Address:</label>
+            <input type="text" v-model="currentHotel.address" required>
+          </div>
+          <div>
+            <label for="price">Price:</label>
+            <input type="number" v-model="currentHotel.price" required>
+          </div>
+          <div>
+            <label for="is_used">Is Used:</label>
+            <select v-model="currentHotel.is_used" required>
+              <option value="Y">Yes</option>
+              <option value="N">No</option>
+            </select>
+          </div>
+          <div>
+            <button type="submit">저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
-import { getHotelList, insertHotel, updateHotel, deleteHotel } from '@/api/sales/HotelApi'; 
+import { getHotelList, updateHotel } from '@/api/sales/HotelApi';
 
 export default {
   name: 'HotelDashboard',
   setup() {
     const hotels = ref([]);
-    const editHotelCode = ref(null);
-    const newHotel = ref({
-      hotelName: '',
-      phone: '',
-      country: '',
-      region: '',
-      address: '',
-      price: 0,
-      isUsed: '',
-    });
+    const showModal = ref(false);
+    const currentHotel = ref({});
+    const empId = 'EMP30002';
 
-    const fetchHotelHandler = async () => {
+    const formatPrice = (price) => {
+      return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(price);
+    };
+
+    const fetchHotels = async () => {
       try {
         hotels.value = await getHotelList();
-        console.log('Fetched hotels:', hotels.value);
+        console.log('Fetched flights:', hotels.value);
       } catch (error) {
-        console.error('Error fetching hotels:', error);
+        console.error('Error fetching flight list:', error);
       }
     };
 
-    const insertHotelHandler = async () => {
-      try {
-        const addedHotel = await insertHotel(newHotel.value);
-        hotels.value.push(addedHotel);
-        newHotel.value = {
-          hotelName: '',
+    const openModal = (hotel) => {
+      if (hotel) {
+        currentHotel.value = { ...hotel };
+      } else {
+        currentHotel.value = {
+          hotel_name: '',
           phone: '',
           country: '',
           region: '',
           address: '',
-          price: 0,
-          isUsed: '',
+          price: '',
+          is_used: 'Y',
         };
-      } catch (error) {
-        console.error('Error adding hotel:', error);
       }
+      showModal.value = true;
     };
 
-    const updateHotelHandler = async (hotel) => {
+    const closeModal = () => {
+      showModal.value = false;
+    };
+
+    const saveHotel = async () => {
       try {
-        await updateHotel(hotel.hotelCode, hotel);
-        editHotelCode.value = null;
+        currentHotel.value.empId = empId;
+        console.log('Updating hotel with data:', currentHotel.value);
+        const hotelCode = currentHotel.value.hotel_code;
+        await updateHotel(hotelCode, currentHotel.value);
+
+        const index = hotels.value.findIndex(h => h.hotel_code === hotelCode);
+        if (index !== -1) {
+          hotels.value[index] = { ...currentHotel.value };
+        } else {
+          hotels.value.push({ ...currentHotel.value });
+        }
+
+        closeModal();
       } catch (error) {
-        console.error('Error updating hotel:', error);
+        console.error('Error saving hotel:', error);
       }
     };
 
-    const deleteHotelHandler = async (hotelCode) => {
-      try {
-        await deleteHotel(hotelCode);
-        hotels.value = hotels.value.filter(hotel => hotel.hotelCode !== hotelCode);
-      } catch (error) {
-        console.error('Error deleting hotel:', error);
-      }
-    };
-
-    onMounted(fetchHotelHandler);
+    onMounted(fetchHotels);
 
     return {
       hotels,
-      newHotel,
-      editHotelCode,
-      insertHotelHandler,
-      updateHotelHandler,
-      deleteHotelHandler,
+      showModal,
+      currentHotel,
+      formatPrice,
+      openModal,
+      closeModal,
+      saveHotel,
     };
   },
 };
 </script>
+
+<style>
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>
+
