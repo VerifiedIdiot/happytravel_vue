@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>여행상품 관리</h1>
-    <button @click="currentComponent = PackageDashboard">
+    <button @click="currentComponent = showPackageDashboard">
       여행상품 리스트
     </button>
     <component :is="currentComponent"></component>
