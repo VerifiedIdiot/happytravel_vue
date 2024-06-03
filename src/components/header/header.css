@@ -13,7 +13,6 @@
 .header-under {
   height: 50px;
   @apply bg-blue-600 text-white;
-  
 }
 
 .header-container {
@@ -24,7 +23,7 @@
 
 .header-box {
   display: flex;
-  height: 100%; 
+  height: 100%;
 }
 
 .logo-box {
@@ -37,40 +36,36 @@
   width: auto;
   object-fit: contain;
 }
+
 .status-box {
-    display: flex;
-    flex-direction: row; 
-    align-items: center;
-    justify-content: flex-end;
-    margin-right: 20px;
-    width: 85%;
-    height: 100%;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 20px;
+  width: 85%;
+  height: 100%;
+}
 
-  .status-text {
-    
-    margin-right: 10px;
-    
-  }
+.status-text {
+  margin-right: 10px;
+}
 
-  .profile-img {
-    width: 60px; 
-    height: 60px; 
-    object-fit: cover;
-  }
+.profile-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
 
 .nav-box {
   display: flex;
   width: 100%;
-  height: 100%; 
+  height: 100%;
   justify-content: flex-end;
 }
+
 nav {
-  
   width: 100%;
-  height: 100%; 
-  
-  
+  height: 100%;
 }
 
 .nav-list {
@@ -78,65 +73,37 @@ nav {
   justify-content: flex-end;
   white-space: nowrap;
   margin-left: 20%;
-  
   width: 80%;
-  height: 100%; 
+  height: 100%;
   li {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 20%;
     height: 100%;
-    
     position: relative;
   }
   p {
     font-size: 1rem;
-    margin: 0; 
+    margin: 0;
   }
 }
-
 .nav-link {
   @apply text-white hover:text-blue-200 transition duration-300;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%; 
-  
-  
-  
+  height: 100%;
 }
-
-
 
 .dropdown-content {
-  display: none;
-  flex-direction: column;
-  position: absolute;
-  
-  top: 100%; 
-  left: 0;
-  right: 0;
-  @apply bg-blue-200 text-white;
-  transition: all 0.3s ease; 
-  z-index: 1000;
-  
-}
-.dropdown-content a {
-  color: white; /* 드롭다운 링크의 글씨 색상을 하얀색으로 설정 */
-  height: 50px;
-  text-decoration: none;
-  display: block;
-  transition: background-color 0.3s; /* 호버 시 배경색 변경 */
-  
-}
+  @apply flex flex-col absolute top-full left-0 right-0 bg-blue-200 text-white transition ease-out z-50;
+  a {
+    @apply flex justify-center items-center text-white no-underline transition h-12 w-full;
+    height: 50px;
 
-.dropdown-content a:hover {
-  background-color: #f1f1f1;
-}
-
-.nav-list li:hover .dropdown-content {
-  display: flex;
-  opacity: 1;
-  visibility: visible;
+    &:hover {
+      @apply bg-blue-600;
+    }
+  }
 }
