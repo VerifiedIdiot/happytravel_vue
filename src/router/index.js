@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 // import store from '../store';
 
 // 컴포넌트 임포트
@@ -7,7 +7,7 @@ import Home from '../views/Home.vue';
 import HRMain from '../views/hr/HRMain.vue';
 import SalesMain from '../views/sales/SalesMain.vue';
 import SalesPartner from '../views/sales/SalesPartner.vue';
-import SalesProduct from '../views/sales/SalesProduct.vue';
+import SalesPackage from '../views/sales/SalesPackage.vue';
 
 const routes = [
   {
@@ -56,9 +56,9 @@ const routes = [
     
       },
       {
-        path: 'product',
-        name: 'SalesProduct',
-        component: SalesProduct,
+        path: 'package',
+        name: 'SalesPackage',
+        component: SalesPackage,
         // meta: { requiresAuth: true }
     
       }
@@ -67,7 +67,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(), 
+  history: createWebHashHistory(), 
   routes
 });
 
