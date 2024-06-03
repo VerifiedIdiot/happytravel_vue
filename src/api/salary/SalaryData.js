@@ -1,31 +1,14 @@
 import apiClient from "@/api/axios";
 
-// 급여 내역 생성 - 일괄 처리
-export const batchInitSalaryData = async (salaryDate) => {
+// 급여 내역 생성 - 일괄 처리 & 단일 처리
+export const initSalaryData = async (salaryDate, empId) => {
   try {
-    const response = await apiClient.post("/salary/insert", {
-      param: {
-        salaryDate,
-      },
+    const response = await apiClient.post(`/salary/insert/${salaryDate}`, {
+      emp_id: empId,
     });
     return response.data;
   } catch (error) {
     console.error("Error fetching batchInitSalaryData:", error);
-    throw error;
-  }
-};
-// 급여 내역 생성 - 단일 처리
-export const singleInitSalaryData = async (empId, salaryDate) => {
-  try {
-    const response = await apiClient.post("/salary/insert", {
-      param: {
-        empId,
-        salaryDate,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching singleInitSalaryData:", error);
     throw error;
   }
 };
