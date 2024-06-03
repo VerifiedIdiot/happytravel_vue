@@ -1,18 +1,34 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from "vue-router";
 // import store from '../store';
 
 // 컴포넌트 임포트
-import LoginMain from '../views/login/LoginMain.vue';
-import Home from '../views/Home.vue';
-import HRMain from '../views/hr/HRMain.vue';
-import SalesMain from '../views/sales/SalesMain.vue';
-import SalesPartner from '../views/sales/SalesPartner.vue';
-import SalesProduct from '../views/sales/SalesProduct.vue';
+import LoginMain from "../views/login/LoginMain.vue";
+import Home from "../views/Home.vue";
+import HRMain from "../views/hr/HRMain.vue";
+import SalesMain from "../views/sales/SalesMain.vue";
+import SalesPartner from "../views/sales/SalesPartner.vue";
+import SalesProduct from "../views/sales/SalesProduct.vue";
+// ================================================== 20240603 - S ==================================================
+import SalaryData from "@/views/salary/SalaryData.vue";
+import Salarypayment from "@/views/salary/Salarypayment.vue";
+// ================================================== 20240603 - E ==================================================
 
 const routes = [
+  // ================================================== 20240603 - S ==================================================
   {
-    path: '/',
-    name: 'Root',
+    path: "/salary/data",
+    name: "SalaryData",
+    component: SalaryData,
+  },
+  {
+    path: "/salary/payment",
+    name: "Salarypayment",
+    component: Salarypayment,
+  },
+  // ================================================== 20240603 - E ==================================================
+  {
+    path: "/",
+    name: "Root",
     // beforeEnter 가드 주석 처리
     // beforeEnter: (to, from, next) => {
     //   if (store.getters.isAuthenticated) {
@@ -21,55 +37,51 @@ const routes = [
     //     next({ name: 'Login' });
     //   }
     // },
-    component: Home
+    component: Home,
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: LoginMain
+    path: "/login",
+    name: "Login",
+    component: LoginMain,
   },
   {
-    path: '/home',
-    name: 'Home',
+    path: "/home",
+    name: "Home",
     component: Home,
     // meta: { requiresAuth: true } 주석 처리
-   
   },
   {
-    path: '/hr',
-    name: 'HRMain',
+    path: "/hr",
+    name: "HRMain",
     component: HRMain,
     // meta: { requiresAuth: true } 주석 처리
-
   },
   {
-    path: '/sales',
-    name: 'SalesMain',
+    path: "/sales",
+    name: "SalesMain",
     component: SalesMain,
     // meta: { requiresAuth: true } 주석 처리
- 
+
     children: [
       {
-        path: 'partner',
-        name: 'SalesPartner',
+        path: "partner",
+        name: "SalesPartner",
         component: SalesPartner,
         // meta: { requiresAuth: true } 주석 처리
-    
       },
       {
-        path: 'product',
-        name: 'SalesProduct',
+        path: "product",
+        name: "SalesProduct",
         component: SalesProduct,
         // meta: { requiresAuth: true } 주석 처리
-    
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(), 
-  routes
+  history: createWebHistory(),
+  routes,
 });
 
 // 전역 가드 주석 처리

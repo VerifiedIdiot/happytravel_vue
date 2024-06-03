@@ -11,7 +11,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in salaryItems" :key="item.salary_item_code">
+        <tr v-for="item in salaryData" :key="item.salary_item_code">
           <td>{{ item.salary_item_code }}</td>
           <td class="amount">{{ $formatNumber(item.amount) }}</td>
         </tr>
@@ -24,7 +24,11 @@
 export default {
   name: "SalaryTable",
   props: {
-    salaryItems: {
+    salaryData: {
+      type: Array,
+      required: true,
+    },
+    salaryItem: {
       type: Array,
       required: true,
     },
@@ -32,16 +36,12 @@ export default {
   data() {
     return {};
   },
-  mounted() {
-    // 여기에 mounted 로직을 추가하세요
-  },
-  computed: {
-    // 여기에 computed 속성을 추가하세요
-  },
+  mounted() {},
+  computed: {},
 };
 </script>
 
-<style>
+<style scoped>
 /* TAG */
 table {
   width: 100%;
@@ -52,14 +52,14 @@ td {
   width: 50%;
   border: 1px solid #ddd;
   padding: 8px;
-}
-th {
-  background-color: #f2f2f2;
-  font-weight: bold;
+  text-align: center;
 }
 /* CLASS */
 .salary-table {
   flex: 1;
   max-width: 25%;
+}
+.amount {
+  text-align: right;
 }
 </style>

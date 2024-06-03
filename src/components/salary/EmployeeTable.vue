@@ -83,10 +83,6 @@ td {
   padding: 8px;
   text-align: center;
 }
-th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
 /* CLASS */
 .employee-table {
   flex: 1;
