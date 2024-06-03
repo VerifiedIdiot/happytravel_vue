@@ -16,12 +16,12 @@
 </template>
 
 <script>
-import HotelDashboard from "@/components/sales/HotelDashboard.vue";
-import AgencyDashboard from "@/components/sales/AgencyDashboard.vue";
-import FlightDashboard from "@/components/sales/FlightDashboard.vue";
+import HotelDashboard from '@/components/sales/HotelDashboard.vue';
+import AgencyDashboard from '@/components/sales/AgencyDashboard.vue';
+import FlightDashboard from '@/components/sales/FlightDashboard.vue';
 
 export default {
-  name: "SalesPartner",
+  name: 'SalesPartner',
   components: {
     HotelDashboard,
     AgencyDashboard,
@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      currentComponent: "HotelDashboard",
+      currentComponent: 'HotelDashboard',
     };
   },
 };
