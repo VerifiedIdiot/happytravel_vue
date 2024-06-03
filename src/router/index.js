@@ -32,35 +32,34 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home,
-    // meta: { requiresAuth: true } 주석 처리
+    // meta: { requiresAuth: true } 
    
   },
   {
     path: '/hr',
     name: 'HRMain',
     component: HRMain,
-    // meta: { requiresAuth: true } 주석 처리
-
+    // meta: { requiresAuth: true } 
   },
   {
     path: '/sales',
     name: 'SalesMain',
     component: SalesMain,
-    // meta: { requiresAuth: true } 주석 처리
+    // meta: { requiresAuth: true } 
  
     children: [
       {
         path: 'partner',
         name: 'SalesPartner',
         component: SalesPartner,
-        // meta: { requiresAuth: true } 주석 처리
+        // meta: { requiresAuth: true } 
     
       },
       {
         path: 'product',
         name: 'SalesProduct',
         component: SalesProduct,
-        // meta: { requiresAuth: true } 주석 처리
+        // meta: { requiresAuth: true }
     
       }
     ]
