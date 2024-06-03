@@ -14,7 +14,8 @@ export const getPackageList = async (params) => {
 // GET Single Package
 export const getPackage = async (params) => {
   try {
-    const response = await apiClient.get('/sales/package', { params });
+  
+    const response = await apiClient.get('/sales/package-detail', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching package:', error);

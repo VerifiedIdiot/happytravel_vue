@@ -32,6 +32,12 @@
     "env": {
       "node": true
     },
+    "prettier" : {
+      "singleQuote": true,
+      "useTabs": true,
+      "tabWidth" : 2
+      
+    },
     "extends": [
       "plugin:vue/vue3-essential",
       "eslint:recommended"
