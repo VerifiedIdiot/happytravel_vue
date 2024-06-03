@@ -33,8 +33,8 @@
           <li @mouseenter="toggleDropdown('sales')" @mouseleave="toggleDropdown(null)">
             <router-link to="/sales" class="nav-link">영업관리</router-link>
             <div v-if="dropdown === 'sales'" class="dropdown-content">
-              <router-link to="/sales/subpage1">페이지 1</router-link>
-              <router-link to="/sales/subpage2">페이지 2</router-link>
+              <router-link to="/sales/partner">협력사관리</router-link>
+              <router-link to="/sales/product">여행상품관리</router-link>
             </div>
           </li>
         </ul>
