@@ -88,8 +88,9 @@ nav {
     margin: 0;
   }
 }
+
 .nav-link {
-  @apply text-white hover:text-blue-200 transition duration-300;
+  @apply text-white;
   display: flex;
   justify-content: center;
   align-items: center;

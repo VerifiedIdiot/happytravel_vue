@@ -9,23 +9,23 @@
 </template>
 
 <script>
-import PackageDashboard from '@/components/sales/package/PackageDashboard.vue';
+import PackageDashboard from "@/components/sales/package/PackageDashboard.vue";
 
 export default {
   name: "SalesProduct",
   components: {
-    PackageDashboard
+    PackageDashboard,
   },
   data() {
     return {
-      currentComponent: PackageDashboard 
+      currentComponent: PackageDashboard,
     };
   },
   methods: {
     showPackageDashboard() {
       this.currentComponent = PackageDashboard;
-    }
-  }
+    },
+  },
 };
 </script>
 
