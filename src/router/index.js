@@ -1,18 +1,18 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from "vue-router";
 // import store from '../store';
 
 // 컴포넌트 임포트
-import LoginMain from '../views/login/LoginMain.vue';
-import Home from '../views/Home.vue';
-import HRMain from '../views/hr/HRMain.vue';
-import SalesMain from '../views/sales/SalesMain.vue';
-import SalesPartner from '../views/sales/SalesPartner.vue';
-import SalesProduct from '../views/sales/SalesProduct.vue';
+import LoginMain from "../views/login/LoginMain.vue";
+import Home from "../views/Home.vue";
+import HRMain from "../views/hr/HRMain.vue";
+import SalesMain from "../views/sales/SalesMain.vue";
+import SalesPartner from "../views/sales/SalesPartner.vue";
+import SalesProduct from "../views/sales/SalesProduct.vue";
 
 const routes = [
   {
-    path: '/',
-    name: 'Root',
+    path: "/",
+    name: "Root",
     // beforeEnter 가드 주석 처리
     // beforeEnter: (to, from, next) => {
     //   if (store.getters.isAuthenticated) {
@@ -21,54 +21,57 @@ const routes = [
     //     next({ name: 'Login' });
     //   }
     // },
-    component: Home
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: LoginMain
-  },
-  {
-    path: '/home',
-    name: 'Home',
     component: Home,
-    // meta: { requiresAuth: true } 
-   
   },
   {
-    path: '/hr',
-    name: 'HRMain',
+    path: "/login",
+    name: "Login",
+    component: LoginMain,
+  },
+  {
+    path: "/home",
+    name: "Home",
+    component: Home,
+    // meta: { requiresAuth: true }
+  },
+  {
+    path: "/hr",
+    name: "HRMain",
     component: HRMain,
-    // meta: { requiresAuth: true } 
+    // meta: { requiresAuth: true }
   },
   {
-    path: '/sales',
-    name: 'SalesMain',
+    path: "/sales",
+    name: "SalesMain",
     component: SalesMain,
-    // meta: { requiresAuth: true } 
- 
+    // meta: { requiresAuth: true }
+
     children: [
       {
-        path: 'partner',
-        name: 'SalesPartner',
+        path: "partner",
+        name: "SalesPartner",
         component: SalesPartner,
-        // meta: { requiresAuth: true } 
-    
+        // meta: { requiresAuth: true }
       },
       {
-        path: 'product',
-        name: 'SalesProduct',
+        path: "product",
+        name: "SalesProduct",
         component: SalesProduct,
         // meta: { requiresAuth: true }
-    
-      }
-    ]
-  }
+      },
+    ],
+  },
+  {
+    path: "/mypage",
+    name: "MyPage",
+    component: HRMain,
+    // meta: { requiresAuth: true }
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(), 
-  routes
+  history: createWebHistory(),
+  routes,
 });
 
 // 전역 가드 주석 처리
