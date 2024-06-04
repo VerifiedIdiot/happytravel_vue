@@ -8,6 +8,8 @@ import HRMain from "../views/hr/HRMain.vue";
 import SalesMain from "../views/sales/SalesMain.vue";
 import SalesPartner from "../views/sales/SalesPartner.vue";
 import SalesPackage from "../views/sales/SalesPackage.vue";
+import SalaryData from "@/views/salary/SalaryData.vue";
+import Salarypayment from "@/views/salary/Salarypayment.vue";
 
 const routes = [
   {
@@ -60,6 +62,16 @@ const routes = [
         // meta: { requiresAuth: true }
       },
     ],
+  },
+  {
+    path: "/salary/data",
+    name: "SalaryData",
+    component: SalaryData,
+  },
+  {
+    path: "/salary/payment",
+    name: "Salarypayment",
+    component: Salarypayment,
   },
 ];
 
