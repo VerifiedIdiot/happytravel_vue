@@ -1,62 +1,89 @@
 <template>
-  <div class="total-table">
-    <div class="row">
-      <table class="total-salary-table">
-        <thead>
-          <tr>
-            <th class="hidden-tag">코드</th>
-            <th>급여 항목</th>
-            <th>금액</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in salaryBodyData" :key="item.code">
-            <td class="hidden-tag">{{ item.code }}</td>
-            <td>{{ item.name }}</td>
-            <td class="amount">{{ formatNumber(item.amount) }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr v-for="item in salaryFootData" :key="item.code">
-            <td class="hidden-tag">{{ item.code }}</td>
-            <td class="item-name">{{ item.name }}</td>
-            <td class="amount">{{ formatNumber(item.amount) }}</td>
-          </tr>
-        </tfoot>
-      </table>
+  <div class="flex" id="salary-head">
+    <div class="flex items-center justify-center w-1/2 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        급여 항목
+      </span>
     </div>
-    <div class="row"><br /><br /><br /><br /><br /></div>
-    <div class="row">
-      <table class="total-deduction-table">
-        <thead>
-          <tr>
-            <th class="hidden-tag">코드</th>
-            <th>급여 항목</th>
-            <th>금액</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in deductionBodyData" :key="item.code">
-            <td class="hidden-tag">{{ item.code }}</td>
-            <td>{{ item.name }}</td>
-            <td class="amount">{{ formatNumber(item.amount) }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr v-for="item in deductionFootData" :key="item.code">
-            <td class="hidden-tag">{{ item.code }}</td>
-            <td class="item-name">{{ item.name }}</td>
-            <td class="amount">{{ formatNumber(item.amount) }}</td>
-          </tr>
-        </tfoot>
-      </table>
+    <div class="flex items-center justify-center w-1/2 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        금 액
+      </span>
+    </div>
+  </div>
+  <div class="relative w-full" id="salary-body">
+    <div class="flex" v-for="item in salaryBodyData" :key="item.code">
+      <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
+        <span>
+          {{ item.name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
+        <span>
+          {{ formatNumber(item.amount) }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-0 w-full" id="salary-foot">
+    <div class="flex bottom-0 salary-foot" v-for="item in salaryFootData" :key="item.code">
+      <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
+        <span class="font-bold text-center">
+          {{ item.name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
+        <span class="font-bold">
+          {{ formatNumber(item.amount) }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="flex mt-5" id="deduction-head">
+    <div class="flex items-center justify-center w-1/2 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        공제 항목
+      </span>
+    </div>
+    <div class="flex items-center justify-center w-1/2 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        금 액
+      </span>
+    </div>
+  </div>
+  <div class="relative w-full" id="deduction-body">
+    <div class="flex" v-for="item in deductionBodyData" :key="item.code">
+      <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
+        <span>
+          {{ item.name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
+        <span>
+          {{ formatNumber(item.amount) }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-0 w-full" id="deduction-foot">
+    <div class="flex" v-for="item in deductionFootData" :key="item.code">
+      <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
+        <span class="font-bold text-center">
+          {{ item.name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
+        <span class="font-bold">
+          {{ formatNumber(item.amount) }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "TotalSalaryTable",
+  name: 'TotalSalaryTable',
   props: {
     totalSalaryData: {
       type: Array,
@@ -80,12 +107,24 @@ export default {
     this.totalDataFilter();
   },
   computed: {},
+  watch: {
+    totalSalaryData: {
+      handler() {
+        this.totalDataFilter();
+      },
+      immediate: true,
+    },
+    salaryItem: {
+      handler() {
+        this.totalDataFilter();
+      },
+      immediate: true,
+    },
+  },
   methods: {
     mergedTotalSalaryDataFunc() {
       this.mergedTotalSalaryData = this.totalSalaryData.map((dataItem) => {
-        const matchingItem = this.salaryItem.find(
-          (item) => item.salary_item_code === dataItem.salary_item_code
-        );
+        const matchingItem = this.salaryItem.find((item) => item.salary_item_code === dataItem.salary_item_code);
         return {
           code: dataItem.salary_item_code,
           name: matchingItem.salary_item_name,
@@ -95,67 +134,12 @@ export default {
     },
     totalDataFilter() {
       this.mergedTotalSalaryDataFunc();
-      this.salaryBodyData = this.mergedTotalSalaryData.filter(
-        (item) => item.code.charAt() === "1"
-      );
-      this.salaryFootData = this.mergedTotalSalaryData.filter(
-        (item) => item.code.charAt() === "8"
-      );
-      this.deductionBodyData = this.mergedTotalSalaryData.filter(
-        (item) => item.code.charAt() === "2"
-      );
-      this.deductionFootData = this.mergedTotalSalaryData.filter(
-        (item) => item.code.charAt() === "9"
-      );
+      this.salaryBodyData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '1');
+      this.salaryFootData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '8');
+      this.deductionBodyData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '2');
+      this.deductionFootData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '9');
       return;
     },
   },
 };
 </script>
-
-<style scoped>
-/* TAG */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th,
-td {
-  width: 50%;
-  border: 2px solid #dddddd;
-  vertical-align: middle;
-}
-th {
-  text-align: center;
-  font-weight: bold;
-  background-color: #f0f0f0;
-}
-td {
-  padding-left: 10px;
-}
-tbody td {
-  background-color: #ffffff;
-}
-tfoot {
-  background-color: #a7ccfa;
-  letter-spacing:normal;
-  text-align: center;
-}
-/* CLASS */
-.total-table {
-  flex: 1;
-  max-width: 25%;
-  background-color: #f7f7f7;
-}
-.hidden-tag {
-  display: none;
-}
-.item-name {
-  font-weight: bold;
-}
-.amount {
-  text-align: right;
-  padding-right: 10px;
-  font-weight: bold;
-}
-</style>

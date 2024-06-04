@@ -1,4 +1,4 @@
-import apiClient from "@/api/axios";
+import apiClient from '@/api/axios';
 
 // 급여 내역 생성 - 일괄 처리 & 단일 처리
 export const initSalaryData = async (salaryDate, empId) => {
@@ -8,7 +8,7 @@ export const initSalaryData = async (salaryDate, empId) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching batchInitSalaryData:", error);
+    console.error('Error fetching batchInitSalaryData:', error);
     throw error;
   }
 };
@@ -16,11 +16,11 @@ export const initSalaryData = async (salaryDate, empId) => {
 export const selectAllSalaryData = async (empId, salaryDate) => {
   try {
     const response = await apiClient.get(
-      "/salary/select/" + salaryDate + "/" + empId
+      `/salary/select/${salaryDate}/${empId}`
     );
     return response.data;
   } catch (error) {
-    console.error("Error fetching salaryData:", error);
+    console.error('Error fetching salaryData:', error);
     throw error;
   }
 };
