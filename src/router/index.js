@@ -5,6 +5,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import LoginMain from "../views/login/LoginMain.vue";
 import Home from "../views/Home.vue";
 import HRMain from "../views/hr/HRMain.vue";
+import HREmp from "../views/hr/HREmp.vue";
 import SalesMain from "../views/sales/SalesMain.vue";
 import SalesPartner from "../views/sales/SalesPartner.vue";
 import SalesPackage from "../views/sales/SalesPackage.vue";
@@ -39,6 +40,14 @@ const routes = [
     name: "HRMain",
     component: HRMain,
     // meta: { requiresAuth: true }
+    children: [
+      {
+        path: "emp",
+        name: "HREmp",
+        component: HREmp,
+        // meta: { requiresAuth: true } 주석 처리
+      },
+    ],
   },
   {
     path: "/sales",
