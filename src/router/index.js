@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 // import store from '../store';
 
 // 컴포넌트 임포트
@@ -7,11 +7,7 @@ import Home from "../views/Home.vue";
 import HRMain from "../views/hr/HRMain.vue";
 import SalesMain from "../views/sales/SalesMain.vue";
 import SalesPartner from "../views/sales/SalesPartner.vue";
-import SalesProduct from "../views/sales/SalesProduct.vue";
-// ================================================== 20240603 - S ==================================================
-import SalaryData from "@/views/salary/SalaryData.vue";
-import Salarypayment from "@/views/salary/Salarypayment.vue";
-// ================================================== 20240603 - E ==================================================
+import SalesPackage from "../views/sales/SalesPackage.vue";
 
 const routes = [
   // ================================================== 20240603 - S ==================================================
@@ -48,35 +44,31 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home,
-    // meta: { requiresAuth: true } 주석 처리
     // meta: { requiresAuth: true }
   },
   {
     path: "/hr",
     name: "HRMain",
     component: HRMain,
-    // meta: { requiresAuth: true } 주석 처리
     // meta: { requiresAuth: true }
   },
   {
     path: "/sales",
     name: "SalesMain",
     component: SalesMain,
-    // meta: { requiresAuth: true } 주석 처리
-
     // meta: { requiresAuth: true }
+
     children: [
       {
         path: "partner",
         name: "SalesPartner",
         component: SalesPartner,
-        // meta: { requiresAuth: true } 주석 처리
         // meta: { requiresAuth: true }
       },
       {
-        path: "product",
-        name: "SalesProduct",
-        component: SalesProduct,
+        path: "package",
+        name: "SalesPackage",
+        component: SalesPackage,
         // meta: { requiresAuth: true }
       },
     ],
@@ -84,7 +76,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 });
 

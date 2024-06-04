@@ -19,7 +19,7 @@
             <input
               type="text"
               id="department"
-              v-model="user.department"
+              v-model="user.deptCode"
               disabled
               class="disabled-input"
             />
@@ -31,7 +31,7 @@
             <input
               type="text"
               id="name"
-              v-model="user.name"
+              v-model="user.empName"
               disabled
               class="disabled-input"
             />
@@ -41,7 +41,7 @@
             <input
               type="text"
               id="position"
-              v-model="user.position"
+              v-model="user.posCode"
               disabled
               class="disabled-input"
             />
@@ -51,9 +51,11 @@
           <label for="type">종류</label>
           <select id="type" v-model="type">
             <option value="">-</option>
-            <option value="연차">연차</option>
-            <option value="반차">반차</option>
-            <option value="병가">병가</option>
+            <option value="3000">외근</option>
+            <option value="4000">야근</option>
+            <option value="5000">연차</option>
+            <option value="5100">병가</option>
+            <option value="5500">경조사</option>
           </select>
         </div>
         <div class="form-group full-width">
@@ -62,19 +64,34 @@
         </div>
         <div class="form-group full-width">
           <label for="period">기간</label>
-          <input
-            type="text"
-            id="period"
-            v-model="period"
-            placeholder="YYYY년 MM월 DD일 ~ YYYY년 MM월 DD일 (X일간)"
-          />
+          <div class="form-row period-row">
+            <div class="form-group">
+              <input
+                type="date"
+                id="startDate"
+                v-model="startDate"
+                :min="minDate"
+                :max="maxDate"
+              />
+            </div>
+            <div class="tilde">~</div>
+            <div class="form-group">
+              <input
+                type="date"
+                id="endDate"
+                v-model="endDate"
+                :min="minDate"
+                :max="maxDate"
+              />
+            </div>
+          </div>
         </div>
         <div class="form-group full-width">
-          <label for="reason">사유</label>
+          <label for="reason">내용</label>
           <textarea id="reason" v-model="reason"></textarea>
         </div>
         <div class="button-group">
-          <button type="submit" class="submit-button">휴가 신청</button>
+          <button type="submit" class="submit-button">근태 신청</button>
         </div>
       </form>
     </div>
@@ -83,6 +100,11 @@
 
 <script>
 import { mapGetters } from "vuex";
+import {
+  insertAttendanceManagement,
+  getMaxAttendanceTypeCode,
+} from "../../api/attendances/AttendanceManagementApi";
+import { getManagerIdByDeptCode } from "../../api/attendances/EmployeeInfoApi";
 
 export default {
   name: "AttendancePopup",
@@ -90,26 +112,76 @@ export default {
     return {
       type: "",
       title: "",
-      period: "",
+      startDate: "",
+      endDate: "",
       reason: "",
+      minDate: "",
+      maxDate: "",
     };
   },
   computed: {
     ...mapGetters(["user"]),
   },
   methods: {
-    submitForm() {
-      console.log(
-        "휴가 신청:",
-        this.user.empId,
-        this.user.department,
-        this.user.name,
-        this.user.position,
-        this.type,
-        this.title,
-        this.period,
-        this.reason
-      );
+    async submitForm() {
+      // 오늘 날짜를 YYYYMMDD 형식으로 생성
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      const creationDate = `${year}${month}${day}`;
+
+      let typeCodeSuffix = "01";
+
+      try {
+        // 데이터베이스에서 현재 날짜에 해당하는 최대 코드 조회
+        const maxCodeResponse = await getMaxAttendanceTypeCode(creationDate);
+        if (maxCodeResponse && maxCodeResponse.maxCode) {
+          const maxCode = maxCodeResponse.maxCode;
+          const currentSuffix = parseInt(maxCode.slice(-2), 10);
+          const newSuffix = (currentSuffix + 1).toString().padStart(2, "0");
+          typeCodeSuffix = newSuffix;
+        }
+      } catch (error) {
+        console.error("Error fetching max attendance type code:", error);
+      }
+
+      const attendanceCode = `${creationDate}${typeCodeSuffix}`;
+
+      let managerId = "";
+      try {
+        // 부서 코드로 부장 직급의 사원 ID 조회
+        const managerResponse = await getManagerIdByDeptCode(
+          this.user.deptCode
+        );
+
+        if (managerResponse) {
+          managerId = managerResponse;
+        }
+      } catch (error) {
+        console.error("Error fetching manager ID:", error);
+      }
+
+      const attendanceManagement = {
+        attendance_code: attendanceCode,
+        emp_id: this.user.empId,
+        attendance_type_code: this.type,
+        start_date: this.startDate,
+        end_date: this.endDate,
+        assign_code: "1000",
+        assign_emp_id: managerId,
+        title: this.title,
+        reason: this.reason,
+        creation_date: creationDate,
+      };
+
+      try {
+        const response = await insertAttendanceManagement(attendanceManagement);
+        console.log("근태 신청 성공:", response);
+      } catch (error) {
+        console.error("근태 신청 실패:", error);
+      }
+
       this.$emit("close");
     },
   },
@@ -187,6 +259,16 @@ export default {
 
 .form-group textarea {
   height: 100px;
+}
+
+.form-row.period-row {
+  align-items: center;
+}
+
+.tilde {
+  margin: 0 10px;
+  font-size: 1.2em;
+  color: #333;
 }
 
 .button-group {

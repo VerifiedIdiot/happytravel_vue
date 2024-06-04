@@ -11,10 +11,21 @@ export const getHotelList = async () => {
   }
 };
 
-// POST
-export const insertHotel = async (hotel) => {
+// GET last hotel code
+export const getLastHotelCode = async () => {
   try {
-    const response = await apiClient.post('/sales/hotel', hotel);
+    const response = await apiClient.get('/sales/last-hotel-code');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching last hotel code:', error);
+    throw error;
+  }
+};
+
+// POST
+export const insertHotel = async (hotel, empId) => {
+  try {
+    const response = await apiClient.post('/sales/hotel', hotel, empId);
     return response.data;
   } catch (error) {
     console.error('Error inserting hotel:', error);
@@ -23,9 +34,9 @@ export const insertHotel = async (hotel) => {
 };
 
 // PUT
-export const updateHotel = async (hotelCode, hotel) => {
+export const updateHotel = async (hotelCode, hotel, empId) => {
   try {
-    const response = await apiClient.put(`/sales/hotel/${hotelCode}`, hotel);
+    const response = await apiClient.put(`/sales/hotel/${hotelCode}`, hotel, empId);
     return response.data;
   } catch (error) {
     console.error('Error updating hotel:', error);
