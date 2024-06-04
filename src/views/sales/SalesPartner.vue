@@ -1,27 +1,40 @@
 <template>
-  <div>
-    <h1>협력사 관리</h1>
-    <button @click="currentComponent = 'HotelDashboard'">
-      Show Hotel Dashboard
-    </button>
-    <button @click="currentComponent = 'AgencyDashboard'">
-      Show Agency Dashboard
-    </button>
-    <button @click="currentComponent = 'FlightDashboard'">
-      Show Flight Dashboard
-    </button>
+  <div class="wrapper">
+    <div class="sales-container">
+      <div class="sales-box">
+        <p>협력사 관리</p>
+      </div>
+    </div>
+    <div class="sales-item">
+      <button :class="{ 'active-tab': currentComponent === 'HotelDashboard' }"
+        @click="currentComponent = 'HotelDashboard'">
+        호텔
+      </button>
+      <button :class="{ 'active-tab': currentComponent === 'FlightDashboard' }"
+        @click="currentComponent = 'FlightDashboard'">
+        항공사
+      </button>
+      <button :class="{ 'active-tab': currentComponent === 'AgencyDashboard' }"
+        @click="currentComponent = 'AgencyDashboard'">
+        현지여행사
+      </button>
+    </div>
 
+  </div>
+  <div class="sales-container">
     <component :is="currentComponent"></component>
   </div>
+
 </template>
 
+
 <script>
-import HotelDashboard from "@/components/sales/HotelDashboard.vue";
-import AgencyDashboard from "@/components/sales/AgencyDashboard.vue";
-import FlightDashboard from "@/components/sales/FlightDashboard.vue";
+import HotelDashboard from '@/components/sales/hotel/HotelDashboard.vue';
+import AgencyDashboard from '@/components/sales/AgencyDashboard.vue';
+import FlightDashboard from '@/components/sales/FlightDashboard.vue';
 
 export default {
-  name: "SalesPartner",
+  name: 'SalesPartner',
   components: {
     HotelDashboard,
     AgencyDashboard,
@@ -29,10 +42,10 @@ export default {
   },
   data() {
     return {
-      currentComponent: "HotelDashboard",
+      currentComponent: 'HotelDashboard',
     };
   },
 };
 </script>
 
-<style></style>
+<style src="../../components/sales/hotel/SalesDashboard.css"></style>

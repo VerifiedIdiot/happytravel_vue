@@ -1,38 +1,91 @@
 <template>
-    <div>
-        <ul>
-            <li v-for="pkg in packages" :key="pkg.package_code">{{ pkg.package_name }} - {{ pkg.country }} - {{ pkg.start_date }} - {{ pkg.end_date }} - {{ pkg.sale_start_date }} - {{ pkg.sale_end_date }} - {{pkg.assign_code}}</li>
-        </ul>
+  <div class="wrapper">
+    <div class="package-container">
+      <div class="package-box">
+        <div class="package-item">
+          <button class="btn-create" @click="openModal"><p>신규등록</p></button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>여행상품 이름</th>
+            <th>여행국가</th>
+            <th>여행시작일</th>
+            <th>여행종료일</th>
+            <th>여행상품 판매 시작일</th>
+            <th>여행상품 판매 종료일</th>
+            <th>결제유무</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="pkg in packages" :key="pkg.package_code" @click="openModal(pkg.package_code)">
+            <td>{{ pkg.package_name }}</td>
+            <td>{{ pkg.country }}</td>
+            <td>{{ pkg.start_date }}</td>
+            <td>{{ pkg.end_date }}</td>
+            <td>{{ pkg.sale_start_date }}</td>
+            <td>{{ pkg.sale_end_date }}</td>
+            <td>{{ pkg.assign_code }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
+    <PackageDetail 
+      v-if="isModalOpen" 
+      @close="closeModal" 
+    />
+  </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, provide } from 'vue';
 import { getPackageList } from '@/api/sales/PackageApi';
+import PackageDetail from '@/components/sales/package/PackageDetail.vue';
 
 export default {
-    name: 'PackageDashboard',
-    setup() {
-        const packages = ref([]);
-        onMounted(async () => {
-            try {
-                const empId = sessionStorage.getItem('empId') || 'EMP30002';
-                const params = { empId }; 
+  name: 'PackageDashboard',
+  components: {
+    PackageDetail
+  },
+  setup() {
+    const packages = ref([]);
+    const isModalOpen = ref(false);
+    const packageCode = ref('');
+    const empId = sessionStorage.getItem('empId') || 'EMP30002';
 
-                const data = await getPackageList(params); // params 전달
-                packages.value = data; 
-            } catch (error) {
-                console.error('Failed to fetch packages:', error);
-            }
-        });
+    onMounted(async () => {
+      try {
+        const params = { empId };
+        const data = await getPackageList(params);
+        packages.value = data;
+      } catch (error) {
+        console.error('Failed to fetch packages:', error);
+      }
+    });
 
-        return {
-            packages
-        };
-    }
-}
+    const openModal = (pkgCode) => {
+      packageCode.value = pkgCode;
+      isModalOpen.value = true;
+    };
+
+    const closeModal = () => {
+      isModalOpen.value = false;
+    };
+
+    provide('empId', empId);
+    provide('packageCode', packageCode);
+
+    return {
+      packages,
+      isModalOpen,
+      openModal,
+      closeModal
+    };
+  }
+};
 </script>
 
-<style lang="scss">
-
-</style>
+<style src="./packageDashboard.css"></style>
