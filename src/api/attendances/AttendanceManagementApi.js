@@ -11,6 +11,20 @@ export const getAttendanceManagementList = async () => {
   }
 };
 
+// GET 작성 날짜 조회 API
+
+// 최대 attendance type code 조회
+export const getMaxAttendanceTypeCode = async (creationDate) => {
+  try {
+    const response = await apiClient.get(
+      `/attendances/maxAttendanceTypeCode?creationDate=${creationDate}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching max attendance type code:", error);
+    throw error;
+  }
+};
 // POST
 export const insertAttendanceManagement = async (attendanceManagement) => {
   try {

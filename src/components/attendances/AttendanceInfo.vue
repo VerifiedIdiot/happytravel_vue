@@ -15,7 +15,7 @@
       <button @click="toggleClockInOut">
         {{ isClockedIn ? "퇴근" : "출근" }}
       </button>
-      <button @click="openLeavePopup">휴가 신청</button>
+      <button @click="openLeavePopup">근태 신청</button>
       <AttendancePopup v-if="showLeavePopup" @close="closeLeavePopup" />
     </div>
   </div>
@@ -72,7 +72,7 @@ export default {
         // 출근 기록 삽입
         const attendance = {
           emp_id: empId,
-          day: this.formatDate(now, "yyyyMMdd"),
+          today: this.formatDate(now, "yyyyMMdd"),
           in_time: this.formatDate(now, "ISO"),
         };
 
@@ -87,7 +87,7 @@ export default {
         // 퇴근 시간 업데이트
         const attendance = {
           emp_id: empId,
-          day: this.formatDate(now, "yyyyMMdd"),
+          today: this.formatDate(now, "yyyyMMdd"),
           out_time: this.formatDate(now, "ISO"),
         };
 
