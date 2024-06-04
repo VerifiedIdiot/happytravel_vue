@@ -1,65 +1,145 @@
 <template>
-  <div class="total-salary-table">
-    <table>
-      <caption>
-        합계
-      </caption>
-      <thead>
-        <tr>
-          <th>항목</th>
-          <th>금액</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in salaryItems" :key="item.salary_item_code">
-          <td>{{ item.salary_item_code }}</td>
-          <td class="amount">{{ $formatNumber(item.amount) }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="flex" id="salary-head">
+    <div class="flex items-center justify-center w-1/2 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        급여 항목
+      </span>
+    </div>
+    <div class="flex items-center justify-center w-1/2 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        금 액
+      </span>
+    </div>
+  </div>
+  <div class="relative w-full" id="salary-body">
+    <div class="flex" v-for="item in salaryBodyData" :key="item.code">
+      <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
+        <span>
+          {{ item.name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
+        <span>
+          {{ formatNumber(item.amount) }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-0 w-full" id="salary-foot">
+    <div class="flex bottom-0 salary-foot" v-for="item in salaryFootData" :key="item.code">
+      <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
+        <span class="font-bold text-center">
+          {{ item.name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
+        <span class="font-bold">
+          {{ formatNumber(item.amount) }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="flex mt-5" id="deduction-head">
+    <div class="flex items-center justify-center w-1/2 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        공제 항목
+      </span>
+    </div>
+    <div class="flex items-center justify-center w-1/2 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        금 액
+      </span>
+    </div>
+  </div>
+  <div class="relative w-full" id="deduction-body">
+    <div class="flex" v-for="item in deductionBodyData" :key="item.code">
+      <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
+        <span>
+          {{ item.name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
+        <span>
+          {{ formatNumber(item.amount) }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-0 w-full" id="deduction-foot">
+    <div class="flex" v-for="item in deductionFootData" :key="item.code">
+      <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
+        <span class="font-bold text-center">
+          {{ item.name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
+        <span class="font-bold">
+          {{ formatNumber(item.amount) }}
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "TotalSalaryTable",
+  name: 'TotalSalaryTable',
   props: {
-    salaryItems: {
+    totalSalaryData: {
+      type: Array,
+      required: true,
+    },
+    salaryItem: {
       type: Array,
       required: true,
     },
   },
   data() {
-    return {};
+    return {
+      mergedTotalSalaryData: [],
+      salaryBodyData: [],
+      salaryFootData: [],
+      deductionBodyData: [],
+      deductionFootData: [],
+    };
   },
   mounted() {
-    // 여기에 mounted 로직을 추가하세요
+    this.totalDataFilter();
   },
-  computed: {
-    // 여기에 computed 속성을 추가하세요
+  computed: {},
+  watch: {
+    totalSalaryData: {
+      handler() {
+        this.totalDataFilter();
+      },
+      immediate: true,
+    },
+    salaryItem: {
+      handler() {
+        this.totalDataFilter();
+      },
+      immediate: true,
+    },
+  },
+  methods: {
+    mergedTotalSalaryDataFunc() {
+      this.mergedTotalSalaryData = this.totalSalaryData.map((dataItem) => {
+        const matchingItem = this.salaryItem.find((item) => item.salary_item_code === dataItem.salary_item_code);
+        return {
+          code: dataItem.salary_item_code,
+          name: matchingItem.salary_item_name,
+          amount: dataItem.amount,
+        };
+      });
+    },
+    totalDataFilter() {
+      this.mergedTotalSalaryDataFunc();
+      this.salaryBodyData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '1');
+      this.salaryFootData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '8');
+      this.deductionBodyData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '2');
+      this.deductionFootData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '9');
+      return;
+    },
   },
 };
 </script>
-
-<style scoped>
-/* TAG */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th,
-td {
-  width: 50%;
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-/* CLASS */
-.total-salary-table {
-  flex: 1;
-  max-width: 25%;
-}
-</style>

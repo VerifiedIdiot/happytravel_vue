@@ -1,57 +1,85 @@
 <template>
-  <div class="employee-table">
-    <table>
-      <caption>
-        사원 리스트
-      </caption>
-      <thead>
-        <tr>
-          <th>사원번호</th>
-          <th>사원명</th>
-          <th>부서</th>
-          <th>직급</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="employee in employees"
-          :key="employee.emp_id"
-          @click="$emit('select', employee)"
-        >
-          <td>{{ employee.emp_id }}</td>
-          <td :class="{ 'leave-emp': !employee.leave_stat }">
-            {{ employee.emp_name }}
-          </td>
-          <td>{{ employee.dept_name }}</td>
-          <td>{{ employee.pos_name }}</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="3">
-            인원(퇴직)
-          </td>
-          <td>{{ leaveCount.true }}({{ leaveCount.false }})</td>
-        </tr>
-      </tfoot>
-    </table>
+  <div class="flex" id="employee-head">
+    <div class="flex items-center justify-center w-1/4 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        사원번호
+      </span>
+    </div>
+    <div class="flex items-center justify-center w-1/4 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        사원명
+      </span>
+    </div>
+    <div class="flex items-center justify-center w-1/4 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        부서
+      </span>
+    </div>
+    <div class="flex items-center justify-center w-1/4 h-10 m-px bg-gray-200">
+      <span class="text-lg font-bold">
+        직급
+      </span>
+    </div>
+  </div>
+  <div class="relative w-full overflow-y-scroll custom-scrollbar" id="employee-body">
+    <div
+      class="flex"
+      v-for="employee in employees"
+      :key="employee.emp_id"
+      @click="selectEmployee(employee)"
+      :class="{ 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }"
+    >
+      <div class="flex items-center justify-center w-1/4 h-7 m-px">
+        <span>
+          {{ employee.emp_id }}
+        </span>
+      </div>
+      <div class="flex items-center justify-center w-1/4 h-7 m-px" :class="{ 'leave-emp': !employee.leave_stat }">
+        <span>
+          {{ employee.emp_name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-center w-1/4 h-7 m-px">
+        <span>
+          {{ employee.dept_name }}
+        </span>
+      </div>
+      <div class="flex items-center justify-center w-1/4 h-7 m-px">
+        <span>
+          {{ employee.pos_name }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-0 w-full" id="employee-foot">
+    <div class="flex">
+      <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
+        <span class="font-bold text-center">
+          인원(퇴직)
+        </span>
+      </div>
+      <div class="flex items-center justify-center w-1/2 h-7 m-px pr-5 bg-blue-300">
+        <span class="font-bold text-center"> {{ leaveCount.true }}({{ leaveCount.false }}) </span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "EmployeeTable",
+  name: 'EmployeeTable',
   props: {
     employees: {
       type: Array,
       required: true,
     },
   },
-  methods: {
-    selectEmployee(employee) {
-      this.$emit("select", employee);
-    },
+  data() {
+    return {
+      selectedEmployeeId: null,
+    };
   },
+  mounted() {},
   computed: {
     leaveCount() {
       return this.employees.reduce(
@@ -67,32 +95,35 @@ export default {
       );
     },
   },
+  watch: {
+    employees: {
+      handler() {
+        this.selectedEmployeeId = null;
+      },
+      immediate: true,
+    },
+  },
+  methods: {
+    selectEmployee(employee) {
+      this.selectedEmployeeId = employee.emp_id;
+      this.$emit('select', employee);
+    },
+  },
 };
 </script>
 
 <style scoped>
 /* TAG */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th,
-td {
-  width: 25%;
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
 /* CLASS */
-.employee-table {
-  flex: 1;
-  max-width: 25%;
-}
 .leave-emp {
   color: red;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 </style>

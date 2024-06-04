@@ -5,9 +5,12 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import LoginMain from "../views/login/LoginMain.vue";
 import Home from "../views/Home.vue";
 import HRMain from "../views/hr/HRMain.vue";
+import HREmp from "../views/hr/HREmp.vue";
 import SalesMain from "../views/sales/SalesMain.vue";
 import SalesPartner from "../views/sales/SalesPartner.vue";
 import SalesPackage from "../views/sales/SalesPackage.vue";
+import SalaryData from "@/views/salary/SalaryData.vue";
+import Salarypayment from "@/views/salary/Salarypayment.vue";
 
 const routes = [
   {
@@ -39,6 +42,14 @@ const routes = [
     name: "HRMain",
     component: HRMain,
     // meta: { requiresAuth: true }
+    children: [
+      {
+        path: "emp",
+        name: "HREmp",
+        component: HREmp,
+        // meta: { requiresAuth: true } 주석 처리
+      },
+    ],
   },
   {
     path: "/sales",
@@ -60,6 +71,16 @@ const routes = [
         // meta: { requiresAuth: true }
       },
     ],
+  },
+  {
+    path: "/salary/data",
+    name: "SalaryData",
+    component: SalaryData,
+  },
+  {
+    path: "/salary/payment",
+    name: "Salarypayment",
+    component: Salarypayment,
   },
   {
     path: '/attendance',
