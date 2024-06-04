@@ -981,9 +981,6 @@ tbody th,
 td {
   background-color: #fff;
 }
-
-#leaveEmpInfo {
-}
 #leaveEmpInfo div p {
   width: 100%;
   padding: 4px;

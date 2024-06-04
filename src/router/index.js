@@ -82,6 +82,32 @@ const routes = [
     name: "SalaryPayment",
     component: SalaryPayment,
   },
+  {
+    path: "/attendance",
+    name: "AttendanceMain",
+    component: () => import("../views/attendances/AttendanceMain.vue"),
+    // meta: { requiresAuth: true }
+    children: [
+      {
+        path: "myAttendance",
+        name: "MyAttendance",
+        component: () => import("../views/attendances/MyAttendance.vue"),
+        // meta: { requiresAuth: true }
+      },
+      {
+        path: "teamAttendance",
+        name: "TeamAttendance",
+        component: () => import("../views/attendances/TeamAttendance.vue"),
+        // meta: { requiresAuth: true }
+      },
+      {
+        path: "adminAttendance",
+        name: "AdminAttendance",
+        component: () => import("../views/attendances/AdminAttendance.vue"),
+        // meta: { requiresAuth: true }
+      },
+    ],
+  },
 ];
 
 const router = createRouter({
