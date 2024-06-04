@@ -1,25 +1,25 @@
 <template>
-  <div>
-    <h1>Hotel Dashboard</h1>
-    <div>
-      <button @click="openModal()">신규등록</button>
+  <div class="wrapper">
+    <!-- <p>Hotel Dashboard</p> -->
+    <div class="btn-item">
+      <button class="btn-create" @click="openModal()">신규등록</button>
     </div>
-    <div>
+    <div class="sales-container">
       <table>
         <thead>
           <tr>
-            <th>Hotel Name</th>
-            <th>Phone</th>
-            <th>Country</th>
-            <th>Region</th>
-            <th>Address</th>
-            <th>Price</th>
-            <th>Is Used</th>
-            <th>Modify</th>
+            <th>호텔명</th>
+            <th>전화번호</th>
+            <th>국가</th>
+            <th>지역</th>
+            <th>주소</th>
+            <th>가격</th>
+            <th>Y/N</th>
+            <th>수정</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="hotel in isUsedHotel" :key="hotel.hotel_code" >
+          <tr v-for="hotel in isUsedHotel" :key="hotel.hotel_code">
             <td>{{ hotel.hotel_name }}</td>
             <td>{{ hotel.phone }}</td>
             <td>{{ hotel.country }}</td>
@@ -34,44 +34,52 @@
     </div>
     <div v-if="showModal" class="modal">
       <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <h2>{{ newHotel ? 'Hotel 등록' : 'Hotel 수정' }}</h2>
-        <form @submit.prevent="saveHotel">
-          <div>
-            <label for="hotel_name">Hotel Name:</label>
-            <input type="text" v-model="currentHotel.hotel_name" required>
-          </div>
-          <div>
-            <label for="phone">Phone:</label>
-            <input type="text" v-model="currentHotel.phone" required>
-          </div>
-          <div>
-            <label for="country">Country:</label>
-            <input type="text" v-model="currentHotel.country" required>
-          </div>
-          <div>
-            <label for="region">Region:</label>
-            <input type="text" v-model="currentHotel.region" required>
-          </div>
-          <div>
-            <label for="address">Address:</label>
-            <input type="text" v-model="currentHotel.address" required>
-          </div>
-          <div>
-            <label for="price">Price:</label>
-            <input type="number" v-model="currentHotel.price" required>
-          </div>
-          <div>
-            <label for="is_used">Is Used:</label>
-            <select v-model="currentHotel.is_used" required>
-              <option value="Y">Yes</option>
-              <option value="N">No</option>
-            </select>
-          </div>
-          <div>
-            <button type="submit">{{ newHotel ? '등록' : '저장' }}</button>
-          </div>
-        </form>
+        <div class="modal-header">
+          <h2>{{ newHotel ? '호텔 등록' : '호텔 수정' }}</h2>
+        </div>
+        <div class="modal-box">
+          <form @submit.prevent="saveHotel">
+            <div>
+              <div class="modal-item">
+                <label for="hotel_name">호텔명 |</label>
+                <input type="text" v-model="currentHotel.hotel_name" required>
+              </div>
+              <div class="modal-item">
+                <label for="phone">전화번호 |</label>
+                <input type="text" v-model="currentHotel.phone" required>
+              </div>
+              <div class="modal-item">
+                <label for="country">국가 |</label>
+                <input type="text" v-model="currentHotel.country" required>
+              </div>
+              <!-- <div class="modal-item">
+                <label for="region">지역 |</label>
+                <input type="text" v-model="currentHotel.region" required>
+              </div>
+              <div class="modal-item">
+                <label for="address">주소 |</label>
+                <input type="text" v-model="currentHotel.address" required>
+              </div> -->
+              <div class="modal-item">
+                <label for="price">가격 |</label>
+                <input type="text" v-model="currentHotel.price" required>
+              </div>
+              <div class="modal-item">
+                <label for="is_used">Y/N |</label>
+                <select v-model="currentHotel.is_used" required>
+                  <option value="Y">Yes</option>
+                  <option value="N">No</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="btn-reg">
+              <button class="rounded-md btn-submit" type="submit">{{ newHotel ? '등록' : '저장' }}</button>
+              <button class="rounded-md btn-close" type="button" @click="closeModal">닫기</button>
+            </div>
+          </form>
+        </div>
+
       </div>
     </div>
   </div>
@@ -79,7 +87,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { getHotelList,getLastHotelCode,insertHotel, updateHotel } from '@/api/sales/HotelApi';
+import { getHotelList, getLastHotelCode, insertHotel, updateHotel } from '@/api/sales/HotelApi';
 
 export default {
   name: 'HotelDashboard',
@@ -95,7 +103,7 @@ export default {
 
     const fetchHotels = async () => {
       try {
-        
+
         hotels.value = await getHotelList();
         console.log('Fetched flights:', hotels.value);
       } catch (error) {
@@ -133,7 +141,7 @@ export default {
         console.log('Updating hotel with data:', currentHotel.value, empId);
         const hotelCode = currentHotel.value.hotel_code;
 
-        if(newHotel.value) {
+        if (newHotel.value) {
           const lastHotelCode = await getLastHotelCode();
           let newHotelCode;
           if (lastHotelCode) {
@@ -154,7 +162,7 @@ export default {
             hotels.value[index] = { ...currentHotel.value };
           }
         }
-        
+
         const index = hotels.value.findIndex(h => h.hotel_code === hotelCode);
         if (index !== -1) {
           hotels.value[index] = { ...currentHotel.value };
@@ -189,40 +197,4 @@ export default {
 };
 </script>
 
-<style>
-.modal {
-  display: block;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-</style>
-
+<style src="./SalesDashboard.css"></style>
