@@ -197,4 +197,4 @@ export default {
 };
 </script>
 
-<style src="./SalesDashboard.css"></style>
+<style src="./HotelDashboard.css"></style>
