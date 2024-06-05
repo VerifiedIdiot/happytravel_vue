@@ -30,8 +30,8 @@
 
 <script>
 import HotelDashboard from '@/components/sales/hotel/HotelDashboard.vue';
-import AgencyDashboard from '@/components/sales/AgencyDashboard.vue';
-import FlightDashboard from '@/components/sales/FlightDashboard.vue';
+import AgencyDashboard from '@/components/sales/agency/AgencyDashboard.vue';
+import FlightDashboard from '@/components/sales/flight/FlightDashboard.vue';
 
 export default {
   name: 'SalesPartner',
@@ -48,4 +48,4 @@ export default {
 };
 </script>
 
-<style src="../../components/sales/hotel/SalesDashboard.css"></style>
+<style src="../../components/sales/hotel/HotelDashboard.css"></style>
