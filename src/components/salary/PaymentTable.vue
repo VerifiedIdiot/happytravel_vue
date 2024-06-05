@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-end w-full m-px" id="payment-button">
-    <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" type="button" @click="downloadExcel()">
+    <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" type="button" @click="downloadExcel">
       급여 지급 내역 내려 받기 (Excel)
     </button>
   </div>
@@ -12,83 +12,83 @@
     </div>
   </div>
   <div class="relative w-full overflow-y-scroll custom-scrollbar" id="payment-body">
-    <div class="flex" v-for="item in paymentData" :key="item.empId" @click="onSelectEmployee(item)" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
-      <div class="flex items-center justify-center w-1/12 h-7 m-px">
+    <div class="flex" v-for="item in paymentData" :key="item.empId" @click="onSelectEmployee(item)">
+      <div class="flex items-center justify-center w-1/12 h-7 m-px" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ item.emp_id }}
         </span>
       </div>
-      <div class="flex items-center justify-center w-1/12 h-7 m-px">
+      <div class="flex items-center justify-center w-1/12 h-7 m-px" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ item.emp_name }}
         </span>
       </div>
-      <div class="flex items-center justify-center w-1/12 h-7 m-px">
+      <div class="flex items-center justify-center w-1/12 h-7 m-px" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ item.dept_name }}
         </span>
       </div>
-      <div class="flex items-center justify-center w-1/12 h-7 m-px">
+      <div class="flex items-center justify-center w-1/12 h-7 m-px" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ item.pos_name }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month01) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month02) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month03) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month04) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month05) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month06) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month07) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month08) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month09) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month10) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month11) }}
         </span>
       </div>
-      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1">
+      <div class="flex items-center justify-end w-1/12 h-7 m-px pr-1" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === item.emp_id, 'bg-white text-black': selectedEmployeeId !== item.emp_id }">
         <span>
           {{ formatNumber(item.month12) }}
         </span>
@@ -99,6 +99,8 @@
 
 <script>
 /********** API **********/
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 /********** VUE **********/
 // PaymentTable: 급여 지급 내역 컴포넌트
 export default {
@@ -159,6 +161,19 @@ export default {
     // 사원 행 선택 이벤트
     onSelectEmployee(employee) {
       this.$emit('select', employee.emp_id);
+    },
+    // 엑셀 내려받기
+    downloadExcel() {
+      // 엑셀의 첫 번째 행에 컬럼 이름을 설정
+      const headers = ['사원번호', '사원명', '부서', '직급', '1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+      const data = this.paymentData.map((item) => [item.emp_id, item.emp_name, item.dept_name, item.pos_name, item.month01, item.month02, item.month03, item.month04, item.month05, item.month06, item.month07, item.month08, item.month09, item.month10, item.month11, item.month12]);
+      const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, '급여 지급 내역');
+
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(dataBlob, '급여_지급_내역.xlsx');
     },
   },
 };

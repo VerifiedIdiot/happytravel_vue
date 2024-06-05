@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-end w-full m-px" id="payment-detail-button">
-    <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" type="button" @click="downloadExcel()">
+    <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" type="button" @click="downloadExcel">
       급여 지급 상세 내역 내려 받기 (Excel)
     </button>
   </div>
@@ -112,6 +112,8 @@
 
 <script>
 /********** API **********/
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 /********** VUE **********/
 // PaymentDetailTable: 급여 지급 내역 상세 내역 컴포넌트
 export default {
@@ -164,6 +166,30 @@ export default {
   unmounted() {},
   // -------------------- --------------- --------------------
   // 인스턴스 메서드를 정의
-  methods: {},
+  methods: {
+    // 엑셀 내려받기
+    downloadExcel() {
+      // 엑셀의 첫 번째 행에 컬럼 이름을 설정
+      const headers1 = ['월', '과세', , , , , , , '비과세', , , , , , '지급액'];
+      const headers2 = ['월', '기본급', '가족수당', '직책수당', '식대', '연장근로수당', '야간근로수당', '휴일근로수당', '국민연금', '건강보험', '장기요양보험', '고용보험', '소득세', '지방소득세'];
+      const data = this.paymentDetailData.map((item) => [item.salary_month, item.item1100, item.item1200, item.item1300, item.item1400, item.item1500, item.item1600, item.item1700, item.item2100, item.item2200, item.item2300, item.item2400, item.item2500, item.item2600, item.item9200]);
+      const worksheet = XLSX.utils.aoa_to_sheet([headers1, headers2, ...data]);
+
+      // 셀 병합
+      worksheet['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 1, c: 0 } }, // A1: A2
+        { s: { r: 0, c: 1 }, e: { r: 0, c: 7 } }, // B1: H1
+        { s: { r: 0, c: 8 }, e: { r: 0, c: 13 } }, // I1: N2
+        { s: { r: 0, c: 14 }, e: { r: 1, c: 14 } }, // A1: A2
+      ];
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, '급여 지급 상세 내역');
+
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const dataBlob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(dataBlob, '급여_지급_상세_내역.xlsx');
+    },
+  },
 };
 </script>
