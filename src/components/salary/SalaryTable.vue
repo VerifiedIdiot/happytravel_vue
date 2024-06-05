@@ -19,7 +19,8 @@
         </span>
       </div>
       <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
-        <input class="text-right" type="text" :value="formatNumber(item.amount)" @input="updateAmount($event, item)" />
+        <!-- <input class="text-right" type="text" :value="formatNumber(item.amount)" @input="updateSalaryData($event, item)" /> -->
+        <input class="text-right" type="text" :value="formatNumber(item.amount)" />
       </div>
     </div>
   </div>
@@ -40,8 +41,15 @@
 </template>
 
 <script>
+/********** API **********/
+/********** VUE **********/
+// SalaryTable: 급여 항목 테이블 컴포넌트
 export default {
+  // 컴포넌트의 이름을 정의
   name: 'SalaryTable',
+  // 자식 컴포넌트를 정의
+  components: {},
+  // 부모로부터 전달받는 데이터를 정의
   props: {
     salaryData: {
       type: Array,
@@ -52,17 +60,19 @@ export default {
       required: true,
     },
   },
+  // 컴포넌트가 내보내는 이벤트를 정의
+  emits: [],
+  // 컴포넌트의 반응형 데이터를 정의
   data() {
     return {
-      mergedSalaryData: [],
-      salaryBodyData: [],
-      salaryFootData: [],
+      mergedSalaryData: [], // 급여 정보 + 항목명
+      salaryBodyData: [], // 급여 정보(급여)
+      salaryFootData: [], // 급여 정보(급여 합계)
     };
   },
-  mounted() {
-    this.salaryDataFilter();
-  },
+  // 계산된 속성을 정의
   computed: {},
+  // 반응형 데이터 또는 props의 변화를 감지하여 동작을 정의
   watch: {
     salaryData: {
       handler() {
@@ -77,7 +87,27 @@ export default {
       immediate: true,
     },
   },
+  // -------------------- 라이프사이클 훅 --------------------
+  // 인스턴스가 생성된 후 호출
+  created() {},
+  // 인스턴스가 DOM에 마운트된 후 호출
+  mounted() {
+    this.salaryDataFilter();
+  },
+  // 컴포넌트가 DOM에 마운트되기 전 호출
+  beforeMount() {},
+  // 데이터가 갱신되기 전 호출
+  beforeUpdate() {},
+  // 데이터가 갱신된 후 호출
+  updated() {},
+  // 컴포넌트가 언마운트되기 전 호출
+  beforeUnmount() {},
+  // 컴포넌트가 언마운트된 후 호출
+  unmounted() {},
+  // -------------------- --------------- --------------------
+  // 인스턴스 메서드를 정의
   methods: {
+    // 급여 정보에 급여 항목명 추가
     mergedSalaryDataFunc() {
       if (this.salaryData.length === 0 || this.salaryItem.length === 0) return;
 
@@ -90,25 +120,18 @@ export default {
         };
       });
     },
+    // 급여 정보에서 급여 부분 필터링
     salaryDataFilter() {
       this.mergedSalaryDataFunc();
       this.salaryBodyData = this.mergedSalaryData.filter((item) => item.code.charAt() === '1');
       this.salaryFootData = this.mergedSalaryData.filter((item) => item.code.charAt() === '8');
       return;
     },
-    formatNumber(value) {
-      if (!value) return '';
-      return new Intl.NumberFormat().format(value);
-    },
-    updateAmount(event, item) {
-      const value = event.target.value.replace(/,/g, '');
-      item.amount = parseInt(value, 10);
-      console.log(item);
-
-      // salary_item_code가 item.code와 같은 항목의 amount를 업데이트
-      console.log(this.salaryData);
-      this.$emit('updateSalaryData', updatedSalaryData);
-    },
+    // updateSalaryData(event, item) {
+    //   const value = event.target.value.replace(/,/g, '');
+    //   item.amount = parseInt(value, 10);
+    //   this.$emit('update', this.salaryBodyData);
+    // },
   },
 };
 </script>
