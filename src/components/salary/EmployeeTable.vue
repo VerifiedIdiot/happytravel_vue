@@ -22,7 +22,7 @@
     </div>
   </div>
   <div class="relative w-full overflow-y-scroll custom-scrollbar" id="employee-body">
-    <div class="flex" v-for="employee in employees" :key="employee.emp_id" @click="onSelect(employee)" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }">
+    <div class="flex" v-for="employee in employees" :key="employee.emp_id" @click="onSelectEmployee(employee)" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }">
       <div class="flex items-center justify-center w-1/4 h-7 m-px">
         <span>
           {{ employee.emp_id }}
@@ -127,7 +127,7 @@ export default {
   // 인스턴스 메서드를 정의
   methods: {
     // 사원 행 선택 이벤트
-    onSelect(employee) {
+    onSelectEmployee(employee) {
       this.$emit('select', employee.emp_id);
     },
   },
