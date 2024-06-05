@@ -15,9 +15,7 @@ export const initSalaryData = async (salaryDate, empId) => {
 // 급여 내역 조회
 export const selectAllSalaryData = async (empId, salaryDate) => {
   try {
-    const response = await apiClient.get(
-      `/salary/select/${salaryDate}/${empId}`
-    );
+    const response = await apiClient.get(`/salary/select/${salaryDate}/${empId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching salaryData:', error);
