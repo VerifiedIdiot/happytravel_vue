@@ -25,7 +25,6 @@
         <EmployeeTable :employees="employees" @select="selectEmployee" :selectedEmployeeId="selectedEmployeeId" />
       </div>
       <div class="relative w-1/4 mx-2 p-px bg-gray-100" id="salary-table">
-        <!-- <SalaryTable :salaryData="salaryData" :salaryItem="salaryItem" @update="updateSalaryData" /> -->
         <SalaryTable :salaryData="salaryData" :salaryItem="salaryItem" />
       </div>
       <div class="relative w-1/4 mx-2 p-px bg-gray-100" id="deduction-table">
@@ -71,7 +70,6 @@ export default {
       employees: [], // 사원 정보
       salaryData: [], // 급여 정보
       totalSalaryData: [], // 급여 합계 정보
-      updateSalaryData: [], // !!!!!!!
     };
   },
   // 계산된 속성을 정의
