@@ -22,13 +22,7 @@
     </div>
   </div>
   <div class="relative w-full overflow-y-scroll custom-scrollbar" id="employee-body">
-    <div
-      class="flex"
-      v-for="employee in employees"
-      :key="employee.emp_id"
-      @click="selectEmployee(employee)"
-      :class="{ 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }"
-    >
+    <div class="flex" v-for="employee in employees" :key="employee.emp_id" @click="onSelect(employee)" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }">
       <div class="flex items-center justify-center w-1/4 h-7 m-px">
         <span>
           {{ employee.emp_id }}
@@ -66,21 +60,38 @@
 </template>
 
 <script>
+/********** API **********/
+/********** VUE **********/
+// EmployeeTable: 사원 정보 테이블 컴포넌트
 export default {
+  // 컴포넌트의 이름을 정의
   name: 'EmployeeTable',
+  // 자식 컴포넌트를 정의
+  components: {},
+  // 부모로부터 전달받는 데이터를 정의
   props: {
     employees: {
       type: Array,
       required: true,
     },
+    onSelect: {
+      type: Function,
+      required: true,
+    },
+    selectedEmployeeId: {
+      type: [String, null],
+      required: true,
+    },
   },
+  // 컴포넌트가 내보내는 이벤트를 정의
+  emits: [],
+  // 컴포넌트의 반응형 데이터를 정의
   data() {
-    return {
-      selectedEmployeeId: null,
-    };
+    return {};
   },
-  mounted() {},
+  // 계산된 속성을 정의
   computed: {
+    // 퇴직 인원 계산
     leaveCount() {
       return this.employees.reduce(
         (counts, employee) => {
@@ -95,18 +106,29 @@ export default {
       );
     },
   },
-  watch: {
-    employees: {
-      handler() {
-        this.selectedEmployeeId = null;
-      },
-      immediate: true,
-    },
-  },
+  // 반응형 데이터 또는 props의 변화를 감지하여 동작을 정의
+  watch: {},
+  // -------------------- 라이프사이클 훅 --------------------
+  // 인스턴스가 생성된 후 호출
+  created() {},
+  // 인스턴스가 DOM에 마운트된 후 호출
+  mounted() {},
+  // 컴포넌트가 DOM에 마운트되기 전 호출
+  beforeMount() {},
+  // 데이터가 갱신되기 전 호출
+  beforeUpdate() {},
+  // 데이터가 갱신된 후 호출
+  updated() {},
+  // 컴포넌트가 언마운트되기 전 호출
+  beforeUnmount() {},
+  // 컴포넌트가 언마운트된 후 호출
+  unmounted() {},
+  // -------------------- --------------- --------------------
+  // 인스턴스 메서드를 정의
   methods: {
-    selectEmployee(employee) {
-      this.selectedEmployeeId = employee.emp_id;
-      this.$emit('select', employee);
+    // 사원 행 선택 이벤트
+    onSelect(employee) {
+      this.$emit('select', employee.emp_id);
     },
   },
 };
