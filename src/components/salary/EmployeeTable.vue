@@ -22,23 +22,23 @@
     </div>
   </div>
   <div class="relative w-full overflow-y-scroll custom-scrollbar" id="employee-body">
-    <div class="flex" v-for="employee in employees" :key="employee.emp_id" @click="onSelectEmployee(employee)" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }">
-      <div class="flex items-center justify-center w-1/4 h-7 m-px">
+    <div class="flex" v-for="employee in employees" :key="employee.emp_id" @click="onSelectEmployee(employee)">
+      <div class="flex items-center justify-center w-1/4 h-7 m-px" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }">
         <span>
           {{ employee.emp_id }}
         </span>
       </div>
-      <div class="flex items-center justify-center w-1/4 h-7 m-px" :class="{ 'leave-emp': !employee.leave_stat }">
+      <div class="flex items-center justify-center w-1/4 h-7 m-px" :class="{ 'leave-emp': !employee.leave_stat, 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }">
         <span>
           {{ employee.emp_name }}
         </span>
       </div>
-      <div class="flex items-center justify-center w-1/4 h-7 m-px">
+      <div class="flex items-center justify-center w-1/4 h-7 m-px" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }">
         <span>
           {{ employee.dept_name }}
         </span>
       </div>
-      <div class="flex items-center justify-center w-1/4 h-7 m-px">
+      <div class="flex items-center justify-center w-1/4 h-7 m-px" :class="{ 'bg-blue-500 text-white': selectedEmployeeId === employee.emp_id, 'bg-white text-black': selectedEmployeeId !== employee.emp_id }">
         <span>
           {{ employee.pos_name }}
         </span>
