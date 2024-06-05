@@ -19,7 +19,6 @@
         </span>
       </div>
       <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
-        <!-- <input class="text-right" type="text" :value="formatNumber(item.amount)" @input="updateSalaryData($event, item)" /> -->
         <input class="text-right" type="text" :value="formatNumber(item.amount)" @input="updateAmount($event, item)" />
       </div>
     </div>
@@ -130,7 +129,6 @@ export default {
     updateAmount(event, item) {
       const value = event.target.value.replace(/,/g, '');
       item.amount = parseInt(value, 10);
-      console.log(this.salaryBodyData);
     },
   },
 };

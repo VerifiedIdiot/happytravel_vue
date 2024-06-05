@@ -74,6 +74,7 @@ export default {
   },
   // 계산된 속성을 정의
   computed: {
+    // 귀속연월 포메터: YYYYMM <-> YYYY-MM
     formattedSalaryDate: {
       get() {
         if (!this.salaryDate) return '';
