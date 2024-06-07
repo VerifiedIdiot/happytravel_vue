@@ -171,7 +171,7 @@ export default {
     downloadExcel() {
       // 엑셀의 첫 번째 행에 컬럼 이름을 설정
       const headers1 = ['월', '과세', , , , , , , '비과세', , , , , , '지급액'];
-      const headers2 = ['월', '기본급', '가족수당', '직책수당', '식대', '연장근로수당', '야간근로수당', '휴일근로수당', '국민연금', '건강보험', '장기요양보험', '고용보험', '소득세', '지방소득세'];
+      const headers2 = [, '기본급', '가족수당', '직책수당', '식대', '연장근로수당', '야간근로수당', '휴일근로수당', '국민연금', '건강보험', '장기요양보험', '고용보험', '소득세', '지방소득세'];
       const data = this.paymentDetailData.map((item) => [item.salary_month, item.item1100, item.item1200, item.item1300, item.item1400, item.item1500, item.item1600, item.item1700, item.item2100, item.item2200, item.item2300, item.item2400, item.item2500, item.item2600, item.item9200]);
       const worksheet = XLSX.utils.aoa_to_sheet([headers1, headers2, ...data]);
 
