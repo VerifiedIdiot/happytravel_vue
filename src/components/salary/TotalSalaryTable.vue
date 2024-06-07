@@ -12,11 +12,11 @@
     </div>
   </div>
   <div class="relative w-full" id="salary-body">
-    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.code">
-      <div class="flex w-full" v-if="item.code.charAt(0) === '1'">
+    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.salary_item_code">
+      <div class="flex w-full" v-if="item.salary_item_code.charAt(0) === '1'">
         <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
           <span>
-            {{ item.name }}
+            {{ item.salary_item_name }}
           </span>
         </div>
         <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
@@ -28,11 +28,11 @@
     </div>
   </div>
   <div class="bottom-0 w-full" id="salary-foot">
-    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.code">
-      <div class="flex w-full" v-if="item.code.charAt(0) === '8'">
+    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.salary_item_code">
+      <div class="flex w-full" v-if="item.salary_item_code.charAt(0) === '8'">
         <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
           <span class="font-bold text-center">
-            {{ item.name }}
+            {{ item.salary_item_name }}
           </span>
         </div>
         <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
@@ -56,11 +56,11 @@
     </div>
   </div>
   <div class="relative w-full" id="deduction-body">
-    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.code">
-      <div class="flex w-full" v-if="item.code.charAt(0) === '2'">
+    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.salary_item_code">
+      <div class="flex w-full" v-if="item.salary_item_code.charAt(0) === '2'">
         <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
           <span>
-            {{ item.name }}
+            {{ item.salary_item_name }}
           </span>
         </div>
         <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
@@ -72,11 +72,11 @@
     </div>
   </div>
   <div class="bottom-0 w-full" id="deduction-foot">
-    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.code">
-      <div class="flex w-full" v-if="item.code.charAt(0) === '9'">
+    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.salary_item_code">
+      <div class="flex w-full" v-if="item.salary_item_code.charAt(0) === '9'">
         <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
           <span class="font-bold text-center">
-            {{ item.name }}
+            {{ item.salary_item_name }}
           </span>
         </div>
         <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
