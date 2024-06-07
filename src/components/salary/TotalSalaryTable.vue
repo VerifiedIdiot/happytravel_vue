@@ -12,30 +12,34 @@
     </div>
   </div>
   <div class="relative w-full" id="salary-body">
-    <div class="flex" v-for="item in salaryBodyData" :key="item.code">
-      <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
-        <span>
-          {{ item.name }}
-        </span>
-      </div>
-      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
-        <span>
-          {{ formatNumber(item.amount) }}
-        </span>
+    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.code">
+      <div class="flex w-full" v-if="item.code.charAt(0) === '1'">
+        <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
+          <span>
+            {{ item.name }}
+          </span>
+        </div>
+        <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
+          <span>
+            {{ formatNumber(item.amount) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
   <div class="bottom-0 w-full" id="salary-foot">
-    <div class="flex bottom-0 salary-foot" v-for="item in salaryFootData" :key="item.code">
-      <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
-        <span class="font-bold text-center">
-          {{ item.name }}
-        </span>
-      </div>
-      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
-        <span class="font-bold">
-          {{ formatNumber(item.amount) }}
-        </span>
+    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.code">
+      <div class="flex w-full" v-if="item.code.charAt(0) === '8'">
+        <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
+          <span class="font-bold text-center">
+            {{ item.name }}
+          </span>
+        </div>
+        <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
+          <span class="font-bold">
+            {{ formatNumber(item.amount) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -52,30 +56,34 @@
     </div>
   </div>
   <div class="relative w-full" id="deduction-body">
-    <div class="flex" v-for="item in deductionBodyData" :key="item.code">
-      <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
-        <span>
-          {{ item.name }}
-        </span>
-      </div>
-      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
-        <span>
-          {{ formatNumber(item.amount) }}
-        </span>
+    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.code">
+      <div class="flex w-full" v-if="item.code.charAt(0) === '2'">
+        <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
+          <span>
+            {{ item.name }}
+          </span>
+        </div>
+        <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
+          <span>
+            {{ formatNumber(item.amount) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
   <div class="bottom-0 w-full" id="deduction-foot">
-    <div class="flex" v-for="item in deductionFootData" :key="item.code">
-      <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
-        <span class="font-bold text-center">
-          {{ item.name }}
-        </span>
-      </div>
-      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
-        <span class="font-bold">
-          {{ formatNumber(item.amount) }}
-        </span>
+    <div class="flex w-full" v-for="item in totalSalaryData" :key="item.code">
+      <div class="flex w-full" v-if="item.code.charAt(0) === '9'">
+        <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
+          <span class="font-bold text-center">
+            {{ item.name }}
+          </span>
+        </div>
+        <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
+          <span class="font-bold">
+            {{ formatNumber(item.amount) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -96,37 +104,19 @@ export default {
       type: Array,
       required: true,
     },
-    salaryItem: {
-      type: Array,
-      required: true,
-    },
   },
   // 컴포넌트가 내보내는 이벤트를 정의
   emits: [],
   // 컴포넌트의 반응형 데이터를 정의
   data() {
-    return {
-      mergedTotalSalaryData: [], // 급여 정보 + 항목명
-      salaryBodyData: [], // 급여 정보(급여)
-      salaryFootData: [], // 급여 정보(급여 합계)
-      deductionBodyData: [], // 급여 정보(공제)
-      deductionFootData: [], // 급여 정보(공제 합계)
-    };
+    return {};
   },
   // 계산된 속성을 정의
   computed: {},
   // 반응형 데이터 또는 props의 변화를 감지하여 동작을 정의
   watch: {
     totalSalaryData: {
-      handler() {
-        this.totalDataFilter();
-      },
-      immediate: true,
-    },
-    salaryItem: {
-      handler() {
-        this.totalDataFilter();
-      },
+      handler() {},
       immediate: true,
     },
   },
@@ -135,7 +125,7 @@ export default {
   created() {},
   // 인스턴스가 DOM에 마운트된 후 호출
   mounted() {
-    this.totalDataFilter();
+    // this.totalDataFilter();
   },
   // 컴포넌트가 DOM에 마운트되기 전 호출
   beforeMount() {},
@@ -149,29 +139,6 @@ export default {
   unmounted() {},
   // -------------------- --------------- --------------------
   // 인스턴스 메서드를 정의
-  methods: {
-    // 급여 합계 정보에 급여 항목명 추가
-    mergedTotalSalaryDataFunc() {
-      if (this.totalSalaryData.length === 0 || this.salaryItem.length === 0) return;
-
-      this.mergedTotalSalaryData = this.totalSalaryData.map((dataItem) => {
-        const matchingItem = this.salaryItem.find((item) => item.salary_item_code === dataItem.salary_item_code);
-        return {
-          code: dataItem.salary_item_code,
-          name: matchingItem.salary_item_name,
-          amount: dataItem.amount,
-        };
-      });
-    },
-    // 급여 합계 정보에서 급여, 공제 부분 필터링
-    totalDataFilter() {
-      this.mergedTotalSalaryDataFunc();
-      this.salaryBodyData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '1');
-      this.salaryFootData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '8');
-      this.deductionBodyData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '2');
-      this.deductionFootData = this.mergedTotalSalaryData.filter((item) => item.code.charAt() === '9');
-      return;
-    },
-  },
+  methods: {},
 };
 </script>

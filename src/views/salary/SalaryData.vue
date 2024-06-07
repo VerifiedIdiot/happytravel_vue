@@ -25,13 +25,13 @@
         <EmployeeTable :employees="employees" @select="selectEmployee" :selectedEmployeeId="selectedEmployeeId" />
       </div>
       <div class="relative w-1/4 mx-2 p-px bg-gray-100" id="salary-table">
-        <SalaryTable :salaryData="salaryData" :salaryItem="salaryItem" />
+        <SalaryTable :salaryData="salaryData" />
       </div>
       <div class="relative w-1/4 mx-2 p-px bg-gray-100" id="deduction-table">
-        <DeductionTable :salaryData="salaryData" :salaryItem="salaryItem" />
+        <DeductionTable :salaryData="salaryData" />
       </div>
       <div class="relative w-1/4 mx-2 p-px bg-gray-100" id="total-table">
-        <TotalSalaryTable :totalSalaryData="totalSalaryData" :salaryItem="salaryItem" />
+        <TotalSalaryTable :totalSalaryData="totalSalaryData" />
       </div>
     </div>
   </div>
@@ -125,8 +125,8 @@ export default {
         const data = await selectAllLists(this.salaryDate);
         this.salaryItem = data.salaryItem;
         this.employees = data.employmentInfo;
-        this.totalSalaryData = data.totalSalaryData;
-        this.salaryData = this.salaryItem;
+        this.totalSalaryData = this.mergedSalaryDataFunc(data.totalSalaryData);
+        this.salaryData = this.mergedSalaryDataFunc(this.salaryItem);
         this.resetSelectedEmployee();
       } catch (error) {
         console.error('Error fetching initial data:', error);
@@ -135,7 +135,7 @@ export default {
     // 선택된 직원 정보 초기화 함수
     resetSelectedEmployee() {
       this.selectedEmployeeId = null;
-      this.salaryData = this.salaryItem;
+      this.mergedSalaryDataFunc(this.salaryItem);
     },
     // 급여 내역 일괄 처리 & 단일 처리 비동기
     async initSalaryData(empId) {
@@ -147,14 +147,27 @@ export default {
       this.selectedEmployeeId = employee; // 선택된 직원 ID 설정
       try {
         const data = await selectAllSalaryData(this.selectedEmployeeId, this.salaryDate);
-        this.salaryData = data ? data : this.salaryItem;
+        this.salaryData = this.mergedSalaryDataFunc(data ? data : this.salaryItem);
       } catch (error) {
         console.error('Error fetching salary data:', error);
       }
     },
+    // 급여 정보에 급여 항목명 추가
+    mergedSalaryDataFunc(data) {
+      if (data.length === 0 || this.salaryItem.length === 0) return;
+
+      return data.map((dataItem) => {
+        const matchingItem = this.salaryItem.find((item) => item.salary_item_code === dataItem.salary_item_code);
+        return {
+          code: dataItem.salary_item_code,
+          name: matchingItem.salary_item_name,
+          amount: dataItem.amount,
+        };
+      });
+    },
     // 수정 버튼 클릭 시 업데이트 함수
     updateSalaryData() {
-      console.log(this.updateSalaryData);
+      console.log(this.salaryData);
     },
   },
 };
