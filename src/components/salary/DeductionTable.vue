@@ -12,30 +12,34 @@
     </div>
   </div>
   <div class="relative w-full" id="deduction-body">
-    <div class="flex" v-for="item in deductionBodyData" :key="item.code">
-      <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
-        <span>
-          {{ item.name }}
-        </span>
-      </div>
-      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
-        <span>
-          {{ formatNumber(item.amount) }}
-        </span>
+    <div class="flex w-full" v-for="item in salaryData" :key="item.code">
+      <div class="flex w-full" v-if="item.code.charAt(0) === '2'">
+        <div class="flex items-center justify-start w-1/2 h-7 m-px pl-5 bg-white">
+          <span>
+            {{ item.name }}
+          </span>
+        </div>
+        <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-white">
+          <span>
+            {{ formatNumber(item.amount) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
   <div class="absolute bottom-0 w-full" id="deduction-foot">
-    <div class="flex" v-for="item in deductionFootData" :key="item.code">
-      <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
-        <span class="font-bold text-center">
-          {{ item.name }}
-        </span>
-      </div>
-      <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
-        <span class="font-bold">
-          {{ formatNumber(item.amount) }}
-        </span>
+    <div class="flex w-full" v-for="item in salaryData" :key="item.code">
+      <div class="flex w-full" v-if="item.code.charAt(0) === '9'">
+        <div class="flex items-center justify-center w-1/2 h-7 m-px pl-5 bg-blue-300">
+          <span class="font-bold text-center">
+            {{ item.name }}
+          </span>
+        </div>
+        <div class="flex items-center justify-end w-1/2 h-7 m-px pr-5 bg-blue-300">
+          <span class="font-bold">
+            {{ formatNumber(item.amount) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -56,19 +60,13 @@ export default {
       type: Array,
       required: true,
     },
-    salaryItem: {
-      type: Array,
-      required: true,
-    },
   },
   // 컴포넌트가 내보내는 이벤트를 정의
   emits: [],
   // 컴포넌트의 반응형 데이터를 정의
   data() {
     return {
-      mergedSalaryData: [], // 급여 정보 + 항목명
-      deductionBodyData: [], // 급여 정보(공제)
-      deductionFootData: [], // 급여 정보(공제 합계)
+      // mergedSalaryData: [], // 급여 정보 + 항목명
     };
   },
   // 계산된 속성을 정의
@@ -77,13 +75,7 @@ export default {
   watch: {
     salaryData: {
       handler() {
-        this.salaryDataFilter();
-      },
-      immediate: true,
-    },
-    salaryItem: {
-      handler() {
-        this.salaryDataFilter();
+        // this.mergedSalaryDataFunc();
       },
       immediate: true,
     },
@@ -93,7 +85,7 @@ export default {
   created() {},
   // 인스턴스가 DOM에 마운트된 후 호출
   mounted() {
-    this.salaryDataFilter();
+    // this.mergedSalaryDataFunc();
   },
   // 컴포넌트가 DOM에 마운트되기 전 호출
   beforeMount() {},
@@ -109,25 +101,18 @@ export default {
   // 인스턴스 메서드를 정의
   methods: {
     // 급여 정보에 급여 항목명 추가
-    mergedSalaryDataFunc() {
-      if (this.salaryData.length === 0 || this.salaryItem.length === 0) return;
+    // mergedSalaryDataFunc() {
+    //   if (this.salaryData.length === 0 || this.salaryItem.length === 0) return;
 
-      this.mergedSalaryData = this.salaryData.map((dataItem) => {
-        const matchingItem = this.salaryItem.find((item) => item.salary_item_code === dataItem.salary_item_code);
-        return {
-          code: dataItem.salary_item_code,
-          name: matchingItem.salary_item_name,
-          amount: dataItem.amount,
-        };
-      });
-    },
-    // 급여 정보에서 공제 부분 필터링
-    salaryDataFilter() {
-      this.mergedSalaryDataFunc();
-      this.deductionBodyData = this.mergedSalaryData.filter((item) => item.code.charAt() === '2');
-      this.deductionFootData = this.mergedSalaryData.filter((item) => item.code.charAt() === '9');
-      return;
-    },
+    //   this.mergedSalaryData = this.salaryData.map((dataItem) => {
+    //     const matchingItem = this.salaryItem.find((item) => item.salary_item_code === dataItem.salary_item_code);
+    //     return {
+    //       code: dataItem.salary_item_code,
+    //       name: matchingItem.salary_item_name,
+    //       amount: dataItem.amount,
+    //     };
+    //   });
+    // },
   },
 };
 </script>
