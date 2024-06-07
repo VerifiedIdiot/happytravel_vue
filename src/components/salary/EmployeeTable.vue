@@ -91,7 +91,7 @@ export default {
   },
   // 계산된 속성을 정의
   computed: {
-    // 퇴직 인원 계산
+    // 퇴직 및 재직 사원 수 계산
     leaveCount() {
       return this.employees.reduce(
         (counts, employee) => {
@@ -126,7 +126,7 @@ export default {
   // -------------------- --------------- --------------------
   // 인스턴스 메서드를 정의
   methods: {
-    // 사원 행 선택 이벤트
+    // 선택된 사원 ID를 부모 컴포넌트에 전달
     onSelectEmployee(employee) {
       this.$emit('select', employee.emp_id);
     },

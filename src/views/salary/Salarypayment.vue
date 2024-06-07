@@ -49,10 +49,12 @@ export default {
   // -------------------- 라이프사이클 훅 --------------------
   // 인스턴스가 생성된 후 호출
   created() {
+    // 기본값으로 현재 연도 설정
     this.paymentYear = this.getTodayYear();
   },
   // 인스턴스가 DOM에 마운트된 후 호출
   mounted() {
+    // 초기 급여 지급 내역 데이터 가져오기
     this.selectPaymentData();
   },
   // 컴포넌트가 DOM에 마운트되기 전 호출
@@ -91,7 +93,8 @@ export default {
     },
     // 사원의 급여 공제 비동기
     async selectEmployee(empId) {
-      this.selectedEmployeeId = empId; // 선택된 직원 ID 설정
+      // 선택된 직원 ID 설정
+      this.selectedEmployeeId = empId;
       try {
         this.paymentDetailData = await selectPaymentDatailData(this.paymentYear, this.selectedEmployeeId);
       } catch (error) {
