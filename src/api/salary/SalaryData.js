@@ -22,3 +22,13 @@ export const selectAllSalaryData = async (empId, salaryDate) => {
     throw error;
   }
 };
+// 급여 내역 수정
+export const updataSalaryData = async (empId, salaryDate, salaryData) => {
+  try {
+    const response = await apiClient.patch(`/salary/update/${salaryDate}/${empId}`, salaryData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating salaryData:', error);
+    throw error;
+  }
+};

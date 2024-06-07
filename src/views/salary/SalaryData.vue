@@ -22,7 +22,7 @@
     </div>
     <div class="flex mx-10" id="table-group">
       <div class="relative w-1/4 mx-2 p-px bg-gray-100" id="employee-table">
-        <EmployeeTable :employees="employees" @select="selectEmployee" :selectedEmployeeId="selectedEmployeeId" />
+        <EmployeeTable ref="employeeTable" :employees="employees" @select="selectEmployee" :selectedEmployeeId="selectedEmployeeId" />
       </div>
       <div class="relative w-1/4 mx-2 p-px bg-gray-100" id="salary-table">
         <SalaryTable :salaryData="salaryData" />
@@ -40,7 +40,7 @@
 <script>
 /********** API **********/
 import { selectAllLists } from '@/api/salary/ListApi';
-import { initSalaryData, selectAllSalaryData } from '@/api/salary/SalaryData';
+import { initSalaryData, selectAllSalaryData, updataSalaryData } from '@/api/salary/SalaryData';
 /********** VUE **********/
 import EmployeeTable from '@/components/salary/EmployeeTable.vue';
 import SalaryTable from '@/components/salary/SalaryTable.vue';
@@ -159,15 +159,26 @@ export default {
       return data.map((dataItem) => {
         const matchingItem = this.salaryItem.find((item) => item.salary_item_code === dataItem.salary_item_code);
         return {
-          code: dataItem.salary_item_code,
-          name: matchingItem.salary_item_name,
+          salary_item_code: dataItem.salary_item_code,
+          salary_item_name: matchingItem.salary_item_name,
           amount: dataItem.amount,
         };
       });
     },
     // 수정 버튼 클릭 시 업데이트 함수
-    updateSalaryData() {
-      console.log(this.salaryData);
+    async updateSalaryData() {
+      try {
+        const empId = this.selectedEmployeeId;
+        const data = await updataSalaryData(this.selectedEmployeeId, this.salaryDate, this.salaryData);
+        // 데이터 갱신 후 selectedEmployeeId 유지 및 해당 직원 다시 선택
+        await this.fetchInitialData(); // 초기 데이터 갱신
+        this.selectedEmployeeId = empId; // 선택된 직원 ID 유지
+        this.$nextTick(() => {
+          this.$refs.employeeTable.onSelectEmployee({ emp_id: this.selectedEmployeeId });
+        });
+      } catch (error) {
+        console.error('Error updating salary data:', error);
+      }
     },
   },
 };
