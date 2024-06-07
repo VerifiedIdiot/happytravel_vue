@@ -1,100 +1,129 @@
 <template>
-  <div>
-    <h1>Flight Dashboard</h1>
-    <div>
-      <button>신규등록</button>
+  <div class="wrapper">
+    <div class="flight-container">
+      <div class="flight-box">
+        <div class="flight-item">
+          <button class="btn-create" @click="openModal">신규등록</button>
+        </div>
+      </div>
+      <div class="flight-box">
+        <table>
+          <thead>
+            <tr>
+              <th>항공번호</th>
+              <th>항공편</th>
+              <th>전화번호</th>
+              <th>출발지</th>
+              <th>출발시간</th>
+              <th>도착지</th>
+              <th>도착시간</th>
+              <th>가격</th>
+              <th>
+                <select v-model="filterOption">
+                  <option value="all">전체</option>
+                  <option value="Y">사용</option>
+                  <option value="N">미사용</option>
+                </select>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="flight in filterFlights"
+              :key="flight.flight_code"
+              @click="openModal(flight)"
+            >
+              <td>{{ flight.flight_number }}</td>
+              <td>{{ flight.airline }}</td>
+              <td>{{ flight.phone }}</td>
+              <td>{{ flight.departure }}</td>
+              <td>{{ flight.departure_time }}</td>
+              <td>{{ flight.destination }}</td>
+              <td>{{ flight.arrival_time }}</td>
+              <td>{{ formatPrice(flight.price) }}</td>
+              <td>{{ flight.is_used }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Flight Number</th>
-            <th>Airline</th>
-            <th>Phone</th>
-            <th>Departure</th>
-            <th>Departure Time</th>
-            <th>Destination</th>
-            <th>Arrival Time</th>
-            <th>Price</th>
-            <th>Is Used</th>
-            <th>Modify</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="flight in flights" :key="flight.flight_code">
-            <td>{{ flight.flight_number }}</td>
-            <td>{{ flight.airline }}</td>
-            <td>{{ flight.phone }}</td>
-            <td>{{ flight.departure }}</td>
-            <td>{{ flight.departure_time }}</td>
-            <td>{{ flight.destination }}</td>
-            <td>{{ flight.arrival_time }}</td>
-            <td>{{ formatPrice(flight.price) }}</td>
-            <td>{{ flight.is_used }}</td>
-            <td><button>수정</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
+    <FlightDetail
+      v-if="isModalOpen"
+      :flight="currentFlight"
+      @close="closeModal"
+    />
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import { getFlightList } from '@/api/sales/FlightApi';
+import { ref, onMounted, computed } from 'vue';
+import { useStore } from 'vuex';
+import FlightDetail from '@/components/sales/flight/FlightDetail.vue';
 
 export default {
   name: 'FlightDashboard',
+  components: {
+    FlightDetail
+  },
   setup() {
-    const flights = ref([]);
+    const store = useStore();
+    const flights = computed(() => store.getters['flight/flights']);
+    const isModalOpen = ref(false);
+    const currentFlight = ref(null);
+    const filterOption = ref('all');
 
-    const fetchFlights = async () => {
-      try {
-        flights.value = await getFlightList();
-        console.log('Fetched flights:', flights.value);
-      } catch (error) {
-        console.error('Error fetching flight list:', error);
+    onMounted(() => {
+      store.dispatch('flight/fetchFlights');
+    });
+
+    const formatPrice = price => {
+      return new Intl.NumberFormat('ko-KR', {
+        style: 'currency',
+        currency: 'KRW'
+      }).format(price);
+    };
+
+    const openModal = flight => {
+      currentFlight.value = flight
+        ? { ...flight }
+        : {
+            flight_number: '',
+            airline: '',
+            phone: '',
+            departure: '',
+            departure_time: '',
+            destination: '',
+            arrival_time: '',
+            price: '',
+            is_used: ''
+          };
+      isModalOpen.value = true;
+    };
+
+    const closeModal = () => {
+      isModalOpen.value = false;
+      currentFlight.value = null;
+    };
+
+    const filterFlights = computed(() => {
+      if (filterOption.value === 'all') {
+        return flights.value;
       }
-    };
-
-    const formatPrice = (price) => {
-      return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(price);
-    };
-
-    onMounted(fetchFlights);
+      return flights.value.filter(flight => flight.is_used === filterOption.value);
+    });
 
     return {
       flights,
       formatPrice,
+      isModalOpen,
+      openModal,
+      closeModal,
+      currentFlight,
+      filterFlights,
+      filterOption
     };
-  },
+  }
 };
 </script>
 
-<style>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  height: 1.8rem;
-}
-
-th {
-  background-color: #f2f2f2;
-  text-align: left;
-}
-
-tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-tbody tr:hover {
-  background-color: #f1f1f1;
-}
-</style>
+<style src="./FlightDashboard.css"></style>

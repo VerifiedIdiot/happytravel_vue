@@ -52,14 +52,14 @@
                 <label for="country">국가 |</label>
                 <input type="text" v-model="currentHotel.country" required>
               </div>
-              <!-- <div class="modal-item">
+              <div class="modal-item">
                 <label for="region">지역 |</label>
                 <input type="text" v-model="currentHotel.region" required>
               </div>
               <div class="modal-item">
                 <label for="address">주소 |</label>
                 <input type="text" v-model="currentHotel.address" required>
-              </div> -->
+              </div>
               <div class="modal-item">
                 <label for="price">가격 |</label>
                 <input type="text" v-model="currentHotel.price" required>
@@ -105,7 +105,7 @@ export default {
       try {
 
         hotels.value = await getHotelList();
-        console.log('Fetched flights:', hotels.value);
+        console.log('Fetched hotels:', hotels.value);
       } catch (error) {
         console.error('Error fetching flight list:', error);
       }
