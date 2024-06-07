@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import flight from "./modules/flight";
 
 export default createStore({
   state: {
@@ -29,5 +30,7 @@ export default createStore({
     },
   },
   actions: {},
-  modules: {},
+  modules: {
+    flight,
+  },
 });
