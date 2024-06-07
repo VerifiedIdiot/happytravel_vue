@@ -68,12 +68,7 @@ export default {
   // 계산된 속성을 정의
   computed: {},
   // 반응형 데이터 또는 props의 변화를 감지하여 동작을 정의
-  watch: {
-    salaryData: {
-      handler() {},
-      immediate: true,
-    },
-  },
+  watch: {},
   // -------------------- 라이프사이클 훅 --------------------
   // 인스턴스가 생성된 후 호출
   created() {},
@@ -94,7 +89,7 @@ export default {
   // -------------------- --------------- --------------------
   // 인스턴스 메서드를 정의
   methods: {
-    // 금액 변동
+    // 급여 금액 업데이트
     updateAmount(event, item) {
       const value = event.target.value.replace(/,/g, '');
       item.amount = parseInt(value, 10);

@@ -1,5 +1,6 @@
 <template>
   <div class="xl" id="salary-data">
+    <!-- Input Group: 귀속연월, 버튼(수정, 급여 내역 생성) -->
     <div class="flex mx-10 mt-5" id="input-group">
       <div class="relative flex items-center justify-end w-1/4 mx-2 p-px">
         <label for="salary-date" class="mr-2">귀속연월</label>
@@ -7,19 +8,20 @@
       </div>
       <div class="relative flex items-center justify-end w-1/4 mx-2 p-px"></div>
       <div class="relative flex items-center justify-end w-1/4 mx-2 p-px">
-        <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" type="button" @click="updateSalaryData" :disabled="selectedEmployeeId === null">
+        <button class="bg-gray-400 hover:bg-gray-700 w-1/2 text-white font-bold py-2 px-4 rounded" type="button" @click="updateSalaryData" :disabled="selectedEmployeeId === null">
           수정
         </button>
       </div>
       <div class="relative flex items-center justify-end w-1/4 mx-2 p-px">
-        <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" type="button" @click="initSalaryData('')">
+        <button class="bg-gray-400 hover:bg-gray-700 w-1/2 text-white text-sm font-bold py-2 px-4 rounded" type="button" @click="initSalaryData('')">
           급여 내역 생성(일괄 처리)
         </button>
-        <button class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" type="button" @click="initSalaryData(this.selectedEmployeeId)" :disabled="selectedEmployeeId === null">
+        <button class="bg-gray-400 hover:bg-gray-700 w-1/2 text-white text-sm font-bold py-2 px-4 rounded" type="button" @click="initSalaryData(this.selectedEmployeeId)" :disabled="selectedEmployeeId === null">
           급여 내역 생성(단일 처리)
         </button>
       </div>
     </div>
+    <!-- Table Group: 사원, 급여, 공제, 총급여 -->
     <div class="flex mx-10" id="table-group">
       <div class="relative w-1/4 mx-2 p-px bg-gray-100" id="employee-table">
         <EmployeeTable ref="employeeTable" :employees="employees" @select="selectEmployee" :selectedEmployeeId="selectedEmployeeId" />
@@ -74,7 +76,7 @@ export default {
   },
   // 계산된 속성을 정의
   computed: {
-    // 귀속연월 포메터: YYYYMM <-> YYYY-MM
+    // salaryDate를 YYYY-MM 형식으로 포맷
     formattedSalaryDate: {
       get() {
         if (!this.salaryDate) return '';
@@ -92,10 +94,12 @@ export default {
   // -------------------- 라이프사이클 훅 --------------------
   // 인스턴스가 생성된 후 호출
   created() {
+    // 기본값으로 현재 날짜 설정
     this.salaryDate = this.getTodayDate();
   },
   // 인스턴스가 DOM에 마운트된 후 호출
   mounted() {
+    // 초기 데이터 가져오기
     this.fetchInitialData();
   },
   // 컴포넌트가 DOM에 마운트되기 전 호출
@@ -111,14 +115,14 @@ export default {
   // -------------------- --------------- --------------------
   // 인스턴스 메서드를 정의
   methods: {
-    // 오늘 일자(년월) 가져오는 함수
+    // 현재 날짜를 YYYYMM 형식으로 가져오기
     getTodayDate() {
       const today = new Date();
       const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, '0');
       return `${year}${month}`;
     },
-    // 초기 데이터 비동기 - 사원 정보, 합계 정보
+    // 초기 데이터 가져오기: 사원 정보, 급여 합계 정보 등
     async fetchInitialData() {
       if (!this.salaryDate) return;
       try {
@@ -132,19 +136,20 @@ export default {
         console.error('Error fetching initial data:', error);
       }
     },
-    // 선택된 직원 정보 초기화 함수
+    // 선택된 사원 초기화
     resetSelectedEmployee() {
       this.selectedEmployeeId = null;
       this.mergedSalaryDataFunc(this.salaryItem);
     },
-    // 급여 내역 일괄 처리 & 단일 처리 비동기
+    // 급여 내역 일괄 생성 또는 단일 생성
     async initSalaryData(empId) {
       const data = await initSalaryData(this.salaryDate, empId);
       this.fetchInitialData();
     },
-    // 사원의 급여 공제 비동기
+    // 선택된 사원의 급여 데이터를 가져오기
     async selectEmployee(employee) {
-      this.selectedEmployeeId = employee; // 선택된 직원 ID 설정
+      // 선택된 사원 ID 설정
+      this.selectedEmployeeId = employee;
       try {
         const data = await selectAllSalaryData(this.selectedEmployeeId, this.salaryDate);
         this.salaryData = this.mergedSalaryDataFunc(data ? data : this.salaryItem);
@@ -152,10 +157,9 @@ export default {
         console.error('Error fetching salary data:', error);
       }
     },
-    // 급여 정보에 급여 항목명 추가
+    // 급여 데이터와 급여 항목을 병합
     mergedSalaryDataFunc(data) {
       if (data.length === 0 || this.salaryItem.length === 0) return;
-
       return data.map((dataItem) => {
         const matchingItem = this.salaryItem.find((item) => item.salary_item_code === dataItem.salary_item_code);
         return {
@@ -165,14 +169,15 @@ export default {
         };
       });
     },
-    // 수정 버튼 클릭 시 업데이트 함수
+    // 급여 데이터 업데이트
     async updateSalaryData() {
       try {
         const empId = this.selectedEmployeeId;
         const data = await updataSalaryData(this.selectedEmployeeId, this.salaryDate, this.salaryData);
-        // 데이터 갱신 후 selectedEmployeeId 유지 및 해당 직원 다시 선택
-        await this.fetchInitialData(); // 초기 데이터 갱신
-        this.selectedEmployeeId = empId; // 선택된 직원 ID 유지
+        // 초기 데이터 갱신
+        await this.fetchInitialData();
+        // 선택된 직원 ID 유지
+        this.selectedEmployeeId = empId;
         this.$nextTick(() => {
           this.$refs.employeeTable.onSelectEmployee({ emp_id: this.selectedEmployeeId });
         });

@@ -1,6 +1,6 @@
 import apiClient from '@/api/axios';
 
-// 급여 항목, 사원 정보, 급여 총계
+// 조회: 급여 항목, 사원 정보, 급여 총계
 export const selectAllLists = async (salaryDate) => {
   try {
     const response = await apiClient.get('/salary/lists', {

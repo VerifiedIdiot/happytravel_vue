@@ -134,12 +134,7 @@ export default {
   // 계산된 속성을 정의
   computed: {},
   // 반응형 데이터 또는 props의 변화를 감지하여 동작을 정의
-  watch: {
-    paymentData: {
-      handler() {},
-      immediate: true,
-    },
-  },
+  watch: {},
   // -------------------- 라이프사이클 훅 --------------------
   // 인스턴스가 생성된 후 호출
   created() {},
