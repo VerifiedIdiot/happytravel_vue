@@ -81,7 +81,6 @@ export default {
       if (!this.paymentYear) return;
       try {
         this.paymentData = await selectPaymentData(this.paymentYear);
-
         this.resetSelectedEmployee();
       } catch (error) {
         console.error('Error fetching payment data:', error);
