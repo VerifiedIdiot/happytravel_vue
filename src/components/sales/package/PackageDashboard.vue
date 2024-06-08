@@ -20,7 +20,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="pkg in packages" :key="pkg.package_code" @click="openModal(pkg.package_code)">
+          <tr
+            v-for="pkg in packages"
+            :key="pkg.package_code"
+            @click="openModal(pkg.package_code)">
             <td>{{ pkg.package_name }}</td>
             <td>{{ pkg.country }}</td>
             <td>{{ pkg.start_date }}</td>
@@ -33,10 +36,7 @@
       </table>
     </div>
 
-    <PackageDetail 
-      v-if="isModalOpen" 
-      @close="closeModal" 
-    />
+    <PackageDetail v-if="isModalOpen" @close="closeModal" />
   </div>
 </template>
 
@@ -48,7 +48,7 @@ import PackageDetail from '@/components/sales/package/PackageDetail.vue';
 export default {
   name: 'PackageDashboard',
   components: {
-    PackageDetail
+    PackageDetail,
   },
   setup() {
     const packages = ref([]);
@@ -66,13 +66,15 @@ export default {
       }
     });
 
-    const openModal = (pkgCode) => {
-      packageCode.value = pkgCode;
-      isModalOpen.value = true;
+    const openModal = (pkgCode = '') => {
+      packageCode.value = pkgCode; // 선택한 패키지 코드 설정
+      isModalOpen.value = true; // 모달 열기
+      console.log('Modal should open now.');
     };
 
     const closeModal = () => {
-      isModalOpen.value = false;
+      isModalOpen.value = false; // 모달 닫기
+      console.log('Modal should close now.');
     };
 
     provide('empId', empId);
@@ -82,9 +84,9 @@ export default {
       packages,
       isModalOpen,
       openModal,
-      closeModal
+      closeModal,
     };
-  }
+  },
 };
 </script>
 
