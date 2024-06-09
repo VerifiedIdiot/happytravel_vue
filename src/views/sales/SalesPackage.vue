@@ -26,10 +26,3 @@ export default {
 };
 </script>
 
-<!-- <style lang="scss">
-.container {
-  display: flex;
-  width: 100%;
-  height: 30dvh;
-}
-</style> -->

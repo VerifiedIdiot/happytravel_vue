@@ -35,26 +35,31 @@
         </tbody>
       </table>
     </div>
-
-    <PackageDetail v-if="isModalOpen" @close="closeModal" />
+    <PackageModal v-if="isModalOpen" @close="closeModal">
+      <PackageDetail :packageCode="packageCode" :isEditing="isEditing" :empId="empId" @update:isEditing="setIsEditing"/>
+    </PackageModal>
   </div>
+
 </template>
 
 <script>
 import { ref, onMounted, provide } from 'vue';
 import { getPackageList } from '@/api/sales/PackageApi';
 import PackageDetail from '@/components/sales/package/PackageDetail.vue';
+import PackageModal from '@/components/sales/package/PackageModal.vue';
 
 export default {
   name: 'PackageDashboard',
   components: {
     PackageDetail,
+    PackageModal
   },
   setup() {
     const packages = ref([]);
     const isModalOpen = ref(false);
     const packageCode = ref('');
     const empId = sessionStorage.getItem('empId') || 'EMP30002';
+    const isEditing = ref(false);
 
     onMounted(async () => {
       try {
@@ -67,24 +72,31 @@ export default {
     });
 
     const openModal = (pkgCode = '') => {
-      packageCode.value = pkgCode; // 선택한 패키지 코드 설정
-      isModalOpen.value = true; // 모달 열기
-      console.log('Modal should open now.');
+      packageCode.value = pkgCode; 
+      isModalOpen.value = true; 
+      
     };
 
     const closeModal = () => {
       isModalOpen.value = false; // 모달 닫기
-      console.log('Modal should close now.');
+    };
+
+    const setIsEditing = (editing) => {
+      isEditing.value = editing;
     };
 
     provide('empId', empId);
     provide('packageCode', packageCode);
-
+    provide('isEditing', isEditing);
     return {
       packages,
       isModalOpen,
       openModal,
       closeModal,
+      packageCode,
+      empId,
+      isEditing,
+      setIsEditing
     };
   },
 };
