@@ -66,3 +66,13 @@ export const assignPackage = async (params) => {
     throw error;
   }
 };
+
+export const getCountries = async (params) => {
+  try {
+    const response = await apiClient.get('sales/get-countries', {params});
+    return response.data;
+  } catch (error) {
+    console.error('Error getting countries:', error);
+    throw error;
+  }
+}
