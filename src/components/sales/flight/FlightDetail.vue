@@ -2,12 +2,8 @@
   <div class="modal-overlay" v-if="showModal">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-header-item">
-          <img src="@/assets/icons/flight.png" />
-        </div>
-        <h1>{{ flightDetail.flight_code ? "수정" : "신규등록" }}</h1>
+        <h1>{{ flightDetail.flight_code ? "✈️ Edit" : "✈️ New" }}</h1>
       </div>
-      <h2></h2>
       <form @submit.prevent="submitForm">
         <div>
           <label for="flight_number">항공번호</label>
@@ -29,12 +25,7 @@
         </div>
         <div>
           <label for="phone">전화번호</label>
-          <input
-            type="text"
-            id="phone"
-            v-model="flightDetail.phone"
-            required
-          />
+          <input type="text" id="phone" v-model="flightDetail.phone" required />
         </div>
         <div>
           <label for="departure">출발지</label>
@@ -74,12 +65,7 @@
         </div>
         <div>
           <label for="price">가격</label>
-          <input
-            type="text"
-            id="price"
-            v-model="flightDetail.price"
-            required
-          />
+          <input type="text" id="price" v-model="flightDetail.price" required />
         </div>
         <div>
           <label for="is_used">사용유무</label>
@@ -90,9 +76,11 @@
             required
           />
         </div>
-        <div>
-          <button type="button" @click="submitForm">{{ flightDetail.flight_code ? "수정" : "등록" }}</button>
-          <button type="button" @click="handleClose">취소</button>
+        <div class="button-container">
+          <button type="button" class="btn-update" @click="submitForm">
+            {{ flightDetail.flight_code ? "수정" : "등록" }}
+          </button>
+          <button type="button" class="btn-close" @click="handleClose">닫기</button>
         </div>
       </form>
     </div>
@@ -100,11 +88,11 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue';
-import { useStore } from 'vuex';
+import { ref, watch } from "vue";
+import { useStore } from "vuex";
 
 export default {
-  name: 'FlightDetail',
+  name: "FlightDetail",
   props: {
     flight: {
       type: Object,
@@ -115,15 +103,15 @@ export default {
     const store = useStore();
     const showModal = ref(true);
     const flightDetail = ref({
-      flight_number: '',
-      airline: '',
-      phone: '',
-      departure: '',
-      departure_time: '',
-      destination: '',
-      arrival_time: '',
-      price: '',
-      is_used: ''
+      flight_number: "",
+      airline: "",
+      phone: "",
+      departure: "",
+      departure_time: "",
+      destination: "",
+      arrival_time: "",
+      price: "",
+      is_used: "",
     });
 
     watch(
@@ -133,16 +121,16 @@ export default {
           flightDetail.value = { ...newFlight };
         } else {
           flightDetail.value = {
-            flight_code: '',
-            flight_number: '',
-            airline: '',
-            phone: '',
-            departure: '',
-            departure_time: '',
-            destination: '',
-            arrival_time: '',
-            price: '',
-            is_used: ''
+            flight_code: "",
+            flight_number: "",
+            airline: "",
+            phone: "",
+            departure: "",
+            departure_time: "",
+            destination: "",
+            arrival_time: "",
+            price: "",
+            is_used: "",
           };
         }
       },
@@ -151,16 +139,16 @@ export default {
 
     const submitForm = async () => {
       if (flightDetail.value.flight_code) {
-        await store.dispatch('flight/updateFlight', flightDetail.value);
-        emit('close');
+        await store.dispatch("flight/updateFlight", flightDetail.value);
+        emit("close");
       } else {
-        await store.dispatch('flight/addFlight', flightDetail.value);
-        emit('close');
+        await store.dispatch("flight/addFlight", flightDetail.value);
+        emit("close");
       }
     };
 
     const handleClose = () => {
-      emit('close');
+      emit("close");
       showModal.value = false;
     };
 

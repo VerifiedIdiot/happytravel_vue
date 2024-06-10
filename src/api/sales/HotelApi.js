@@ -1,12 +1,12 @@
-import apiClient from '../axios'; 
+import apiClient from "../axios";
 
 // GET
 export const getHotelList = async () => {
   try {
-    const response = await apiClient.get('/sales/hotel-list');
+    const response = await apiClient.get("/sales/hotel-list");
     return response.data;
   } catch (error) {
-    console.error('Error fetching hotel list:', error);
+    console.error("Error fetching hotel list:", error);
     throw error;
   }
 };
@@ -14,10 +14,10 @@ export const getHotelList = async () => {
 // GET last hotel code
 export const getLastHotelCode = async () => {
   try {
-    const response = await apiClient.get('/sales/last-hotel-code');
+    const response = await apiClient.get("/sales/last-hotel-code");
     return response.data;
   } catch (error) {
-    console.error('Error fetching last hotel code:', error);
+    console.error("Error fetching last hotel code:", error);
     throw error;
   }
 };
@@ -25,10 +25,10 @@ export const getLastHotelCode = async () => {
 // POST
 export const insertHotel = async (hotel, empId) => {
   try {
-    const response = await apiClient.post('/sales/hotel', hotel, empId);
+    const response = await apiClient.post("/sales/hotel", hotel, empId);
     return response.data;
   } catch (error) {
-    console.error('Error inserting hotel:', error);
+    console.error("Error inserting hotel:", error);
     throw error;
   }
 };
@@ -50,7 +50,18 @@ export const deleteHotel = async (hotelCode) => {
     const response = await apiClient.delete(`/sales/hotel/${hotelCode}`);
     return response.data;
   } catch (error) {
-    console.error('Error deleting hotel:', error);
+    console.error("Error deleting hotel:", error);
+    throw error;
+  }
+};
+
+// GET Country List
+export const getCountries = async (params) => {
+  try {
+    const response = await apiClient.get("sales/countries", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error getting countries:", error);
     throw error;
   }
 };
