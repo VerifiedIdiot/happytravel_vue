@@ -11,7 +11,8 @@
             v-else
             type="text"
             id="packageName"
-            v-model="packageDetail.package_name" />
+            v-model="packageDetail.package_name"
+            autocomplete="off" />
         </div>
         <div class="form-item">
           <label for="country"><legend>국가</legend></label>
@@ -42,7 +43,8 @@
             v-else
             type="date"
             id="startDate"
-            v-model="packageDetail.start_date" />
+            v-model="packageDetail.start_date"
+            autocomplete="off" />
         </div>
         <div class="form-item">
           <label for="endDate"><legend>여행종료일</legend></label>
@@ -53,7 +55,8 @@
             v-else
             type="date"
             id="endDate"
-            v-model="packageDetail.end_date" />
+            v-model="packageDetail.end_date"
+            autocomplete="off" />
         </div>
       </div>
       <div>
@@ -66,7 +69,8 @@
             v-else
             type="date"
             id="saleStartDate"
-            v-model="packageDetail.sale_start_date" />
+            v-model="packageDetail.sale_start_date"
+            autocomplete="off" />
         </div>
         <div class="form-item">
           <label for="saleEndDate"><legend>판매종료일</legend></label>
@@ -77,7 +81,8 @@
             v-else
             type="date"
             id="saleEndDate"
-            v-model="packageDetail.sale_end_date" />
+            v-model="packageDetail.sale_end_date"
+            autocomplete="off" />
         </div>
       </div>
     </div>
@@ -85,10 +90,7 @@
       <div class="partner-info-container">
         <label for="flightCode"><legend>항공권 정보</legend></label>
         <div class="partner-info-box">
-          <img
-            src="@/assets/icons/passport.png"
-            alt="passport image"
-            loading="lazy" />
+          <img src="@/assets/icons/passport.png" alt="passport image" loading="lazy" />
           <span v-if="!isEditing">항공사 {{ packageDetail.airline }}</span>
           <span v-if="!isEditing">출발지 {{ packageDetail.departure }}</span>
           <span v-if="!isEditing">도착지 {{ packageDetail.destination }}</span>
@@ -97,16 +99,14 @@
             v-else
             type="text"
             id="flightCode"
-            v-model="packageDetail.flight_code" />
+            v-model="packageDetail.flight_code"
+            autocomplete="off" />
         </div>
       </div>
       <div class="partner-info-container">
         <label for="hotelCode"><legend>호텔 정보</legend></label>
         <div class="partner-info-box">
-          <img
-            src="@/assets/icons/hotel2.png"
-            alt="hotel image"
-            loading="lazy" />
+          <img src="@/assets/icons/hotel2.png" alt="hotel image" loading="lazy" />
           <span v-if="!isEditing">호텔명 {{ packageDetail.hotel_name }}</span>
           <span v-if="!isEditing">국가 {{ packageDetail.country }}</span>
           <span v-if="!isEditing">지역 {{ packageDetail.hotel_region }}</span>
@@ -115,16 +115,14 @@
             v-else
             type="text"
             id="hotelCode"
-            v-model="packageDetail.hotel_code" />
+            v-model="packageDetail.hotel_code"
+            autocomplete="off" />
         </div>
       </div>
       <div class="partner-info-container">
         <label for="agencyCode"><legend>현지 여행사 정보</legend></label>
         <div class="partner-info-box">
-          <img
-            src="@/assets/icons/agency.png"
-            alt="agency image"
-            loading="lazy" />
+          <img src="@/assets/icons/agency.png" alt="agency image" loading="lazy" />
           <span v-if="!isEditing">여행사 {{ packageDetail.agency_name }}</span>
           <span v-if="!isEditing">국가 {{ packageDetail.country }}</span>
           <span v-if="!isEditing">지역 {{ packageDetail.agency_region }}</span>
@@ -133,7 +131,8 @@
             v-else
             type="text"
             id="agencyCode"
-            v-model="packageDetail.agency_code" />
+            v-model="packageDetail.agency_code"
+            autocomplete="off" />
         </div>
       </div>
     </div>
@@ -153,7 +152,8 @@
           v-else
           type="number"
           id="saleAmount"
-          v-model="packageDetail.sale_amount" />
+          v-model="packageDetail.sale_amount"
+          autocomplete="off" />
       </div>
       <div>
         <label for="assignCode"><legend>승인상태</legend></label>
@@ -162,55 +162,28 @@
           v-else
           type="text"
           id="assignCode"
-          v-model="packageDetail.assign_code" />
+          v-model="packageDetail.assign_code"
+          autocomplete="off" />
       </div>
     </div>
   </form>
 </template>
 
 <script>
-import { ref, onMounted, inject } from 'vue';
-import {
-  getPackage,
-  updatePackage,
-  getCountries,
-} from '@/api/sales/PackageApi';
+import { inject } from 'vue';
+import { updatePackage } from '@/api/sales/PackageApi';
 
 export default {
   name: 'PackageDetail',
   setup(_, { emit }) {
-    const packageCode = inject('packageCode');
-    const empId = inject('empId');
+    const packageDetail = inject('packageDetail');
+    const countries = inject('countries');
     const isEditing = inject('isEditing');
-    const packageDetail = ref({});
-    const countries = ref([]);
-
-    onMounted(async () => {
-      if (packageCode && packageCode.value) {
-        try {
-          
-          const data = await getPackage({
-            packageCode: packageCode.value,
-            empId: empId
-          });
-          packageDetail.value = data;
-          
-        } catch (error) {
-          console.error('Failed to fetch package details:', error);
-        }
-      }
-      try {
-        const countryData = await getCountries(); // 국가 데이터 불러오기
-        countries.value = countryData;
-      } catch (error) {
-        console.error('Failed to fetch countries:', error);
-      }
-    });
 
     const submitForm = async () => {
       try {
         await updatePackage(packageDetail.value);
-        isEditing.value = false; // 수정 후 다시 읽기 모드로 전환
+        isEditing.value = false; 
         emit('update:isEditing', false);
       } catch (error) {
         console.error('Failed to update package:', error);
@@ -220,10 +193,10 @@ export default {
     return {
       packageDetail,
       countries,
-      submitForm,
       isEditing,
+      submitForm
     };
-  },
+  }
 };
 </script>
 
@@ -246,70 +219,68 @@ legend {
 }
 
 .form-upper {
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  width:100%;
-  height:30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 30%;
   box-shadow: 2px 4px 15px 3px rgba(0, 0, 0, 0.2);
   div {
-    display:flex;
-    
-    flex-direction:row;
-    align-items:center;
-    width:100%;
-    height:25%;
+    display: flex;
+
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    height: 25%;
   }
   .form-item {
-    display:flex;
-    width:25%;
-    height:100%;
+    display: flex;
+    width: 25%;
+    height: 100%;
   }
 }
 .form-middle {
-  display:flex;
-  flex-direction:column;
-  justify-content:space-evenly;
-  width:100%;
-  height:50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 50%;
   .partner-info-container {
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     box-shadow: 2px 4px 15px 3px rgba(0, 0, 0, 0.2);
-    width:100%;
-    height:25%;
+    width: 100%;
+    height: 25%;
   }
   .partner-info-box {
-    display:flex;
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    width:100%;
-    height:70%;
+    width: 100%;
+    height: 70%;
     border-radius: 4px;
     img {
-      object-fit:cover;
-      height: 80%;
+      object-fit: cover;
+      height: 55%;
       width: auto;
     }
   }
-
 }
 .form-under {
-  display:flex;
-  
-  justify-content:center;
-  width:100%;
-  height:10%;
+  display: flex;
+
+  justify-content: center;
+  width: 100%;
+  height: 10%;
   box-shadow: 2px 4px 15px 3px rgba(0, 0, 0, 0.2);
   div {
-    display:flex;
-    flex-direction:column;
-    justify-content:space-evenly;
-    width:100%;
-    height:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 100%;
   }
-
 }
 
 .custom-select {
@@ -320,7 +291,7 @@ legend {
   border: 1px solid #ccc;
   padding: 0.5em;
   font-size: 1em;
-  
+
   width: 100%;
   max-width: 300px;
   background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEuNjA2NTUsNS44Mjk2NyBMNy45NTM2MiwxMi4xNzY2IEwxNC4zOTM0LDYuNzM2NCAxMy4xODI0LDUuNTI1MyA3Ljk1MzYyLDEwLjc1NCAxLjcwNjU1LDUuNTA5MzkgTDEuNjA2NTUsNS44Mjk2NyBaIiBmaWxsPSIjNjY2NjY2IiBzdHJva2U9IiM2NjY2NjYiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+');
@@ -335,4 +306,3 @@ legend {
   box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
 }
 </style>
-<!-- <style src="./packageDashboard.css"></style> -->
