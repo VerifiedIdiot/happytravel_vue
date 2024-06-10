@@ -78,11 +78,26 @@
             {{ empStatus.stat_name }}
           </option>
         </select>
-        퇴사일자<input type="date" v-model="thisEmployee.leave_date" />
-      </p>
-      <p>
-        은행
-        <select name="" id="" v-model="thisEmployee.bank_code">
+        <input
+          type="date"
+          id="leave_date"
+          v-model="thisEmployee.leave_date"
+          :readonly="isResignedOrOnLeave"
+          class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
+        />
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="bank_code"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>은행</label
+        >
+        <select
+          name=""
+          id="bank_code"
+          v-model="thisEmployee.bank_code"
+          class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
+        >
           <option value="">-</option>
           <option
             :value="bank.bank_code"
@@ -111,7 +126,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, readonly } from "vue";
 import {
   getDeptList,
   getPosList,
