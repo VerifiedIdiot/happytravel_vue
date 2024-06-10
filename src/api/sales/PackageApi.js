@@ -76,3 +76,14 @@ export const getCountries = async (params) => {
     throw error;
   }
 }
+
+export const getPackageCnt = async (params) => {
+  try {
+    const response = await apiClient.get('sales/package-count', {params});
+    return response.data;
+  } catch (error) {
+    console.error('Error getting packageCnt:', error);
+    throw error;
+  }
+
+}

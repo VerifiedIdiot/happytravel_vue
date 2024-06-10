@@ -1,129 +1,177 @@
 <template>
   <div class="wrapper">
-    <!-- <p>Hotel Dashboard</p> -->
-    <div class="btn-item">
-      <button class="btn-create" @click="openModal()">신규등록</button>
-    </div>
-    <div class="sales-container">
-      <table>
-        <thead>
-          <tr>
-            <th>호텔명</th>
-            <th>전화번호</th>
-            <th>국가</th>
-            <th>지역</th>
-            <th>주소</th>
-            <th>가격</th>
-            <th>Y/N</th>
-            <th>수정</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="hotel in isUsedHotel" :key="hotel.hotel_code">
-            <td>{{ hotel.hotel_name }}</td>
-            <td>{{ hotel.phone }}</td>
-            <td>{{ hotel.country }}</td>
-            <td>{{ hotel.region }}</td>
-            <td>{{ hotel.address }}</td>
-            <td>{{ formatPrice(hotel.price) }}</td>
-            <td>{{ hotel.is_used }}</td>
-            <td><button @click="openModal(hotel)">수정</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div v-if="showModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>{{ newHotel ? '호텔 등록' : '호텔 수정' }}</h2>
+    <div class="hotel-container">
+      <div class="hotel-box">
+        <div class="hotel-item">
+          <button class="btn-create" @click="openModal()">
+            <p>신규등록</p>
+          </button>
         </div>
-        <div class="modal-box">
-          <form @submit.prevent="saveHotel">
-            <div>
-              <div class="modal-item">
-                <label for="hotel_name">호텔명 |</label>
-                <input type="text" v-model="currentHotel.hotel_name" required>
-              </div>
-              <div class="modal-item">
-                <label for="phone">전화번호 |</label>
-                <input type="text" v-model="currentHotel.phone" required>
-              </div>
-              <div class="modal-item">
-                <label for="country">국가 |</label>
-                <input type="text" v-model="currentHotel.country" required>
-              </div>
-              <div class="modal-item">
-                <label for="region">지역 |</label>
-                <input type="text" v-model="currentHotel.region" required>
-              </div>
-              <div class="modal-item">
-                <label for="address">주소 |</label>
-                <input type="text" v-model="currentHotel.address" required>
-              </div>
-              <div class="modal-item">
-                <label for="price">가격 |</label>
-                <input type="text" v-model="currentHotel.price" required>
-              </div>
-              <div class="modal-item">
-                <label for="is_used">Y/N |</label>
-                <select v-model="currentHotel.is_used" required>
-                  <option value="Y">Yes</option>
-                  <option value="N">No</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="btn-reg">
-              <button class="rounded-md btn-submit" type="submit">{{ newHotel ? '등록' : '저장' }}</button>
-              <button class="rounded-md btn-close" type="button" @click="closeModal">닫기</button>
-            </div>
-          </form>
-        </div>
-
       </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>호텔명</th>
+              <th>전화번호</th>
+              <th>국가</th>
+              <th>주소</th>
+              <th>가격</th>
+              <th>
+                <select v-model="filterOption">
+                  <option value="all">사용유무</option>
+                  <option value="Y">사용</option>
+                  <option value="N">미사용</option>
+                </select>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="hotel in filterHotels"
+              :key="hotel.hotel_code"
+              @click="openModal(hotel)"
+            >
+              <td>{{ hotel.hotel_name }}</td>
+              <td>{{ hotel.phone }}</td>
+              <td>{{ hotel.country }}</td>
+              <td>{{ hotel.address }}</td>
+              <td>{{ formatPrice(hotel.price) }}</td>
+              <td>{{ hotel.is_used }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div v-if="showModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-header-item">
+          <img
+            src="@/assets/icons/hotel2.png"
+            alt="hotel image"
+            width="100"
+            height="100"
+            loading="lazy"
+          />
+        </div>
+        <h1>{{ newHotel ? "신규등록" : "수정" }}</h1>
+      </div>
+      <form @submit.prevent="saveHotel">
+        <div class="form-container">
+          <div class="form-box">
+            <div class="form-item">
+              <label for="hotel_name">호텔명</label>
+              <input type="text" v-model="currentHotel.hotel_name" required />
+            </div>
+            <div class="form-item">
+              <label for="phone">전화번호</label>
+              <input type="text" v-model="currentHotel.phone" required />
+            </div>
+            <div class="form-item">
+              <label for="country">국가</label>
+              <select
+                id="country"
+                v-model="currentHotel.country_code"
+                @change="updateCountryName"
+              >
+                <option
+                  v-for="country in countries"
+                  :key="country.country_code"
+                  :value="country.country_code"
+                >
+                  {{ country.korean_name }}
+                </option>
+              </select>
+            </div>
+            <div class="form-item">
+              <label for="address">주소</label>
+              <input type="text" v-model="currentHotel.address" required />
+            </div>
+            <div class="form-item">
+              <label for="price">가격</label>
+              <input type="text" v-model="currentHotel.price" required />
+            </div>
+            <div class="form-item">
+              <label for="is_used">사용유무</label>
+              <select v-model="currentHotel.is_used" required>
+                <option value="Y">Yes</option>
+                <option value="N">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button class="rounded-md btn-update" type="submit">
+            {{ newHotel ? "등록" : "저장" }}
+          </button>
+          <button
+            class="rounded-md btn-close"
+            type="button"
+            @click="closeModal"
+          >
+            닫기
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { getHotelList, getLastHotelCode, insertHotel, updateHotel } from '@/api/sales/HotelApi';
+import { ref, computed, onMounted } from "vue";
+import {
+  getHotelList,
+  insertHotel,
+  updateHotel,
+  getCountries,
+} from "@/api/sales/HotelApi";
 
 export default {
-  name: 'HotelDashboard',
+  name: "HotelDashboard",
+
   setup() {
     const hotels = ref([]);
+    const countries = ref([]);
     const showModal = ref(false);
-    const currentHotel = ref({});
+    const currentHotel = ref({
+      hotel_code: "",
+      hotel_name: "",
+      phone: "",
+      country_code: "",
+      country: "",
+      address: "",
+      price: 0,
+      is_used: "Y",
+    });
     const newHotel = ref(true);
+    const filterOption = ref("all");
 
     const formatPrice = (price) => {
-      return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(price);
+      return new Intl.NumberFormat("ko-KR", {
+        style: "currency",
+        currency: "KRW",
+      }).format(price);
     };
-
-    const fetchHotels = async () => {
-      try {
-
-        hotels.value = await getHotelList();
-        console.log('Fetched hotels:', hotels.value);
-      } catch (error) {
-        console.error('Error fetching flight list:', error);
-      }
-    };
-
     const openModal = (hotel) => {
       if (hotel) {
         currentHotel.value = { ...hotel };
+        currentHotel.value.country_code =
+          countries.value.find(
+            (country) => country.korean_name === hotel.country
+          )?.country_code || "";
         newHotel.value = false;
       } else {
         currentHotel.value = {
-          hotel_name: '',
-          phone: '',
-          country: '',
-          region: '',
-          address: '',
-          price: '',
-          is_used: 'Y',
+          hotel_name: "",
+          phone: "",
+          country_code: "",
+          country: "",
+          address: "",
+          price: 0,
+          is_used: "Y",
         };
         newHotel.value = true;
       }
@@ -136,51 +184,66 @@ export default {
 
     const saveHotel = async () => {
       try {
-        const empId = sessionStorage.getItem('empId') || 'EMP30002';
-        // currentHotel.value.empId = empId;
-        console.log('Updating hotel with data:', currentHotel.value, empId);
-        const hotelCode = currentHotel.value.hotel_code;
-
+        console.log("Current Hotel before save:", currentHotel.value);
         if (newHotel.value) {
-          const lastHotelCode = await getLastHotelCode();
-          let newHotelCode;
-          if (lastHotelCode) {
-            const numericPart = parseInt(lastHotelCode.replace('H', ''), 10);
-            const newNumericPart = numericPart + 1;
-            newHotelCode = `H${String(newNumericPart).padStart(3, '0')}`;
-          } else {
-            newHotelCode = 'H001';
+          const insertResult = await insertHotel(currentHotel.value);
+          console.log("Hotel inserted:", insertResult);
+
+          if (insertResult) {
+            // 새로 삽입된 호텔 정보를 가져온 후 hotels 리스트에 추가
+            const data = await getHotelList();
+            hotels.value = data;
           }
-          currentHotel.value.hotel_code = newHotelCode;
-          const newHotel = await insertHotel(currentHotel.value);
-          hotels.value.push(newHotel);
         } else {
           const hotelCode = currentHotel.value.hotel_code;
-          await updateHotel(hotelCode, currentHotel.value);
-          const index = hotels.value.findIndex(h => h.hotel_code === hotelCode);
+          const updateResult = await updateHotel(hotelCode, currentHotel.value);
+          console.log("Hotel updated:", updateResult);
+
+          const index = hotels.value.findIndex(
+            (h) => h.hotel_code === currentHotel.value.hotel_code
+          );
           if (index !== -1) {
             hotels.value[index] = { ...currentHotel.value };
           }
         }
 
-        const index = hotels.value.findIndex(h => h.hotel_code === hotelCode);
-        if (index !== -1) {
-          hotels.value[index] = { ...currentHotel.value };
-        } else {
-          hotels.value.push({ ...currentHotel.value });
-        }
-
         closeModal();
       } catch (error) {
-        console.error('Error saving hotel:', error);
+        console.error("Error saving hotel:", error);
       }
     };
 
-    const isUsedHotel = computed(() => {
-      return hotels.value.filter(hotel => hotel.is_used === 'Y');
+    onMounted(async () => {
+      try {
+        const data = await getHotelList();
+        hotels.value = data;
+        const countryData = await getCountries();
+        countries.value = countryData;
+        console.log("Fetched hotels:", hotels.value);
+        console.log("Fetched countries:", countries.value);
+      } catch (error) {
+        console.error("Error fetching hotel list:", error);
+      }
     });
 
-    onMounted(fetchHotels);
+    const filterHotels = computed(() => {
+      if (filterOption.value === "all") {
+        return hotels.value;
+      }
+      return hotels.value.filter(
+        (hotel) => hotel.is_used === filterOption.value
+      );
+    });
+
+    const updateCountryName = (e) => {
+      const selectedCountryCode = e.target.value;
+      const selectedCountry = countries.value.find(
+        (country) => country.country_code === selectedCountryCode
+      );
+      if (selectedCountry) {
+        currentHotel.value.country = selectedCountry.korean_name;
+      }
+    };
 
     return {
       hotels,
@@ -191,7 +254,10 @@ export default {
       closeModal,
       saveHotel,
       newHotel,
-      isUsedHotel,
+      filterOption,
+      filterHotels,
+      countries,
+      updateCountryName,
     };
   },
 };
