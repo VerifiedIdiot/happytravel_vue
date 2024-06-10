@@ -16,9 +16,10 @@ module.exports = defineConfig({
         target: TARGET_URL,
         changeOrigin: true,
         pathRewrite: { "^/": "" },
-        ws: false,
+        ws: false,  // WebSocket 비활성화
       },
     },
+    webSocketServer: false,  // WebSocket 서버 비활성화
   },
   configureWebpack: {
     plugins: [
