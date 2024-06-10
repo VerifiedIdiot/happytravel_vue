@@ -20,7 +20,7 @@
               <th>가격</th>
               <th>
                 <select v-model="filterOption">
-                  <option value="all">전체</option>
+                  <option value="all">사용유무</option>
                   <option value="Y">사용</option>
                   <option value="N">미사용</option>
                 </select>
