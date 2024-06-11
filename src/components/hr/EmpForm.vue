@@ -651,8 +651,24 @@ export default {
       return false;
     };
 
+    const validatePassword = (password) => {
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/;
+      return regex.test(password);
+    };
+
     const saveEmpHandler = async () => {
       try {
+        // 사원 수정시에만 비밀번호 유효성 검사
+        if (
+          buttonText.value === "수정" &&
+          !validatePassword(thisEmployee.value.password)
+        ) {
+          alert(
+            "비밀번호는 영문 대문자, 소문자, 숫자, 특수문자 중 최소 3가지 이상을 포함해야 합니다."
+          );
+          return;
+        }
+
         //주민번호 13자리 유효성 검사
         if (ssnFirst.value.length !== 6 || ssnLast.value.length !== 7) {
           alert("주민등록번호를 확인해주세요.");
