@@ -4,7 +4,7 @@
       <div class="modal-header">
         <div class="modal-header-item">
           <img
-            :src="'@/assets/icons/flight.png'"
+            src="@/assets/icons/flight.png"
             alt="flight image"
             loading="lazy" />
         </div>
