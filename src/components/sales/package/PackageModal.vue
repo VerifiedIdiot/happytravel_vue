@@ -15,14 +15,14 @@
         <button
           type="button"
           class="btn-update"
-          v-if="!isEditing"
+          v-if="!packageState.isEditing"
           @click="toggleEditing">
           수정하기
         </button>
         <button
           type="submit"
           class="btn-update"
-          v-if="isEditing"
+          v-if="packageState.isEditing"
           @click="handleSave">
           저장
         </button>
@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import { inject, ref, onMounted, onUnmounted } from 'vue';
-
+import { inject, onMounted, onUnmounted } from 'vue';
+import { getCountries } from '@/api/sales/PackageApi';
 export default {
   name: 'PackageModal',
   props: {
@@ -47,37 +47,43 @@ export default {
   },
   emits: ['close', 'update:isEditing'],
   setup(_, { emit }) {
-    const isEditing = inject('isEditing', ref(false));
+    const packageState = inject('packageState')
+    const resetPackageState = inject('resetPackageState')
 
-    const handleClose = () => {
-      isEditing.value = false;
-      emit('close');
-    };
-
-    const toggleEditing = () => {
-      isEditing.value = !isEditing.value;
+    const toggleEditing = async () => {
+      const countryData = await getCountries();
+      packageState.countries = countryData;
+      if (packageState.countries)
+      packageState.isEditing = true;
     };
 
     const handleSave = () => {
       emit('update:isEditing', false);
+      resetPackageState()
     };
-    // escape 버튼 클릭시 close함수 실행
+
+    const handleClose = () => {
+      resetPackageState()
+      emit('close');
+    };
+
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
+        resetPackageState()
         handleClose();
       }
     };
-    //마운트시 이벤트리스터 함수 등록
+
     onMounted(() => {
       document.addEventListener('keydown', handleKeyDown);
     });
-    //안마운트시 이벤트리스터 함수 제거
+
     onUnmounted(() => {
       document.removeEventListener('keydown', handleKeyDown);
     });
 
     return {
-      isEditing,
+      packageState,
       handleClose,
       toggleEditing,
       handleSave,
