@@ -8,7 +8,6 @@
           </button>
         </div>
       </div>
-
       <table>
         <thead>
           <tr>
@@ -25,8 +24,7 @@
           <tr
             v-for="pkg in packages"
             :key="pkg.package_code"
-            @click="openModal(pkg.package_code)"
-          >
+            @click="openModal(pkg.package_code)">
             <td>{{ pkg.package_name }}</td>
             <td>{{ pkg.country }}</td>
             <td>{{ pkg.start_date }}</td>
@@ -101,7 +99,6 @@ const closeModal = () => {
 <style scoped>
 /* 스타일 정의 */
 </style>
-
 
 <style scoped lang="scss">
 @import 'tailwindcss/base';

@@ -47,29 +47,28 @@ export default {
   },
   emits: ['close', 'update:isEditing'],
   setup(_, { emit }) {
-    const packageState = inject('packageState')
-    const resetPackageState = inject('resetPackageState')
+    const packageState = inject('packageState');
+    const resetPackageState = inject('resetPackageState');
 
     const toggleEditing = async () => {
       const countryData = await getCountries();
       packageState.countries = countryData;
-      if (packageState.countries)
-      packageState.isEditing = true;
+      if (packageState.countries) packageState.isEditing = true;
     };
 
     const handleSave = () => {
       emit('update:isEditing', false);
-      resetPackageState()
+      resetPackageState();
     };
 
     const handleClose = () => {
-      resetPackageState()
+      resetPackageState();
       emit('close');
     };
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        resetPackageState()
+        resetPackageState();
         handleClose();
       }
     };
