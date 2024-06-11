@@ -1,48 +1,207 @@
 <template>
-  <!-- 사원등록 / 수정 화면 -->
-  <div>사원 등록</div>
-  <div class="empSave">
-    <div>
-      <p>
-        사원번호<input
+  <div id="emp-info" class="flex flex-col items-center w-full">
+    <!-- 사원등록 / 수정 화면 -->
+    <div class="flex w-full text-3xl pl-10">사원 정보 {{ buttonText }}</div>
+    <div class="relative flex flex-col w-11/12 mt-5">
+      <!-- 사진 -->
+      <div class="absolute right-0 top-1 w-4/12 h-48 bg-green-100">
+        <h2>사원 사진 영역</h2>
+      </div>
+      <div
+        class="absolute top-1 right-1 w-5/12 h-48 border border-green-400"
+      ></div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="emp_id"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>사원번호</label
+        >
+        <input
           type="text"
+          id="emp_id"
           v-model="thisEmployee.emp_id"
           :readonly="isReadOnly"
+          class="flex w-2/6 h-8 px-1 border border-slate-200 outline-none"
         />
-      </p>
+      </div>
       <!-- 사원번호 자동생성 ex) 입사년도4자리 + 입사순서 4자리 -->
-      <p>비밀번호<input type="password" v-model="thisEmployee.password" /></p>
-      <p>사원명<input type="text" v-model="thisEmployee.emp_name" /></p>
-      <p>
-        입사일자<input
+      <div class="flex my-1 gap-1">
+        <label
+          for="password"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>비밀번호</label
+        >
+        <input
+          type="password"
+          id="password"
+          v-model="thisEmployee.password"
+          class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
+        />
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="emp_name"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>사원명</label
+        >
+        <input
+          type="text"
+          id="emp_name"
+          v-model="thisEmployee.emp_name"
+          :readonly="isReadOnly"
+          class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
+        />
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="join_date"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>입사일자</label
+        >
+        <input
           type="date"
+          id="join_date"
           v-model="thisEmployee.join_date"
           :readonly="isReadOnly"
+          class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
-      </p>
-      <p>
-        주민등록번호<input
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="ssn"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>주민등록번호</label
+        >
+        <input
           type="text"
-          v-model="thisEmployee.ssn"
-          :readonly="isReadOnly"
+          id="ssn_first"
+          v-model="ssnFirst"
+          @input="validateSSNFirst"
+          maxlength="6"
+          class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
         />
-      </p>
-      <p>
-        주소<input
+        <span class="text-base">-</span>
+        <input
+          type="text"
+          id="ssn_last"
+          v-model="ssnLast"
+          @input="validateSSNLast"
+          maxlength="7"
+          class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
+        />
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="zip_code"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>주소</label
+        >
+        <input
           type="text"
           placeholder="우편번호"
+          id="zip_code"
           v-model="thisEmployee.zip_code"
-        /><input type="text" v-model="thisEmployee.address" /><button>
-          검색
-        </button>
-      </p>
+          :readonly="isReadOnly"
+          class="flex w-2/12 h-8 px-1 border border-gray-200 outline-none"
+        />
+        <input
+          type="text"
+          id="address"
+          v-model="thisEmployee.address"
+          class="flex w-7/12 h-8 px-1 border border-gray-200 outline-none"
+        />
+        <button @click="searchAddress" class="w-1/12 bg-slate-200">검색</button>
+      </div>
       <!-- 주소 검색 팝업창 -->
-      <p>상세주소<input type="text" v-model="thisEmployee.address_detail" /></p>
-      <p>전화번호<input type="text" v-model="thisEmployee.phone" /></p>
-      <p>휴대전화<input type="text" v-model="thisEmployee.mobile" /></p>
-      <p>
-        부서
-        <select name="" id="" v-model="thisEmployee.dept_code">
+      <div class="flex my-1 gap-1">
+        <label
+          for="address_detail"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>상세주소</label
+        >
+        <input
+          type="text"
+          id="address_detail"
+          v-model="thisEmployee.address_detail"
+          class="flex w-10/12 h-8 px-1 border border-gray-200 outline-none"
+        />
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="phone"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          >전화번호</label
+        >
+        <select
+          v-model="phoneFirst"
+          class="flex w-1/6 h8 px-1 border border-gray-200 ouline-none"
+        >
+          <option value="">-</option>
+          <option v-for="option in phoneOptions" :key="option" :value="option">
+            {{ option }}
+          </option>
+        </select>
+        <input
+          type="text"
+          id="phone_second"
+          v-model="phoneSecond"
+          @input="validatePhoneSecond"
+          maxlength="4"
+          class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
+        />
+        <input
+          type="text"
+          id="phone_third"
+          v-model="phoneThird"
+          @input="validatePhoneThird"
+          maxlength="4"
+          class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
+        />
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="mobile"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>휴대전화</label
+        >
+        <select
+          v-model="mobileFirst"
+          class="flex w-1/6 px-1 border border-gray-200 outline-none"
+        >
+          <option value="">-</option>
+          <option v-for="option in mobileOptions" :key="option" :value="option">
+            {{ option }}
+          </option>
+        </select>
+        <input
+          type="text"
+          id="moblieSecond"
+          v-model="mobileSecond"
+          @input="validateMobileSecond"
+          class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
+          maxlength="4"
+        />
+        <input
+          type="text"
+          id="mobileThird"
+          v-model="mobileThird"
+          @input="validateMobileThird"
+          class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
+          maxlength="4"
+        />
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="dept_code"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>부서</label
+        >
+        <select
+          name=""
+          id="dept_code"
+          v-model="thisEmployee.dept_code"
+          class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
+        >
           <option value="">-</option>
           <option
             :value="department.dept_code"
@@ -52,10 +211,19 @@
             {{ department.dept_name }}
           </option>
         </select>
-      </p>
-      <p>
-        직급
-        <select name="" id="" v-model="thisEmployee.pos_code">
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="pos_code"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>직급</label
+        >
+        <select
+          name=""
+          id="pos_code"
+          v-model="thisEmployee.pos_code"
+          class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
+        >
           <option value="">-</option>
           <option
             :value="position.pos_code"
@@ -65,10 +233,19 @@
             {{ position.pos_name }}
           </option>
         </select>
-      </p>
-      <p>
-        재직상태
-        <select name="" id="" v-model="thisEmployee.status_code">
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="status_code"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>재직상태</label
+        >
+        <select
+          name=""
+          id="status_code"
+          v-model="thisEmployee.status_code"
+          class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
+        >
           <option value="">-</option>
           <option
             :value="empStatus.stat_code"
@@ -96,7 +273,7 @@
           name=""
           id="bank_code"
           v-model="thisEmployee.bank_code"
-          class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
+          class="flex w-3/12 h-8 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
           <option
@@ -110,43 +287,103 @@
         <input
           type="text"
           placeholder="계좌번호"
+          id="account_no"
           v-model="thisEmployee.account_no"
+          class="flex w-7/12 h-8 px-1 border border-gray-200 outline-none"
         />
-      </p>
-      <p>
-        기본급(연봉)<input type="text" v-model="thisEmployee.salary" /><span
-          style="font-size: 12px"
-          >만원</span
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="salary"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          ><span class="text-red-500">*</span>기본급(연봉)</label
         >
-      </p>
-      <p>비고<input type="text" v-model="thisEmployee.remaerks" /></p>
-      <button @click="saveEmployee">{{ buttonText }}</button>
+        <input
+          type="text"
+          id="salary"
+          v-model="thisEmployee.salary"
+          class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
+        />
+        <label
+          for="salary"
+          class="flex items-center justify-start w-2/12 h-8 px-1 text-sm"
+          >만원</label
+        >
+      </div>
+      <div class="flex my-1 gap-1">
+        <label
+          for="remaerks"
+          class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
+          >비고</label
+        >
+        <textarea
+          rows="10"
+          type="text"
+          id="remaerks"
+          v-model="thisEmployee.remaerks"
+          class="flex w-10/12 h-20 px-1 border border-gray-200 outline-none resize-none"
+        ></textarea>
+      </div>
+      <div class="flex justify-center my-1 gap-1">
+        <button
+          @click="saveEmpHandler"
+          class="w-1/6 h-10 bg-blue-600 hover:bg-blue-500 rounded-md text-white font-medium shadow-md outline-none"
+        >
+          {{ buttonText }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- 사진 업로드 모달 -->
+  <div
+    v-if="showModal"
+    class="fixed inset-0 flex items-center justify-center z-50 bg-gray-500 bg-opacity-75"
+  >
+    <div class="bg-white p-5 rounded-md">
+      <h2 class="text-xl mb-4">사진 업로드</h2>
+      <input type="file" />
+      <div class="mt-4">
+        <button
+          class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
+        >
+          업로드
+        </button>
+        <button
+          @click="closeModal"
+          class="px-3 py-1 bg-slate-600 hover:bg-slate-500 rounded-md text-white ml-2"
+        >
+          취소
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, watch, computed, readonly } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import {
   getDeptList,
   getPosList,
   getempStatusList,
   getbankList,
+  insertEmployee,
+  updateEmployee,
 } from "@/api/hr/EmpApi";
 
 export default {
   name: "EmpForm",
+  emits: ["saved"],
   props: {
     employee: {
       type: Object,
-      // required: true,
       default: () => ({}),
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const defaultEmployee = {
       emp_id: "",
       password: "",
+      photo_url: "",
       emp_name: "",
       dept_code: "",
       pos_code: "",
@@ -167,6 +404,40 @@ export default {
 
     const thisEmployee = ref({ ...props.employee });
 
+    const showModal = ref(false);
+
+    const ssnFirst = ref("");
+    const ssnLast = ref("");
+
+    const phoneFirst = ref("");
+    const phoneSecond = ref("");
+    const phoneThird = ref("");
+
+    const mobileFirst = ref("");
+    const mobileSecond = ref("");
+    const mobileThird = ref("");
+
+    const phoneOptions = [
+      "02",
+      "031",
+      "032",
+      "033",
+      "041",
+      "042",
+      "043",
+      "044",
+      "051",
+      "052",
+      "053",
+      "054",
+      "055",
+      "061",
+      "062",
+      "063",
+      "064",
+    ];
+    const mobileOptions = ["010", "011", "016", "017", "018", "019"];
+
     const departmentList = ref([]);
     const positionList = ref([]);
     const empStatusList = ref([]);
@@ -182,11 +453,36 @@ export default {
     };
 
     const isReadOnly = computed(() => {
-      return Object.keys(props.employee || {}).length > 0;
+      return Object.keys(props.employee.emp_name || {}).length > 0;
     });
 
     const buttonText = computed(() => {
-      return Object.keys(props.employee || {}).length === 0 ? "등록" : "수정";
+      return Object.keys(props.employee.emp_name || {}).length === 0
+        ? "등록"
+        : "수정";
+    });
+
+    /** kakao 주소 검색 api */
+    const searchAddress = () => {
+      new daum.Postcode({
+        oncomplete: function (data) {
+          thisEmployee.value.zip_code = data.zonecode;
+          thisEmployee.value.address = data.address;
+          document.getElementById("address_detail").focus();
+        },
+      }).open();
+    };
+
+    const getStatusName = (statusCode) => {
+      const status = empStatusList.value.find(
+        (status) => status.stat_code === statusCode
+      );
+      return status ? status.stat_name : "";
+    };
+
+    const isResignedOrOnLeave = computed(() => {
+      const statusName = getStatusName(thisEmployee.value.status_code);
+      return statusName === "재직" || statusName === "휴직";
     });
 
     watch(
@@ -198,13 +494,55 @@ export default {
             join_date: formatDate(newVal.join_date),
             leave_date: newVal.leave_date ? formatDate(newVal.leave_date) : "",
           };
+
+          ssnFirst.value = newVal.ssn ? newVal.ssn.slice(0, 6) : "";
+          ssnLast.value = newVal.ssn ? newVal.ssn.slice(7) : "";
+
+          if (newVal.phone) {
+            if (newVal.phone.startsWith("02")) {
+              phoneFirst.value = "02";
+              phoneSecond.value = newVal.phone.slice(
+                3,
+                newVal.phone.indexOf("-", 4)
+              );
+              phoneThird.value = newVal.phone.slice(
+                newVal.phone.lastIndexOf("-") + 1
+              );
+            } else {
+              phoneFirst.value = newVal.phone.slice(
+                0,
+                newVal.phone.indexOf("-")
+              );
+              phoneSecond.value = newVal.phone.slice(
+                newVal.phone.indexOf("-") + 1,
+                newVal.phone.lastIndexOf("-")
+              );
+              phoneThird.value = newVal.phone.slice(
+                newVal.phone.lastIndexOf("-") + 1
+              );
+            }
+          }
+
+          if (newVal.mobile) {
+            mobileFirst.value = newVal.mobile.slice(
+              0,
+              newVal.mobile.indexOf("-")
+            );
+            mobileSecond.value = newVal.mobile.slice(
+              newVal.mobile.indexOf("-") + 1,
+              newVal.mobile.lastIndexOf("-")
+            );
+            mobileThird.value = newVal.mobile.slice(
+              newVal.mobile.lastIndexOf("-") + 1
+            );
+          }
         } else {
           thisEmployee.value = { ...defaultEmployee };
         }
-        console.log("Updated employee prop: ", newVal);
       },
       { deep: true, immediate: true }
     );
+    // watch End
 
     const formList = ref({
       dept_code: "",
@@ -215,6 +553,7 @@ export default {
       bank_code: "",
     });
 
+    // START 사원 정보 폼 select option 리스트 가져오기
     const fetchDepartmentListHandler = async () => {
       try {
         departmentList.value = await getDeptList();
@@ -246,6 +585,77 @@ export default {
         console.error("Error fetching bankList:", error);
       }
     };
+    // END 사원 정보 폼 select option 리스트 가져오기
+
+    const openModal = () => {
+      showModal.value = true;
+    };
+
+    const closeModal = () => {
+      showModal.value = false;
+    };
+
+    const validateSSNFirst = () => {
+      ssnFirst.value = ssnFirst.value.replace(/\D/g, "").slice(0, 6);
+    };
+
+    const validateSSNLast = () => {
+      ssnLast.value = ssnLast.value.replace(/\D/g, "").slice(0, 7);
+    };
+
+    const validatePhoneSecond = () => {
+      phoneSecond.value = phoneSecond.value.replace(/\D/g, "").slice(0, 4);
+    };
+
+    const validatePhoneThird = () => {
+      phoneThird.value = phoneThird.value.replace(/\D/g, "").slice(0, 4);
+    };
+
+    const validateMobileSecond = () => {
+      mobileSecond.value = mobileSecond.value.replace(/\D/g, "").slice(0, 4);
+    };
+
+    const validateMobileThird = () => {
+      mobileThird.value = mobileThird.value.replace(/\D/g, "").slice(0, 4);
+    };
+
+    const saveEmpHandler = async () => {
+      try {
+        //주민번호 13자리 유효성 검사
+        if (ssnFirst.value.length !== 6 || ssnLast.value.length !== 7) {
+          alert("주민등록번호를 확인해주세요.");
+          return;
+        }
+
+        if (thisEmployee.value.leave_date === "") {
+          thisEmployee.value.leave_date = null;
+        }
+
+        thisEmployee.value.ssn = `${ssnFirst.value}-${ssnLast.value}`;
+        thisEmployee.value.phone = `${phoneFirst.value}-${phoneSecond.value}-${phoneThird.value}`;
+        thisEmployee.value.mobile = `${mobileFirst.value}-${mobileSecond.value}-${mobileThird.value}`;
+
+        const data = thisEmployee.value;
+
+        if (buttonText.value === "등록") {
+          await insertEmployee(thisEmployee.value);
+          alert("사원정보 저장이 완료되었습니다.");
+        } else {
+          await updateEmployee(thisEmployee.value);
+          alert("사원정보 수정이 완료되었습니다.");
+        }
+
+        emit("saved");
+      } catch (error) {
+        if (buttonText.value === "등록") {
+          console.error("Error saving employee: ", error);
+          alert("사원정보 저장에 실패했습니다.");
+        } else {
+          console.error("Error saving employee: ", error);
+          alert("사원정보 수정에 실패했습니다.");
+        }
+      }
+    };
 
     onMounted(() => {
       fetchDepartmentListHandler();
@@ -264,9 +674,45 @@ export default {
       formatDate,
       buttonText,
       isReadOnly,
+      searchAddress,
+      saveEmpHandler,
+      validateSSNFirst,
+      validateSSNLast,
+      validatePhoneSecond,
+      validatePhoneThird,
+      validateMobileSecond,
+      validateMobileThird,
+      ssnFirst,
+      ssnLast,
+      phoneFirst,
+      phoneSecond,
+      phoneThird,
+      mobileFirst,
+      mobileSecond,
+      mobileThird,
+      phoneOptions,
+      mobileOptions,
+      showModal,
+      openModal,
+      closeModal,
+      isResignedOrOnLeave,
     };
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+input,
+select,
+textarea,
+th,
+td {
+  border: 1px solid rgb(243, 244, 246);
+}
+table,
+thead,
+tbody th,
+td {
+  background-color: #fff;
+}
+</style>
