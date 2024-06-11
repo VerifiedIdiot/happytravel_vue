@@ -27,11 +27,12 @@
             class="custom-select"
             v-else
             id="country"
-            v-model="packageState.packageDetail.country">
+            v-model="packageState.packageDetail.country"
+            @change="setCountryCode">>
             <option
               v-for="country in packageState.countries"
               :key="country.country_code"
-              :value="country.korean_name">
+              :value="country.korean_name" >
               {{ country.korean_name }}
             </option>
           </select>
@@ -212,6 +213,8 @@ export default {
   name: 'PackageDetail',
   setup(_, { emit }) {
     const packageState = inject('packageState');
+    const partnerState = inject('partnerState')
+
 
     const submitForm = async () => {
       try {
@@ -221,11 +224,25 @@ export default {
       } catch (error) {
         console.error('Failed to update package:', error);
       }
+    }
+
+    const setCountryCode = () => {
+      const selectedCountry = packageState.countries.find(
+        (country) => country.korean_name === packageState.packageDetail.country
+      );
+      if (selectedCountry) {
+        partnerState.selectedCountry = selectedCountry.country_code
+      }
+
+      if (partnerState.selectedCountry) {
+        console.log(partnerState.selectedCountry)
+      }
     };
 
     return {
       packageState,
       submitForm,
+      setCountryCode,
     };
   },
 };
