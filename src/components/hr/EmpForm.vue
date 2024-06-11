@@ -368,6 +368,7 @@ import {
   getbankList,
   insertEmployee,
   updateEmployee,
+  checkDuplicate,
 } from "@/api/hr/EmpApi";
 
 export default {
@@ -380,6 +381,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    // 기본 데이터 초기화
     const defaultEmployee = {
       emp_id: "",
       password: "",
@@ -408,11 +410,9 @@ export default {
 
     const ssnFirst = ref("");
     const ssnLast = ref("");
-
     const phoneFirst = ref("");
     const phoneSecond = ref("");
     const phoneThird = ref("");
-
     const mobileFirst = ref("");
     const mobileSecond = ref("");
     const mobileThird = ref("");
@@ -462,7 +462,7 @@ export default {
         : "수정";
     });
 
-    /** kakao 주소 검색 api */
+    /*************** kakao 주소 검색 api *******************/
     const searchAddress = () => {
       new daum.Postcode({
         oncomplete: function (data) {
@@ -472,6 +472,7 @@ export default {
         },
       }).open();
     };
+    /*************** kakao 주소 검색 api *******************/
 
     const getStatusName = (statusCode) => {
       const status = empStatusList.value.find(
@@ -619,11 +620,46 @@ export default {
       mobileThird.value = mobileThird.value.replace(/\D/g, "").slice(0, 4);
     };
 
+    const checkDuplicates = async () => {
+      const fieldsToCheck = [
+        { field: "ssn", value: `${ssnFirst.value}-${ssnLast.value}` },
+        {
+          field: "mobile",
+          value: `${mobileFirst.value}-${mobileSecond.value}-${mobileThird.value}`,
+        },
+        {
+          field: "bank",
+          value: `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}`,
+        },
+      ];
+
+      for (const { field, value } of fieldsToCheck) {
+        const isDuplicate = await checkDuplicate(field, value);
+        if (isDuplicate) {
+          alert(
+            `중복된 ${
+              field === "ssn"
+                ? "주민등록번호"
+                : field === "mobile"
+                ? "휴대전화"
+                : "은행 계좌"
+            }입니다.`
+          );
+          return true;
+        }
+      }
+      return false;
+    };
+
     const saveEmpHandler = async () => {
       try {
         //주민번호 13자리 유효성 검사
         if (ssnFirst.value.length !== 6 || ssnLast.value.length !== 7) {
           alert("주민등록번호를 확인해주세요.");
+          return;
+        }
+
+        if (await checkDuplicates()) {
           return;
         }
 
@@ -696,6 +732,7 @@ export default {
       openModal,
       closeModal,
       isResignedOrOnLeave,
+      checkDuplicates,
     };
   },
 };
