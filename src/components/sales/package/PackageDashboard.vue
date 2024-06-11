@@ -23,7 +23,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="pkg in state.packages"
+            v-for="pkg in packages"
             :key="pkg.package_code"
             @click="openModal(pkg.package_code)">
             <td>{{ pkg.package_name }}</td>
@@ -39,14 +39,14 @@
       <Pagination />
     </div>
 
-    <PackageModal v-if="state.isModalOpen" @close="closeModal">
+    <PackageModal v-if="packageState.isModalOpen" @close="closeModal">
       <PackageDetail />
     </PackageModal>
   </div>
 </template>
 
 <script>
-import { ref, reactive, onMounted, provide } from 'vue';
+import { ref, reactive, onMounted, provide, markRaw } from 'vue';
 import {
   getPackageList,
   getPackage,
@@ -57,7 +57,7 @@ import PackageDetail from '@/components/sales/package/PackageDetail.vue';
 import PackageModal from '@/components/sales/package/PackageModal.vue';
 import Pagination from '@/components/sales/package/Pagination.vue';
 
-export default {
+export default markRaw({
   name: 'PackageDashboard',
   components: {
     PackageDetail,
@@ -65,36 +65,41 @@ export default {
     Pagination,
   },
   setup() {
-    const initialState = {
-      packages: [],
+    const empId = sessionStorage.getItem('empId') || 'EMP30002';
+    const packages = ref([]);
+
+    // 패키지 상세정보들 상태
+    const packageState = reactive({
       isModalOpen: false,
       packageCode: '',
-      empId: sessionStorage.getItem('empId') || 'EMP30002',
       isEditing: false,
       packageDetail: {},
       countries: [],
+    });
+    // 페이지네이션 요소들 상태
+    const paginationState = reactive({
       packageCnt: 0,
       currentPage: 1,
       itemsPerPage: 5,
       totalPages: 0,
-    };
-
-    const state = reactive({ ...initialState });
+    });
 
     const fetchPackages = async () => {
       try {
         const params = {
-          empId: state.empId,
-          limit: state.itemsPerPage,
-          offset: state.itemsPerPage * (state.currentPage - 1),
+          empId,
+          limit: paginationState.itemsPerPage,
+          offset:
+            paginationState.itemsPerPage * (paginationState.currentPage - 1),
         };
         const [data, cnt] = await Promise.all([
           getPackageList(params),
-          getPackageCnt({ empId: state.empId }), 
+          getPackageCnt({ empId }),
         ]);
-        state.packages = data;
-        state.packageCnt = cnt;
-        state.totalPages = Math.ceil(cnt / state.itemsPerPage);
+        packages.value = data;
+        paginationState.packageCnt = cnt;
+        paginationState.totalPages = Math.ceil(cnt / paginationState.itemsPerPage
+        );
       } catch (error) {
         console.error('Failed to fetch packages:', error);
       }
@@ -103,23 +108,21 @@ export default {
     onMounted(fetchPackages);
 
     const openModal = async (pkgCode = '') => {
-      state.packageCode = pkgCode;
-      state.isModalOpen = false;
+      packageState.packageCode = pkgCode;
+      packageState.isModalOpen = false;
       try {
         if (pkgCode) {
           const data = await getPackage({
             packageCode: pkgCode,
-            empId: state.empId,
+            empId: empId,
           });
-          state.packageDetail = data;
+          packageState.packageDetail = data;
         } else {
-          state.packageDetail = {};
+          packageState.packageDetail = {};
         }
 
-        if (state.packageDetail) {
-          setTimeout(() => {
-            state.isModalOpen = true;
-          }, 0);
+        if (packageState.packageDetail) {
+          packageState.isModalOpen = true;
         }
       } catch (error) {
         console.error('Failed to load package details:', error);
@@ -127,42 +130,47 @@ export default {
     };
 
     const openModalForCreate = async () => {
-      state.isModalOpen = true;
-      state.packageCode = '';
-      state.isEditing = true;
-      state.packageDetail = {};
+      packageState.packageCode = '';
+      packageState.isEditing = true;
+      packageState.packageDetail = {};
       const countryData = await getCountries();
-      state.countries = countryData;
+      packageState.countries = countryData;
+      if (packageState.countries.length > 0) {
+        packageState.isModalOpen = true;
+      }
     };
 
     const closeModal = () => {
-      Object.assign(state, { ...initialState });
+      Object.assign(packageState, {
+        isModalOpen: false,
+        packageCode: '',
+        isEditing: false,
+        packageDetail: {},
+        countries: [],
+      });
     };
 
     const setCurrentPage = (page) => {
-      state.currentPage = page;
+      paginationState.currentPage = page;
       fetchPackages();
     };
 
-    provide('empId', state.empId);
-    provide('packageCode', state.packageCode);
-    provide('isEditing', state.isEditing);
-    provide('packageDetail', state.packageDetail);
-    provide('countries', state.countries);
-    provide('packageCnt', state.packageCnt);
-    provide('currentPage', state.currentPage);
-    provide('totalPages', state.totalPages);
+    provide('packageState', packageState);
+    provide('paginationState', paginationState);
     provide('setCurrentPage', setCurrentPage);
+    provide('empId', empId);
 
     return {
-      state,
+      packages,
+      packageState,
+      paginationState,
       openModal,
       openModalForCreate,
       closeModal,
       setCurrentPage,
     };
   },
-};
+});
 </script>
 
 <style scoped lang="scss">

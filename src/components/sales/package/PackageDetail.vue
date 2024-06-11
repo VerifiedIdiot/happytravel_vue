@@ -6,26 +6,26 @@
           <label for="packageName"><legend>상품 이름</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!isEditing">{{ packageDetail.package_name }}</span>
+          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.package_name }}</span>
           <input
             v-else
             type="text"
             id="packageName"
-            v-model="packageDetail.package_name"
+            v-model="packageState.packageDetail.package_name"
             autocomplete="off" />
         </div>
         <div class="form-item">
           <label for="country"><legend>국가</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!isEditing">{{ packageDetail.country }}</span>
+          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.country }}</span>
           <select
             class="custom-select"
             v-else
             id="country"
-            v-model="packageDetail.country">
+            v-model="packageState.packageDetail.country">
             <option
-              v-for="country in countries"
+              v-for="country in packageState.countries"
               :key="country.country_code"
               :value="country.korean_name">
               {{ country.korean_name }}
@@ -38,24 +38,24 @@
           <label for="startDate"><legend>여행시작일</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!isEditing">{{ packageDetail.start_date }}</span>
+          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.start_date }}</span>
           <input
             v-else
             type="date"
             id="startDate"
-            v-model="packageDetail.start_date"
+            v-model="packageState.packageDetail.start_date"
             autocomplete="off" />
         </div>
         <div class="form-item">
           <label for="endDate"><legend>여행종료일</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!isEditing">{{ packageDetail.end_date }}</span>
+          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.end_date }}</span>
           <input
             v-else
             type="date"
             id="endDate"
-            v-model="packageDetail.end_date"
+            v-model="packageState.packageDetail.end_date"
             autocomplete="off" />
         </div>
       </div>
@@ -64,24 +64,24 @@
           <label for="saleStartDate"><legend>판매시작일</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!isEditing">{{ packageDetail.sale_start_date }}</span>
+          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.sale_start_date }}</span>
           <input
             v-else
             type="date"
             id="saleStartDate"
-            v-model="packageDetail.sale_start_date"
+            v-model="packageState.packageDetail.sale_start_date"
             autocomplete="off" />
         </div>
         <div class="form-item">
           <label for="saleEndDate"><legend>판매종료일</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!isEditing">{{ packageDetail.sale_end_date }}</span>
+          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.sale_end_date }}</span>
           <input
             v-else
             type="date"
             id="saleEndDate"
-            v-model="packageDetail.sale_end_date"
+            v-model="packageState.packageDetail.sale_end_date"
             autocomplete="off" />
         </div>
       </div>
@@ -91,15 +91,15 @@
         <label for="flightCode"><legend>항공권 정보</legend></label>
         <div class="partner-info-box">
           <img src="@/assets/icons/passport.png" alt="passport image" loading="lazy" />
-          <span v-if="!isEditing">항공사 {{ packageDetail.airline }}</span>
-          <span v-if="!isEditing">출발지 {{ packageDetail.departure }}</span>
-          <span v-if="!isEditing">도착지 {{ packageDetail.destination }}</span>
-          <span v-if="!isEditing">왕복 {{ packageDetail.flight_price }}원</span>
+          <span v-if="!packageState.isEditing">항공사 {{ packageState.packageDetail.airline }}</span>
+          <span v-if="!packageState.isEditing">출발지 {{ packageState.packageDetail.departure }}</span>
+          <span v-if="!packageState.isEditing">도착지 {{ packageState.packageDetail.destination }}</span>
+          <span v-if="!packageState.isEditing">왕복 {{ packageState.packageDetail.flight_price }}원</span>
           <input
             v-else
             type="text"
             id="flightCode"
-            v-model="packageDetail.flight_code"
+            v-model="packageState.packageDetail.flight_code"
             autocomplete="off" />
         </div>
       </div>
@@ -107,15 +107,15 @@
         <label for="hotelCode"><legend>호텔 정보</legend></label>
         <div class="partner-info-box">
           <img src="@/assets/icons/hotel2.png" alt="hotel image" loading="lazy" />
-          <span v-if="!isEditing">호텔명 {{ packageDetail.hotel_name }}</span>
-          <span v-if="!isEditing">국가 {{ packageDetail.country }}</span>
-          <span v-if="!isEditing">지역 {{ packageDetail.hotel_region }}</span>
-          <span v-if="!isEditing">1박 {{ packageDetail.hotel_price }}원</span>
+          <span v-if="!packageState.isEditing">호텔명 {{ packageState.packageDetail.hotel_name }}</span>
+          <span v-if="!packageState.isEditing">국가 {{ packageState.packageDetail.country }}</span>
+          <span v-if="!packageState.isEditing">지역 {{ packageState.packageDetail.hotel_region }}</span>
+          <span v-if="!packageState.isEditing">1박 {{ packageState.packageDetail.hotel_price }}원</span>
           <input
             v-else
             type="text"
             id="hotelCode"
-            v-model="packageDetail.hotel_code"
+            v-model="packageState.packageDetail.hotel_code"
             autocomplete="off" />
         </div>
       </div>
@@ -123,35 +123,35 @@
         <label for="agencyCode"><legend>현지 여행사 정보</legend></label>
         <div class="partner-info-box">
           <img src="@/assets/icons/agency.png" alt="agency image" loading="lazy" />
-          <span v-if="!isEditing">여행사 {{ packageDetail.agency_name }}</span>
-          <span v-if="!isEditing">국가 {{ packageDetail.country }}</span>
-          <span v-if="!isEditing">지역 {{ packageDetail.agency_region }}</span>
-          <span v-if="!isEditing">하루 {{ packageDetail.agency_price }}원</span>
+          <span v-if="!packageState.isEditing">여행사 {{ packageState.packageDetail.agency_name }}</span>
+          <span v-if="!packageState.isEditing">국가 {{ packageState.packageDetail.country }}</span>
+          <span v-if="!packageState.isEditing">지역 {{ packageState.packageDetail.agency_region }}</span>
+          <span v-if="!packageState.isEditing">하루 {{ packageState.packageDetail.agency_price }}원</span>
           <input
             v-else
             type="text"
             id="agencyCode"
-            v-model="packageDetail.agency_code"
+            v-model="packageState.packageDetail.agency_code"
             autocomplete="off" />
         </div>
       </div>
     </div>
-    <div class="form-under" >
-      <div :class="[ isEditing ? 'editing' : '']">
+    <div class="form-under">
+      <div :class="[ packageState.isEditing ? 'editing' : '']">
         <label for="totalPrice"><legend>총가격</legend></label>
-        <span>{{ packageDetail.total_price }}</span>
+        <span>{{ packageState.packageDetail.total_price }}</span>
       </div>
-      <div :class="[ isEditing ? 'editing' : '']">
+      <div :class="[ packageState.isEditing ? 'editing' : '']">
         <label for="salePrice"><legend>판매가</legend></label>
-        <span>{{ packageDetail.sale_price }}</span>
+        <span>{{ packageState.packageDetail.sale_price }}</span>
       </div>
-      <div v-if="!isEditing">
+      <div v-if="!packageState.isEditing">
         <label for="saleAmount"><legend>판매량</legend></label>
-        <span>{{ packageDetail.sale_amount }}</span>
+        <span>{{ packageState.packageDetail.sale_amount }}</span>
       </div>
-      <div v-if="!isEditing">
+      <div v-if="!packageState.isEditing">
         <label for="assignCode"><legend>승인상태</legend></label>
-        <span v-if="!isEditing">{{ packageDetail.assign_code }}</span>
+        <span v-if="!packageState.isEditing">{{ packageState.packageDetail.assign_code }}</span>
       </div>
     </div>
   </form>
@@ -164,14 +164,12 @@ import { updatePackage } from '@/api/sales/PackageApi';
 export default {
   name: 'PackageDetail',
   setup(_, { emit }) {
-    const packageDetail = inject('packageDetail');
-    const countries = inject('countries');
-    const isEditing = inject('isEditing');
+    const packageState = inject('packageState');
 
     const submitForm = async () => {
       try {
-        await updatePackage(packageDetail.value);
-        isEditing.value = false; 
+        await updatePackage(packageState.packageDetail);
+        packageState.isEditing = false; 
         emit('update:isEditing', false);
       } catch (error) {
         console.error('Failed to update package:', error);
@@ -179,14 +177,13 @@ export default {
     };
 
     return {
-      packageDetail,
-      countries,
-      isEditing,
-      submitForm
+      packageState,
+      submitForm,
     };
   }
 };
 </script>
+
 
 <style scoped lang="scss">
 @import 'tailwindcss/base';
