@@ -136,34 +136,22 @@
         </div>
       </div>
     </div>
-    <div class="form-under">
-      <div>
+    <div class="form-under" >
+      <div :class="[ isEditing ? 'editing' : '']">
         <label for="totalPrice"><legend>총가격</legend></label>
         <span>{{ packageDetail.total_price }}</span>
       </div>
-      <div>
+      <div :class="[ isEditing ? 'editing' : '']">
         <label for="salePrice"><legend>판매가</legend></label>
         <span>{{ packageDetail.sale_price }}</span>
       </div>
-      <div>
+      <div v-if="!isEditing">
         <label for="saleAmount"><legend>판매량</legend></label>
-        <span v-if="!isEditing">{{ packageDetail.sale_amount }}</span>
-        <input
-          v-else
-          type="number"
-          id="saleAmount"
-          v-model="packageDetail.sale_amount"
-          autocomplete="off" />
+        <span>{{ packageDetail.sale_amount }}</span>
       </div>
-      <div>
+      <div v-if="!isEditing">
         <label for="assignCode"><legend>승인상태</legend></label>
         <span v-if="!isEditing">{{ packageDetail.assign_code }}</span>
-        <input
-          v-else
-          type="text"
-          id="assignCode"
-          v-model="packageDetail.assign_code"
-          autocomplete="off" />
       </div>
     </div>
   </form>
@@ -281,6 +269,12 @@ legend {
     width: 100%;
     height: 100%;
   }
+}
+
+.editing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .custom-select {
