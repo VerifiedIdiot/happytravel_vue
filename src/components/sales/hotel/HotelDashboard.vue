@@ -185,20 +185,27 @@ export default {
 
     const saveHotel = async () => {
       try {
+        console.log("Current Hotel before save:", currentHotel.value);
         if (newHotel.value) {
-          await insertHotel(currentHotel.value);
+          const insertResult = await insertHotel(currentHotel.value);
+          console.log("Hotel inserted:", insertResult);
+
+          if (insertResult) {
+            // 새로 삽입된 호텔 정보를 가져온 후 hotels 리스트에 추가
+            const data = await getHotelList();
+            hotels.value = data;
+          }
         } else {
           const hotelCode = currentHotel.value.hotel_code;
-          await updateHotel(hotelCode, currentHotel.value);
-        }
+          const updateResult = await updateHotel(hotelCode, currentHotel.value);
+          console.log("Hotel updated:", updateResult);
 
-        const index = hotels.value.findIndex(
-          (h) => h.hotel_code === currentHotel.value.hotel_code
-        );
-        if (index !== -1) {
-          hotels.value[index] = { ...currentHotel.value };
-        } else {
-          hotels.value.push({ ...currentHotel.value });
+          const index = hotels.value.findIndex(
+            (h) => h.hotel_code === currentHotel.value.hotel_code
+          );
+          if (index !== -1) {
+            hotels.value[index] = { ...currentHotel.value };
+          }
         }
 
         closeModal();
