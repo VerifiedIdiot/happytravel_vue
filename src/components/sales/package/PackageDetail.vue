@@ -1,4 +1,3 @@
-
 <template>
   <form @submit.prevent="submitForm">
     <div class="form-upper">
@@ -7,7 +6,9 @@
           <label for="packageName"><legend>상품 이름</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.package_name }}</span>
+          <span v-if="!packageState.isEditing">{{
+            packageState.packageDetail.package_name
+          }}</span>
           <input
             v-else
             type="text"
@@ -19,7 +20,9 @@
           <label for="country"><legend>국가</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.country }}</span>
+          <span v-if="!packageState.isEditing">{{
+            packageState.packageDetail.country
+          }}</span>
           <select
             class="custom-select"
             v-else
@@ -39,7 +42,9 @@
           <label for="startDate"><legend>여행시작일</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.start_date }}</span>
+          <span v-if="!packageState.isEditing">{{
+            packageState.packageDetail.start_date
+          }}</span>
           <input
             v-else
             type="date"
@@ -51,7 +56,9 @@
           <label for="endDate"><legend>여행종료일</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.end_date }}</span>
+          <span v-if="!packageState.isEditing">{{
+            packageState.packageDetail.end_date
+          }}</span>
           <input
             v-else
             type="date"
@@ -65,7 +72,9 @@
           <label for="saleStartDate"><legend>판매시작일</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.sale_start_date }}</span>
+          <span v-if="!packageState.isEditing">{{
+            packageState.packageDetail.sale_start_date
+          }}</span>
           <input
             v-else
             type="date"
@@ -77,7 +86,9 @@
           <label for="saleEndDate"><legend>판매종료일</legend></label>
         </div>
         <div class="form-item">
-          <span v-if="!packageState.isEditing">{{ packageState.packageDetail.sale_end_date }}</span>
+          <span v-if="!packageState.isEditing">{{
+            packageState.packageDetail.sale_end_date
+          }}</span>
           <input
             v-else
             type="date"
@@ -91,11 +102,22 @@
       <div class="partner-info-container">
         <label for="flightCode"><legend>항공권 정보</legend></label>
         <div class="partner-info-box">
-          <img src="@/assets/icons/passport.png" alt="passport image" loading="lazy" />
-          <span v-if="!packageState.isEditing">항공사 {{ packageState.packageDetail.airline }}</span>
-          <span v-if="!packageState.isEditing">출발지 {{ packageState.packageDetail.departure }}</span>
-          <span v-if="!packageState.isEditing">도착지 {{ packageState.packageDetail.destination }}</span>
-          <span v-if="!packageState.isEditing">왕복 {{ packageState.packageDetail.flight_price }}원</span>
+          <img
+            src="@/assets/icons/passport.png"
+            alt="passport image"
+            loading="lazy" />
+          <span v-if="!packageState.isEditing"
+            >항공사 {{ packageState.packageDetail.airline }}</span
+          >
+          <span v-if="!packageState.isEditing"
+            >출발지 {{ packageState.packageDetail.departure }}</span
+          >
+          <span v-if="!packageState.isEditing"
+            >도착지 {{ packageState.packageDetail.destination }}</span
+          >
+          <span v-if="!packageState.isEditing"
+            >왕복 {{ packageState.packageDetail.flight_price }}원</span
+          >
           <input
             v-else
             type="text"
@@ -107,11 +129,22 @@
       <div class="partner-info-container">
         <label for="hotelCode"><legend>호텔 정보</legend></label>
         <div class="partner-info-box">
-          <img src="@/assets/icons/hotel2.png" alt="hotel image" loading="lazy" />
-          <span v-if="!packageState.isEditing">호텔명 {{ packageState.packageDetail.hotel_name }}</span>
-          <span v-if="!packageState.isEditing">국가 {{ packageState.packageDetail.country }}</span>
-          <span v-if="!packageState.isEditing">지역 {{ packageState.packageDetail.hotel_region }}</span>
-          <span v-if="!packageState.isEditing">1박 {{ packageState.packageDetail.hotel_price }}원</span>
+          <img
+            src="@/assets/icons/hotel2.png"
+            alt="hotel image"
+            loading="lazy" />
+          <span v-if="!packageState.isEditing"
+            >호텔명 {{ packageState.packageDetail.hotel_name }}</span
+          >
+          <span v-if="!packageState.isEditing"
+            >국가 {{ packageState.packageDetail.country }}</span
+          >
+          <span v-if="!packageState.isEditing"
+            >지역 {{ packageState.packageDetail.hotel_region }}</span
+          >
+          <span v-if="!packageState.isEditing"
+            >1박 {{ packageState.packageDetail.hotel_price }}원</span
+          >
           <input
             v-else
             type="text"
@@ -123,11 +156,22 @@
       <div class="partner-info-container">
         <label for="agencyCode"><legend>현지 여행사 정보</legend></label>
         <div class="partner-info-box">
-          <img src="@/assets/icons/agency.png" alt="agency image" loading="lazy" />
-          <span v-if="!packageState.isEditing">여행사 {{ packageState.packageDetail.agency_name }}</span>
-          <span v-if="!packageState.isEditing">국가 {{ packageState.packageDetail.country }}</span>
-          <span v-if="!packageState.isEditing">지역 {{ packageState.packageDetail.agency_region }}</span>
-          <span v-if="!packageState.isEditing">하루 {{ packageState.packageDetail.agency_price }}원</span>
+          <img
+            src="@/assets/icons/agency.png"
+            alt="agency image"
+            loading="lazy" />
+          <span v-if="!packageState.isEditing"
+            >여행사 {{ packageState.packageDetail.agency_name }}</span
+          >
+          <span v-if="!packageState.isEditing"
+            >국가 {{ packageState.packageDetail.country }}</span
+          >
+          <span v-if="!packageState.isEditing"
+            >지역 {{ packageState.packageDetail.agency_region }}</span
+          >
+          <span v-if="!packageState.isEditing"
+            >하루 {{ packageState.packageDetail.agency_price }}원</span
+          >
           <input
             v-else
             type="text"
@@ -138,11 +182,11 @@
       </div>
     </div>
     <div class="form-under">
-      <div :class="[ packageState.isEditing ? 'editing' : '']">
+      <div :class="[packageState.isEditing ? 'editing' : '']">
         <label for="totalPrice"><legend>총가격</legend></label>
         <span>{{ packageState.packageDetail.total_price }}</span>
       </div>
-      <div :class="[ packageState.isEditing ? 'editing' : '']">
+      <div :class="[packageState.isEditing ? 'editing' : '']">
         <label for="salePrice"><legend>판매가</legend></label>
         <span>{{ packageState.packageDetail.sale_price }}</span>
       </div>
@@ -152,7 +196,9 @@
       </div>
       <div v-if="!packageState.isEditing">
         <label for="assignCode"><legend>승인상태</legend></label>
-        <span v-if="!packageState.isEditing">{{ packageState.packageDetail.assign_code }}</span>
+        <span v-if="!packageState.isEditing">{{
+          packageState.packageDetail.assign_code
+        }}</span>
       </div>
     </div>
   </form>
@@ -166,11 +212,11 @@ export default {
   name: 'PackageDetail',
   setup(_, { emit }) {
     const packageState = inject('packageState');
-    
+
     const submitForm = async () => {
       try {
         await updatePackage(packageState.packageDetail);
-        packageState.isEditing = false; 
+        packageState.isEditing = false;
         emit('update:isEditing', false);
       } catch (error) {
         console.error('Failed to update package:', error);
@@ -181,10 +227,9 @@ export default {
       packageState,
       submitForm,
     };
-  }
+  },
 };
 </script>
-
 
 <style scoped lang="scss">
 @import 'tailwindcss/base';
