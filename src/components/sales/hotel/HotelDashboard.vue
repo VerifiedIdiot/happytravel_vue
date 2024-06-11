@@ -104,7 +104,8 @@
         </div>
 
         <div class="button-container">
-          <button class="rounded-md btn-update" type="submit">
+          <button class="rounded-md btn-update" type="button"
+          @click="saveHotel">
             {{ newHotel ? "등록" : "저장" }}
           </button>
           <button
