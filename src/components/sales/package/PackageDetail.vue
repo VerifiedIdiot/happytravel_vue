@@ -1,3 +1,4 @@
+
 <template>
   <form @submit.prevent="submitForm">
     <div class="form-upper">
@@ -165,7 +166,7 @@ export default {
   name: 'PackageDetail',
   setup(_, { emit }) {
     const packageState = inject('packageState');
-
+    
     const submitForm = async () => {
       try {
         await updatePackage(packageState.packageDetail);
