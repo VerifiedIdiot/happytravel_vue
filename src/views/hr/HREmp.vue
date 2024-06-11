@@ -1,78 +1,106 @@
 <template>
-  <div id="HREmp">
-    <div class="empList1">
-      <span>사원 리스트 조회</span>
-      <p>
-        <span>
-          <select v-model="searchType" name="emplist2" id="emplist2">
-            <option value="">-</option>
-            <option value="emp_id">사원번호</option>
-            <option value="emp_name">사원명</option>
-            <option value="dept_code">부서명</option>
-            <option value="pos_code">직급</option>
-          </select>
-          <input v-model="searchQuery" type="text" />
-          <button @click="handleSearch">조회</button>
-        </span>
-      </p>
-      <div class="list">
-        <table>
-          <colgroup width="100px">
-            <col width="25%" />
-            <col width="25%" />
-            <col width="25%" />
-            <col width="25%" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>사원번호</th>
-              <th>사원명</th>
-              <th>부서</th>
-              <th>직급</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-if="empList.length > 0">
-              <template v-for="emp in filteredEmpList" :key="emp.emp_id">
-                <tr @click="updateEmpInfoHandler(emp.emp_id)">
-                  <td>{{ emp.emp_id }}</td>
-                  <td>{{ emp.emp_name }}</td>
-                  <td>{{ emp.dept_name }}</td>
-                  <td>{{ emp.pos_name }}</td>
-                </tr>
-              </template>
-            </template>
-            <template v-else>
-              <tr>
-                <td colspan="7">데이터 없음</td>
+  <div id="hr-emp" class="flex flex-col w-1/4 mx-2 p-px">
+    <div id="serch-group" class="flex w-full">
+      <select
+        id="emplist2"
+        name="emplist2"
+        v-model="searchType"
+        class="w-1/4 h-10 pl-1 border border-gray-200 outline-none"
+      >
+        <option value="">-</option>
+        <option value="emp_id">사원번호</option>
+        <option value="emp_name">사원명</option>
+        <option value="dept_code">부서명</option>
+        <option value="pos_code">직급</option>
+      </select>
+      <input
+        id="searchQuery"
+        v-model="searchQuery"
+        type="text"
+        class="w-1/2 h-10 pl-1 border border-gray-200 outline-none ml-[2px]"
+        placeholder="검색어 입력"
+      />
+      <button
+        id="newEmpBtn"
+        @click="handleNewEmp"
+        class="w-1/4 h-10 bg-blue-600 hover:bg-blue-500 rounded-md text-white font-medium shadow-md outline-none ml-[2px]"
+      >
+        신규등록
+      </button>
+    </div>
+    <div id="emp-table" class="flex w-full mt-1">
+      <table class="text-center shadow-md border-0">
+        <colgroup>
+          <col class="w-1/4" />
+          <col class="w-1/4" />
+          <col class="w-1/4" />
+          <col class="w-1/4" />
+        </colgroup>
+        <thead class="bg-slate-20">
+          <tr>
+            <th class="text-center font-bold border border-gray-200">
+              사원번호
+            </th>
+            <th class="text-center font-bold border border-gray-200">사원명</th>
+            <th class="text-center font-bold border border-gray-200">부서</th>
+            <th class="text-center font-bold border border-gray-200">직급</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white">
+          <template v-if="empList.length > 0">
+            <template v-for="emp in filteredEmpList" :key="emp.emp_id">
+              <tr
+                @click="updateEmpInfoHandler(emp.emp_id)"
+                class="bg-white hover:bg-slate-50 test"
+              >
+                <td class="border border-gray-200">
+                  {{ emp.emp_id }}
+                </td>
+                <td class="border border-gray-200">
+                  {{ emp.emp_name }}
+                </td>
+                <td class="border border-gray-200">
+                  {{ emp.dept_name }}
+                </td>
+                <td class="border border-gray-200">
+                  {{ emp.pos_name }}
+                </td>
               </tr>
             </template>
-          </tbody>
-        </table>
-        <div>
-          <button @click="handleNewEmp">신규등록</button>
-        </div>
-      </div>
+          </template>
+          <template v-else>
+            <tr>
+              <td colspan="4" class="text-center">데이터 없음</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
     </div>
-    <div v-if="onEmpForm">
-      <EmpForm :employee="employee" />
-      <!-- :employee="selectedEmployee" -->
-    </div>
+  </div>
+  <div id="hr-emp-form" class="flex w-6/12 mx-2 p-px">
+    <EmpForm v-if="onEmpForm" :employee="employee" @saved="handleEmpSaved" />
   </div>
 </template>
 
 <script>
 import { ref, onMounted, computed } from "vue";
-import { getEmpList, getEmpInfo, searchEmpList } from "@/api/hr/EmpApi";
+import {
+  getEmpList,
+  getEmpInfo,
+  searchEmpList,
+  generateLastEmpId,
+} from "@/api/hr/EmpApi";
 import EmpForm from "@/components/hr/EmpForm.vue";
 
 export default {
   name: "HREmp",
+  components: {
+    EmpForm,
+  },
   setup() {
     const empList = ref([]);
     const onEmpForm = ref(false);
     const employee = ref([]);
-
     const searchType = ref("");
     const searchQuery = ref("");
 
@@ -91,16 +119,42 @@ export default {
     const updateEmpInfoHandler = async (empId) => {
       try {
         const empInfo = await getEmpInfo(empId);
-        employee.value = empInfo; // empInfo를 selectedEmployee에 할당
+        employee.value = empInfo;
         onEmpForm.value = true;
       } catch (error) {
         console.error("Error fetching emp info: ", error);
       }
     };
 
-    const handleNewEmp = () => {
-      employee.value = null; // 신규 등록 시 selectedEmployee를 null로 설정
+    const handleNewEmp = async () => {
+      const newId = await generateLastEmpId();
+      employee.value = {
+        emp_id: `${newId}`,
+        password: "000000",
+        photo_url: "",
+        emp_name: "",
+        dept_code: "",
+        pos_code: "",
+        join_date: "",
+        ssn: "",
+        zip_code: "",
+        address: "",
+        address_detail: "",
+        phone: "",
+        mobile: "",
+        status_code: "",
+        leave_date: "",
+        bank_code: "",
+        account_no: "",
+        salary: "",
+        remaerks: "",
+      };
       onEmpForm.value = true;
+    };
+
+    const handleEmpSaved = async () => {
+      onEmpForm.value = false;
+      await fetchEmpListHandler();
     };
 
     const filteredEmpList = computed(() => {
@@ -116,9 +170,12 @@ export default {
           return emp.pos_name
             .toLowerCase()
             .includes(searchQuery.value.toLowerCase());
-        } else {
-          emp[searchType.value]
-            .toString()
+        } else if (searchType.value === "emp_id") {
+          return emp.emp_id
+            .toLowerCase()
+            .includes(searchQuery.value.toLowerCase());
+        } else if (searchType.value === "emp_name") {
+          return emp.emp_name
             .toLowerCase()
             .includes(searchQuery.value.toLowerCase());
         }
@@ -143,6 +200,7 @@ export default {
     onMounted(() => {
       fetchEmpListHandler();
     });
+
     return {
       empList,
       onEmpForm,
@@ -154,33 +212,33 @@ export default {
       searchQuery,
       filteredEmpList,
       handleSearch,
+      handleEmpSaved,
     };
-  },
-  data() {
-    return {};
-  },
-  components: {
-    EmpForm,
   },
 };
 </script>
 
-<style>
-#HREmp {
-  display: flex;
-  justify-content: left;
+<style scoped>
+table * {
+  background-color: white;
 }
-#HREmp .empList1,
-#HREmp .empSave {
-  padding: 30px;
+input,
+select,
+textarea,
+th,
+td {
+  border: 1.5px solid rgb(243, 244, 246);
 }
-#HREmp .empList1 tr td {
-  text-align: center;
+tr {
+  background-color: #fff;
 }
-.empSave div p {
-  margin: 10px 0;
+tbody tr:hover {
+  background: rgb(235, 235, 235);
 }
-.empSave div p input {
-  margin: 0 10px;
+table,
+thead,
+tbody,
+th {
+  background: rgb(229 231 235);
 }
 </style>
