@@ -3,10 +3,42 @@ import apiClient from "../axios";
 // GET
 export const getAttendanceManagementList = async () => {
   try {
-    const response = await apiClient.get("/attendances/attendanceManagement");
+    const response = await apiClient.get("/attendance/attendanceManagement");
     return response.data;
   } catch (error) {
     console.error("Error fetching attendanceManagement list:", error);
+    throw error;
+  }
+};
+
+export const approveRequest = async (attendanceCode, status) => {
+  try {
+    console.log(`휴가 신청 ${status}: ${attendanceCode}`);
+    const response = await apiClient.patch(`/attendance/attendanceManagement/${attendanceCode}?status=${status}`, null);
+    return response.data;
+  } catch (error) {
+    console.error(`Error ${status} attendanceManagement:`, error);
+    throw error;
+  }
+};
+
+export const rejectRequest = async (attendanceCode, status) => {
+  try {
+    console.log(`반려 신청 ${status}: ${attendanceCode}`);
+    const response = await apiClient.patch(`/attendance/attendanceManagement/${attendanceCode}?status=${status}`, null);
+    return response.data;
+  } catch (error) {
+    console.error(`Error ${status} attendanceManagement:`, error);
+    throw error;
+  }
+};
+
+export const getAttendanceHistory = async () => {
+  try {
+    const response = await apiClient.get("/attendance/attendanceConfirm");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching attendanceHistory list:", error);
     throw error;
   }
 };
