@@ -1,8 +1,6 @@
 <template>
   <div class="pagination">
-    <button
-      @click="goToFirstPage"
-      :disabled="paginationState.currentPage === 1">
+    <button @click="goToFirstPage" :disabled="paginationState.currentPage === 1">
       «
     </button>
     <button
@@ -39,12 +37,7 @@ export default {
   name: 'Pagination',
   setup() {
     const paginationState = inject('paginationState');
-    const fetchPackages = inject('fetchPackages');
-
-    const setCurrentPage = (page) => {
-      paginationState.currentPage = page;
-      fetchPackages();
-    };
+    const setCurrentPage = inject('setCurrentPage');
 
     const prevPage = () => {
       if (paginationState.currentPage > 1) {
