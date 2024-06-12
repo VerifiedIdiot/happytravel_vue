@@ -4,33 +4,38 @@
 
 <script setup>
 import { provide, ref, reactive } from 'vue';
-import { getPackageList, getPackageCnt } from '@/api/sales/PackageApi';
+import { getHotelList, getHotelCnt } from '@/api/sales/HotelApi';
 
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
-const packages = ref([]);
+const hotels = ref([]);
 
-const initialPackageState = {
+// 초기화
+const initialHotelState = {
   isModalOpen: false,
-  packageCode: '',
+  hotelCode: '',
   isEditing: false,
-  packageDetail: {},
+  hotelDetail: {},
   countries: [],
 };
-const packageState = reactive({ ...initialPackageState });
 
+const hotelState = reactive({ ...initialHotelState });
+
+// 초기세팅
 const initialPaginationState = {
-  packageCnt: 0,
+  hotelCnt: 0,
   currentPage: 1,
   itemsPerPage: 5,
   totalPages: 0,
 };
-const paginationState = reactive({ ...initialPaginationState });
 
-const resetPackageState = () => {
-  Object.assign(packageState, initialPackageState);
+const paginationState = reactive({ ...initialHotelState });
+
+// 필드 초기화
+const resetHotelState = () => {
+  Object.assign(hotelState, initialHotelState);
 };
 
-const fetchPackages = async () => {
+const fetchHotels = async () => {
   try {
     const params = {
       empId,
@@ -38,27 +43,27 @@ const fetchPackages = async () => {
       offset: paginationState.itemsPerPage * (paginationState.currentPage - 1),
     };
     const [data, cnt] = await Promise.all([
-      getPackageList(params),
-      getPackageCnt({ empId }),
+      getHotelList(params),
+      getHotelCnt({ empId }),
     ]);
-    packages.value = data;
-    paginationState.packageCnt = cnt;
+    hotels.value = data;
+    paginationState.hotelCnt = cnt;
     paginationState.totalPages = Math.ceil(cnt / paginationState.itemsPerPage);
   } catch (error) {
-    console.error('Failed to fetch packages:', error);
+    console.error('Failed to fetch hotels:', error);
   }
 };
 
 const setCurrentPage = (page) => {
   paginationState.currentPage = page;
-  fetchPackages();
+  fetchHotels();
 };
 
 provide('empId', empId);
-provide('packages', packages);
-provide('packageState', packageState);
-provide('resetPackageState', resetPackageState);
+provide('hotels', hotels);
+provide('hotelState', hotelState);
+provide('resetHotelState', resetHotelState);
 provide('paginationState', paginationState);
 provide('setCurrentPage', setCurrentPage);
-provide('fetchPackages', fetchPackages);
+provide('fetchHotels', fetchHotels);
 </script>

@@ -14,12 +14,34 @@
         <h1>{{ title }}</h1>
       </div>
       <slot></slot>
+      <div class="button-container">
+        <button
+          type="button"
+          class="btn-update"
+          v-if="!hotelState.isEditing"
+          @click="toggleEditing"
+        >
+          수정하기
+        </button>
+        <button
+          type="submit"
+          class="btn-update"
+          v-if="packageState.isEditing"
+          @click="handleSave"
+        >
+          저장
+        </button>
+        <button type="button" class="btn-close" @click="handleClose">
+          닫기
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { inject } from "vue";
+import { inject, onMounted, onUnmounted } from "vue";
+import { getCountries } from "@/api/sales/HotelApi";
 
 export default {
   name: "HotelModal",
@@ -33,17 +55,42 @@ export default {
       default: "@/assets/icons/hotel2.png",
     },
   },
-  emits: ['close' ],
+  emits: ["close", "update:isEditing"],
   setup(_, { emit }) {
-    const isEditing = inject('isEditing');
+    const hotelState = inject("hotelState");
+    const resetHotelState = inject("resetHotelState");
 
-    const handleClose = () => {
-      isEditing.value = false;
-      emit('close');
+    const toggleEditing = async () => {
+      const countryData = await getCountries();
+      packageState.countries = countryData;
+      if (packageState.countries) packageState.isEditing = true;
     };
 
+    const isEditing = inject("isEditing");
+
+    const handleSave = () => {
+      emit("update:isEditing", false);
+      resetHotelState();
+    };
+
+    const handleClose = () => {
+      resetHotelState();
+      emit("close");
+    };
+
+    onMounted(() => {
+      document.addEventListener("keydown", handleKeyDown);
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener("keydown", handleKeyDown);
+    });
+
     return {
+      hotelState,
       handleClose,
+      handleSave,
+      toggleEditing,
     };
   },
 };
