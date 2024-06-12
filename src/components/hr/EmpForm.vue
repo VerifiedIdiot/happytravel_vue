@@ -88,6 +88,7 @@
           type="text"
           id="ssn_first"
           v-model="ssnFirst"
+          :readonly="isReadOnly"
           @input="validateSSNFirst"
           maxlength="6"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -97,6 +98,7 @@
           type="text"
           id="ssn_last"
           v-model="ssnLast"
+          :readonly="isReadOnly"
           @input="validateSSNLast"
           maxlength="7"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -492,18 +494,6 @@ export default {
         : "수정";
     });
 
-    /*************** kakao 주소 검색 api *******************/
-    const searchAddress = () => {
-      new daum.Postcode({
-        oncomplete: function (data) {
-          thisEmployee.value.zip_code = data.zonecode;
-          thisEmployee.value.address = data.address;
-          document.getElementById("address_detail").focus();
-        },
-      }).open();
-    };
-    /*************** kakao 주소 검색 api *******************/
-
     const getStatusName = (statusCode) => {
       const status = empStatusList.value.find(
         (status) => status.stat_code === statusCode
@@ -658,43 +648,39 @@ export default {
       }
     };
 
+    /********************* 사원정보 중복 체크 ****************************/
+    const validateInput = (input, maxLength) => {
+      input.value = input.value.replace(/\D/g, "").slice(0, maxLength);
+    };
+
     const validateSSNFirst = () => {
-      ssnFirst.value = ssnFirst.value.replace(/\D/g, "").slice(0, 6);
+      validateInput(ssnFirst, 6);
     };
 
     const validateSSNLast = () => {
-      ssnLast.value = ssnLast.value.replace(/\D/g, "").slice(0, 7);
+      validateInput(ssnLast, 7);
     };
 
     const validatePhoneSecond = () => {
-      phoneSecond.value = phoneSecond.value.replace(/\D/g, "").slice(0, 4);
+      validateInput(phoneSecond, 4);
     };
 
     const validatePhoneThird = () => {
-      phoneThird.value = phoneThird.value.replace(/\D/g, "").slice(0, 4);
+      validateInput(phoneThird, 4);
     };
 
     const validateMobileSecond = () => {
-      mobileSecond.value = mobileSecond.value.replace(/\D/g, "").slice(0, 4);
+      validateInput(mobileSecond, 4);
     };
-
     const validateMobileThird = () => {
-      mobileThird.value = mobileThird.value.replace(/\D/g, "").slice(0, 4);
+      validateInput(mobileThird, 4);
+    };
+    const validatePassword = (password) => {
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/;
+      return regex.test(password);
     };
 
-    const checkDuplicates = async () => {
-      const fieldsToCheck = [
-        { field: "ssn", value: `${ssnFirst.value}-${ssnLast.value}` },
-        {
-          field: "mobile",
-          value: `${mobileFirst.value}-${mobileSecond.value}-${mobileThird.value}`,
-        },
-        {
-          field: "bank",
-          value: `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}`,
-        },
-      ];
-
+    const checkDuplicates = async (fieldsToCheck) => {
       for (const { field, value } of fieldsToCheck) {
         const isDuplicate = await checkDuplicate(field, value);
         if (isDuplicate) {
@@ -712,17 +698,15 @@ export default {
       }
       return false;
     };
-
-    const validatePassword = (password) => {
-      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/;
-      return regex.test(password);
-    };
+    /********************* 사원정보 중복 체크 ****************************/
 
     const saveEmpHandler = async () => {
       try {
-        // 사원 수정시에만 비밀번호 유효성 검사
+        const fieldsToCheck = [];
+        // 사원 수정시 && 기존 비밀번호와 다를때 비밀번호 유효성 검사
         if (
           buttonText.value === "수정" &&
+          props.employee.password !== thisEmployee.value.password &&
           !validatePassword(thisEmployee.value.password)
         ) {
           alert(
@@ -737,7 +721,18 @@ export default {
           return;
         }
 
-        if (await checkDuplicates()) {
+        // 계좌번호 유효성 검사, 기존 계좌번호와 다를 때만 검사
+        if (
+          `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}` !==
+          `${props.employee.bank_code}-${props.employee.account_no}`
+        ) {
+          fieldsToCheck.push({
+            field: "bank",
+            value: `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}`,
+          });
+        }
+
+        if (await checkDuplicates(fieldsToCheck)) {
           return;
         }
 
@@ -770,6 +765,20 @@ export default {
         }
       }
     };
+
+    /*************** kakao 주소 검색 api *******************/
+
+    const searchAddress = () => {
+      new daum.Postcode({
+        oncomplete: function (data) {
+          thisEmployee.value.zip_code = data.zonecode;
+          thisEmployee.value.address = data.address;
+          document.getElementById("address_detail").focus();
+        },
+      }).open();
+    };
+
+    /*************** kakao 주소 검색 api *******************/
 
     onMounted(() => {
       fetchDepartmentListHandler();
