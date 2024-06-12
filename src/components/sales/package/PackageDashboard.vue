@@ -54,14 +54,18 @@ import Pagination from '@/components/sales/package/Pagination.vue';
 const packages = inject('packages');
 const packageState = inject('packageState');
 const resetPackageState = inject('resetPackageState');
+const resetPartnerState = inject('resetPartnerState')
 const fetchPackages = inject('fetchPackages');
 const empId = inject('empId');
 
-onMounted(fetchPackages);
+onMounted(() => {
+  fetchPackages()
+  console.log()
+});
 
 const openModal = async (pkgCode = '') => {
   packageState.packageCode = pkgCode;
-  packageState.isModalOpen = false;
+ 
   try {
     if (pkgCode) {
       const data = await getPackage({
@@ -69,6 +73,8 @@ const openModal = async (pkgCode = '') => {
         empId: empId,
       });
       packageState.packageDetail = data;
+      if (packageState.packageDetail)
+      console.log(packageState.packageDetail)
     } else {
       packageState.packageDetail = {};
     }
@@ -92,7 +98,9 @@ const openModalForCreate = async () => {
 };
 
 const closeModal = () => {
-  resetPackageState();
+  resetPackageState()
+  resetPartnerState()
+  packageState.isModalOpen = false
 };
 </script>
 
