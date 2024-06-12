@@ -1,197 +1,152 @@
 <template>
   <div class="wrapper">
-    <!-- <p>Hotel Dashboard</p> -->
-    <div class="btn-item">
-      <button class="btn-create" @click="openModal()">신규등록</button>
-    </div>
-    <div class="sales-container">
-      <table>
-        <thead>
-          <tr>
-            <th>호텔명</th>
-            <th>전화번호</th>
-            <th>국가</th>
-            <th>지역</th>
-            <th>주소</th>
-            <th>가격</th>
-            <th>Y/N</th>
-            <th>수정</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="hotel in isUsedHotel" :key="hotel.hotel_code">
-            <td>{{ hotel.hotel_name }}</td>
-            <td>{{ hotel.phone }}</td>
-            <td>{{ hotel.country }}</td>
-            <td>{{ hotel.region }}</td>
-            <td>{{ hotel.address }}</td>
-            <td>{{ formatPrice(hotel.price) }}</td>
-            <td>{{ hotel.is_used }}</td>
-            <td><button @click="openModal(hotel)">수정</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div v-if="showModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>{{ newHotel ? '호텔 등록' : '호텔 수정' }}</h2>
+    <div class="hotel-container">
+      <div class="hotel-box">
+        <div class="hotel-item">
+          <button class="btn-create" @click="openModalForCreate">
+            <p>신규등록</p>
+          </button>
         </div>
-        <div class="modal-box">
-          <form @submit.prevent="saveHotel">
-            <div>
-              <div class="modal-item">
-                <label for="hotel_name">호텔명 |</label>
-                <input type="text" v-model="currentHotel.hotel_name" required>
-              </div>
-              <div class="modal-item">
-                <label for="phone">전화번호 |</label>
-                <input type="text" v-model="currentHotel.phone" required>
-              </div>
-              <div class="modal-item">
-                <label for="country">국가 |</label>
-                <input type="text" v-model="currentHotel.country" required>
-              </div>
-              <!-- <div class="modal-item">
-                <label for="region">지역 |</label>
-                <input type="text" v-model="currentHotel.region" required>
-              </div>
-              <div class="modal-item">
-                <label for="address">주소 |</label>
-                <input type="text" v-model="currentHotel.address" required>
-              </div> -->
-              <div class="modal-item">
-                <label for="price">가격 |</label>
-                <input type="text" v-model="currentHotel.price" required>
-              </div>
-              <div class="modal-item">
-                <label for="is_used">Y/N |</label>
-                <select v-model="currentHotel.is_used" required>
-                  <option value="Y">Yes</option>
-                  <option value="N">No</option>
+      </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>호텔명</th>
+              <th>전화번호</th>
+              <th>국가</th>
+              <th>주소</th>
+              <th>가격</th>
+              <th>
+                <select>
+                  <option value="all">사용유무</option>
+                  <option value="Y">사용</option>
+                  <option value="N">미사용</option>
                 </select>
-              </div>
-            </div>
-
-            <div class="btn-reg">
-              <button class="rounded-md btn-submit" type="submit">{{ newHotel ? '등록' : '저장' }}</button>
-              <button class="rounded-md btn-close" type="button" @click="closeModal">닫기</button>
-            </div>
-          </form>
-        </div>
-
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="htl in hotels"
+              :key="htl.hotel_code"
+              @click="openModal(htl.hotel_code)"
+            >
+              <td>{{ htl.hotel_name }}</td>
+              <td>{{ htl.phone }}</td>
+              <td>{{ htl.country }}</td>
+              <td>{{ htl.address }}</td>
+              <td>{{ htl.price }}</td>
+              <td>{{ htl.is_used }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+    <HotelModal v-if="isModalOpen" @close="closeModal">
+      <HotelDetail />
+    </HotelModal>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { getHotelList, getLastHotelCode, insertHotel, updateHotel } from '@/api/sales/HotelApi';
+import { ref, onMounted, provide } from "vue";
+import { getHotelList, getHotel, getCountries } from "@/api/sales/HotelApi";
+import HotelDetail from "@/components/sales/hotel/HotelDetail.vue";
+import HotelModal from "@/components/sales/hotel/HotelModal.vue";
 
 export default {
-  name: 'HotelDashboard',
+  name: "HotelDashboard",
+  components: {
+    HotelDetail,
+    HotelModal,
+  },
+
   setup() {
     const hotels = ref([]);
-    const showModal = ref(false);
-    const currentHotel = ref({});
-    const newHotel = ref(true);
-
-    const formatPrice = (price) => {
-      return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(price);
-    };
+    const isModalOpen = ref(false);
+    const hotelCode = ref("");
+    const empId = sessionStorage.getItem("empId") || "EMP30002";
+    const hotelDetail = ref({});
+    const countries = ref([]);
 
     const fetchHotels = async () => {
       try {
-
-        hotels.value = await getHotelList();
-        console.log('Fetched flights:', hotels.value);
-      } catch (error) {
-        console.error('Error fetching flight list:', error);
-      }
-    };
-
-    const openModal = (hotel) => {
-      if (hotel) {
-        currentHotel.value = { ...hotel };
-        newHotel.value = false;
-      } else {
-        currentHotel.value = {
-          hotel_name: '',
-          phone: '',
-          country: '',
-          region: '',
-          address: '',
-          price: '',
-          is_used: 'Y',
+        // 서버에 요청을 보낼 때 사용할 매개변수를 설정함
+        const params = {
+          empId,
         };
-        newHotel.value = true;
-      }
-      showModal.value = true;
-    };
-
-    const closeModal = () => {
-      showModal.value = false;
-    };
-
-    const saveHotel = async () => {
-      try {
-        const empId = sessionStorage.getItem('empId') || 'EMP30002';
-        // currentHotel.value.empId = empId;
-        console.log('Updating hotel with data:', currentHotel.value, empId);
-        const hotelCode = currentHotel.value.hotel_code;
-
-        if (newHotel.value) {
-          const lastHotelCode = await getLastHotelCode();
-          let newHotelCode;
-          if (lastHotelCode) {
-            const numericPart = parseInt(lastHotelCode.replace('H', ''), 10);
-            const newNumericPart = numericPart + 1;
-            newHotelCode = `H${String(newNumericPart).padStart(3, '0')}`;
-          } else {
-            newHotelCode = 'H001';
-          }
-          currentHotel.value.hotel_code = newHotelCode;
-          const newHotel = await insertHotel(currentHotel.value);
-          hotels.value.push(newHotel);
-        } else {
-          const hotelCode = currentHotel.value.hotel_code;
-          await updateHotel(hotelCode, currentHotel.value);
-          const index = hotels.value.findIndex(h => h.hotel_code === hotelCode);
-          if (index !== -1) {
-            hotels.value[index] = { ...currentHotel.value };
-          }
-        }
-
-        const index = hotels.value.findIndex(h => h.hotel_code === hotelCode);
-        if (index !== -1) {
-          hotels.value[index] = { ...currentHotel.value };
-        } else {
-          hotels.value.push({ ...currentHotel.value });
-        }
-
-        closeModal();
+        // getHotelList 함수를 호출하여 호텔 리스트를 가져옴
+        const hotelList = await getHotelList(params);
+        // 가져온 호텔 리스트를 처리함
+        hotels.value = hotelList;
+        console.log(hotels.value);
       } catch (error) {
-        console.error('Error saving hotel:', error);
+        console.error("Failed to fetch hotels:", error);
       }
     };
-
-    const isUsedHotel = computed(() => {
-      return hotels.value.filter(hotel => hotel.is_used === 'Y');
-    });
 
     onMounted(fetchHotels);
 
+    const openModal = async (htlCode = '') => {
+      console.log(htlCode)
+      hotelCode.value = htlCode;
+      isModalOpen.value = false;
+
+      try {
+        if (htlCode) {
+          const data = await getHotel({
+            hotelCode: htlCode,
+            empId: empId,
+          });
+          if (data) {
+            console.log(data)
+          }
+          
+          hotelDetail.value = data;
+        } else {
+          hotelDetail.value = {};
+        }
+
+        if (hotelDetail.value) {
+          setTimeout(() => {
+            isModalOpen.value = true;
+          }, 0);
+        }
+      } catch (error) {
+        console.error("Failed to load hotel details:", error);
+      }
+    };
+
+    const openModalForCreate = async () => {
+      // isModalOpen.value = true;
+      hotelCode.value = "";
+      hotelDetail.value = {};
+      const countryData = await getCountries();
+      countries.value = countryData;
+    };
+
+    const closeModal = () => {
+      isModalOpen.value = false;
+      hotelCode.value = "";
+      hotelDetail.value = {};
+    };
+
+    provide("empId", empId);
+    provide("hotelCode", hotelCode);
+    provide("hotelDetail", hotelDetail);
+    provide("countries", countries);
+
     return {
       hotels,
-      showModal,
-      currentHotel,
-      formatPrice,
+      isModalOpen,
       openModal,
       closeModal,
-      saveHotel,
-      newHotel,
-      isUsedHotel,
+      openModalForCreate,
+      hotelCode,
+      empId,
+      hotelDetail,
+      countries,
     };
   },
 };
