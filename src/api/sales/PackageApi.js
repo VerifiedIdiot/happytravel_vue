@@ -87,34 +87,3 @@ export const getPackageCnt = async (params) => {
   }
 
 }
-
-export const getfilteredHotelList = async (params) => {
-  try {
-    const response = await apiClient.get('sales/package-hotel-list', {params})
-    return response.data
-  } catch (error) {
-    console.error('error fetching hotelList', error)
-    throw error
-  }
-}
-
-export const getfilteredFlightList = async (params) => {
-  try {
-    const response = await apiClient.get('sales/package-flight-list', {params})
-    return response.data
-  } catch (error) {
-    console.error('error fetching flightList', error)
-    throw error
-  }
-}
-
-export const getfilteredAgencyList = async (params) => {
-  try {
-    const response = await apiClient.get('sales/package-agency-list', {params})
-    return response.data
-  } catch (error) {
-    console.error('error fetching agencyList', error)
-    throw error
-  }
-}
-

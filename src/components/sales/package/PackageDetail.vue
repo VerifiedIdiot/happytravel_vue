@@ -23,15 +23,11 @@
           <span v-if="!packageState.isEditing">{{
             packageState.packageDetail.country
           }}</span>
-
           <select
             class="custom-select"
             v-else
             id="country"
-            v-model="packageState.packageDetail.country"
-            @change="setCountryCode">
-            >
-
+            v-model="packageState.packageDetail.country">
             <option
               v-for="country in packageState.countries"
               :key="country.country_code"
@@ -39,15 +35,6 @@
               {{ country.korean_name }}
             </option>
           </select>
-          <p
-            class="verification-text"
-            v-if="
-              partnerState.selectedCountryCode === '' &&
-              packageState.isEditing &&
-              packageState.packageDetail.country == undefined
-            ">
-            국가를 먼저 선택해 주세요
-          </p>
         </div>
       </div>
       <div>
@@ -113,17 +100,7 @@
     </div>
     <div class="form-middle">
       <div class="partner-info-container">
-        <p
-          class="verification-text"
-          v-if="
-            partnerState.selectedCountryCode === '' &&
-            packageState.isEditing &&
-            packageState.packageDetail.country == undefined
-          ">
-          국가를 먼저 선택해주세요
-        </p>
-        <p class="verification-text" style="color: blue;" v-else>항공권을 선택해주세요</p>
-        <label for="flightCode"><legend>항공권 정보</legend> </label>
+        <label for="flightCode"><legend>항공권 정보</legend></label>
         <div class="partner-info-box">
           <img
             src="@/assets/icons/passport.png"
@@ -150,20 +127,7 @@
         </div>
       </div>
       <div class="partner-info-container">
-        <p
-            class="verification-text"
-            v-if="
-              partnerState.selectedCountryCode === '' &&
-              packageState.isEditing &&
-              packageState.packageDetail.country == undefined
-            ">
-            국가를 먼저 선택해 주세요
-          </p>
-          <p class="verification-text" style="color: blue;" v-else>호텔을 선택해주세요</p>
-        <label for="hotelCode"
-          ><legend>호텔 정보</legend>
-         </label
-        >
+        <label for="hotelCode"><legend>호텔 정보</legend></label>
         <div class="partner-info-box">
           <img
             src="@/assets/icons/hotel2.png"
@@ -190,20 +154,7 @@
         </div>
       </div>
       <div class="partner-info-container">
-        <p
-            class="verification-text"
-            v-if="
-              partnerState.selectedCountryCode === '' &&
-              packageState.isEditing &&
-              packageState.packageDetail.country == undefined
-            ">
-            국가를 먼저 선택해 주세요
-          </p>
-          <p class="verification-text" style="color: blue;" v-else>현지여행사를 선택해주세요</p>
-        <label for="agencyCode"
-          ><legend>현지 여행사 정보</legend>
-         </label
-        >
+        <label for="agencyCode"><legend>현지 여행사 정보</legend></label>
         <div class="partner-info-box">
           <img
             src="@/assets/icons/agency.png"
@@ -254,18 +205,13 @@
 </template>
 
 <script>
-import { inject, onMounted } from 'vue';
+import { inject } from 'vue';
 import { updatePackage } from '@/api/sales/PackageApi';
 
 export default {
   name: 'PackageDetail',
   setup(_, { emit }) {
     const packageState = inject('packageState');
-    const partnerState = inject('partnerState');
-
-    onMounted(() => {
-      console.log(packageState.packageDetail.country);
-    });
 
     const submitForm = async () => {
       try {
@@ -277,25 +223,9 @@ export default {
       }
     };
 
-    const setCountryCode = () => {
-      const selectedCountry = packageState.countries.find(
-        (country) => country.korean_name === packageState.packageDetail.country
-      );
-      if (selectedCountry) {
-        partnerState.selectedCountryCode = selectedCountry.country_code;
-      } else {
-        partnerState.selectedCountryCode = '';
-      }
-      if (partnerState.selectedCountryCode) {
-        console.log(partnerState.selectedCountryCode);
-      }
-    };
-
     return {
       packageState,
-      partnerState,
       submitForm,
-      setCountryCode,
     };
   },
 };
@@ -318,12 +248,7 @@ form {
 legend {
   font-size: 1.5rem;
 }
-.verification-text {
-  position: absolute;
-  top: -16px;
-  font-size: 0.7rem;
-  color: red;
-}
+
 .form-upper {
   display: flex;
   flex-direction: column;
@@ -333,22 +258,16 @@ legend {
   box-shadow: 2px 4px 15px 3px rgba(0, 0, 0, 0.2);
   div {
     display: flex;
+
     flex-direction: row;
     align-items: center;
     width: 100%;
     height: 25%;
   }
   .form-item {
-    position: relative;
     display: flex;
     width: 25%;
     height: 100%;
-  }
-  .verification-text {
-    position: absolute;
-    top: -10px;
-    font-size: 0.7rem;
-    color: red;
   }
 }
 .form-middle {
@@ -358,7 +277,6 @@ legend {
   width: 100%;
   height: 50%;
   .partner-info-container {
-    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

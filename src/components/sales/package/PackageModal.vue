@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import { inject, onMounted, onUnmounted } from 'vue'
-import { getCountries } from '@/api/sales/PackageApi'
+import { inject, onMounted, onUnmounted } from 'vue';
+import { getCountries } from '@/api/sales/PackageApi';
 export default {
   name: 'PackageModal',
   props: {
@@ -47,35 +47,29 @@ export default {
   },
   emits: ['close', 'update:isEditing'],
   setup(_, { emit }) {
-    const packageState = inject('packageState')
-    const resetPackageState = inject('resetPackageState')
-    const resetPartnerState = inject('resetPartnerState')
+    const packageState = inject('packageState');
+    const resetPackageState = inject('resetPackageState');
 
     const toggleEditing = async () => {
-      resetPartnerState()
-      const countryData = await getCountries()
-      packageState.countries = countryData
-      if (packageState.countries) packageState.isEditing = true
+      const countryData = await getCountries();
+      packageState.countries = countryData;
+      if (packageState.countries) packageState.isEditing = true;
     };
 
     const handleSave = () => {
-      resetPackageState()
-      resetPartnerState()
       emit('update:isEditing', false);
-      
+      resetPackageState();
     };
 
     const handleClose = () => {
-      resetPackageState()
-      resetPartnerState()
-      emit('close')
+      resetPackageState();
+      emit('close');
     };
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        resetPackageState()
-        resetPartnerState()
-        handleClose()
+        resetPackageState();
+        handleClose();
       }
     };
 
