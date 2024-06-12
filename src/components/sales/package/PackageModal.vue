@@ -67,15 +67,15 @@ export default {
 
     const handleClose = () => {
       resetPackageState()
-      resetPackageState()
+      resetPartnerState()
       emit('close')
     };
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         resetPackageState()
-        resetPackageState();
-        handleClose();
+        resetPartnerState()
+        handleClose()
       }
     };
 
