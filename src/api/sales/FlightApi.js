@@ -1,9 +1,9 @@
 import apiClient from '../axios'; 
 
-// GET
-export const getFlightList = async () => {
+// GET Flight List
+export const getFlightList = async (params) => {
   try {
-    const response = await apiClient.get('/sales/flight-list');
+    const response = await apiClient.get('/sales/flight-list', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching flight list:', error);
@@ -11,21 +11,31 @@ export const getFlightList = async () => {
   }
 };
 
-// POST
-export const addFlight = async (flight) => {
+// GET Flight Detail
+export const getFlight = async (params) => {
   try {
-    const response = await apiClient.post('/sales/flight', flight);
+    const response = await apiClient.get('/sales/flight-detail', { params });
     return response.data;
   } catch (error) {
-    console.error('Error inserting flight:', error);
+    console.error('Error fetching flight:', error);
     throw error;
   }
 };
 
-// PUT
-export const updateFlight = async (flightCode, flight) => {
+// POST
+export const addFlight = async (empId, flightData) => {
   try {
-    const response = await apiClient.put(`/sales/flight${flightCode}`, flight);
+    const response = await apiClient.post('/sales/flight', { empId, ...flightData });
+    return response.data;
+  } catch (error) {
+    throw new Error('Error adding flight');
+  }
+};
+
+// PUT
+export const updateFlight = async (flightCode, flightData) => {
+  try {
+    const response = await apiClient.put(`/sales/flight/${flightCode}`, flightData);
     return response.data;
   } catch (error) {
     console.error('Error updating flight:', error);

@@ -13,13 +13,13 @@ module.exports = defineConfig({
     port: 8088,
     proxy: {
       "/": {
-        // 전체 경로에 대해 프록시 설정 적용
         target: TARGET_URL,
         changeOrigin: true,
-        pathRewrite: { "^/": "" }, // 모든 경로를 백엔드의 루트로 변경
-        ws: false, // WebSocket 프록시 비활성화
+        pathRewrite: { "^/": "" },
+        ws: false,  // WebSocket 비활성화
       },
     },
+    webSocketServer: false,  // WebSocket 서버 비활성화
   },
   configureWebpack: {
     plugins: [
@@ -27,5 +27,17 @@ module.exports = defineConfig({
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false),
       }),
     ],
+  },
+  css: {
+    loaderOptions: {
+      postcss: {
+        postcssOptions: {
+          plugins: [
+            require('tailwindcss'),
+            require('autoprefixer'),
+          ],
+        },
+      },
+    },
   },
 });

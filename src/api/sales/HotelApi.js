@@ -1,39 +1,39 @@
-import apiClient from '../axios'; 
+import apiClient from "../axios";
 
-// GET
-export const getHotelList = async () => {
+// GET Hotel List
+export const getHotelList = async (params) => {
   try {
-    const response = await apiClient.get('/sales/hotel-list');
+    const response = await apiClient.get("/sales/hotel-list", {params});
     return response.data;
   } catch (error) {
-    console.error('Error fetching hotel list:', error);
+    console.error("Error fetching hotel list:", error);
     throw error;
   }
 };
 
-// GET last hotel code
-export const getLastHotelCode = async () => {
+// GET Single Hotel
+export const getHotel = async (params) => {
   try {
-    const response = await apiClient.get('/sales/last-hotel-code');
+    const response = await apiClient.get('/sales/hotel-detail', { params });
     return response.data;
   } catch (error) {
-    console.error('Error fetching last hotel code:', error);
+    console.error('Error fetching hotel:', error);
     throw error;
   }
 };
 
-// POST
+// POST Insert Hotel
 export const insertHotel = async (hotel, empId) => {
   try {
-    const response = await apiClient.post('/sales/hotel', hotel, empId);
+    const response = await apiClient.post("/sales/hotel", hotel, empId);
     return response.data;
   } catch (error) {
-    console.error('Error inserting hotel:', error);
+    console.error("Error inserting hotel:", error);
     throw error;
   }
 };
 
-// PUT
+// PUT Update Hotel
 export const updateHotel = async (hotelCode, hotel, empId) => {
   try {
     const response = await apiClient.put(`/sales/hotel/${hotelCode}`, hotel, empId);
@@ -44,13 +44,24 @@ export const updateHotel = async (hotelCode, hotel, empId) => {
   }
 };
 
-// DELETE
-export const deleteHotel = async (hotelCode) => {
+// PUT Update Hotel Y/N
+export const updateHotelYN = async (params) => {
   try {
-    const response = await apiClient.delete(`/sales/hotel/${hotelCode}`);
+    const response = await apiClient.put('/sales/hotel-yn', null, { params });
     return response.data;
   } catch (error) {
-    console.error('Error deleting hotel:', error);
+    console.error('Error updating hotel Y/N:', error);
+    throw error;
+  }
+};
+
+// GET Country List
+export const getCountries = async (params) => {
+  try {
+    const response = await apiClient.get("sales/countries", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error getting countries:", error);
     throw error;
   }
 };

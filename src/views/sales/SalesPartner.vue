@@ -16,7 +16,7 @@
       </button>
       <button :class="{ 'active-tab': currentComponent === 'AgencyDashboard' }"
         @click="currentComponent = 'AgencyDashboard'">
-        현지여행사
+        여행사
       </button>
     </div>
 
@@ -48,4 +48,4 @@ export default {
 };
 </script>
 
-<style src="../../components/sales/hotel/HotelDashboard.css"></style>
+<style src="./SalesPartnerMenu.css"></style>

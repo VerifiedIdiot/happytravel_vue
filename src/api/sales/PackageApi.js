@@ -66,3 +66,55 @@ export const assignPackage = async (params) => {
     throw error;
   }
 };
+
+export const getCountries = async (params) => {
+  try {
+    const response = await apiClient.get('sales/get-countries', {params});
+    return response.data;
+  } catch (error) {
+    console.error('Error getting countries:', error);
+    throw error;
+  }
+}
+
+export const getPackageCnt = async (params) => {
+  try {
+    const response = await apiClient.get('sales/package-count', {params});
+    return response.data;
+  } catch (error) {
+    console.error('Error getting packageCnt:', error);
+    throw error;
+  }
+
+}
+
+export const getfilteredHotelList = async (params) => {
+  try {
+    const response = await apiClient.get('sales/package-hotel-list', {params})
+    return response.data
+  } catch (error) {
+    console.error('error fetching hotelList', error)
+    throw error
+  }
+}
+
+export const getfilteredFlightList = async (params) => {
+  try {
+    const response = await apiClient.get('sales/package-flight-list', {params})
+    return response.data
+  } catch (error) {
+    console.error('error fetching flightList', error)
+    throw error
+  }
+}
+
+export const getfilteredAgencyList = async (params) => {
+  try {
+    const response = await apiClient.get('sales/package-agency-list', {params})
+    return response.data
+  } catch (error) {
+    console.error('error fetching agencyList', error)
+    throw error
+  }
+}
+
