@@ -8,10 +8,13 @@
       </div>
       <div class="header-box status-box">
         <h1 class="status-text">{{ someVar }} 님</h1>
-        <img
-          src="@/assets/img/pepe.png"
-          alt="Profile-img"
-          class="profile-img" />
+        <router-link to="/mypage" class="profile-link">
+          <img
+            src="@/assets/img/pepe.png"
+            alt="Profile-img"
+            class="profile-img"
+          />
+        </router-link>
       </div>
     </div>
   </header>
@@ -21,7 +24,8 @@
         <ul class="nav-list">
           <li
             @mouseenter="toggleDropdown('hr')"
-            @mouseleave="toggleDropdown(null)">
+            @mouseleave="toggleDropdown(null)"
+          >
             <router-link to="/hr" class="nav-link">인사/급여</router-link>
             <div v-if="dropdown === 'hr'" class="dropdown-content">
               <router-link to="/hr/subpage1">페이지 1</router-link>
@@ -32,7 +36,8 @@
           </li>
           <li
             @mouseenter="toggleDropdown('accounting')"
-            @mouseleave="toggleDropdown(null)">
+            @mouseleave="toggleDropdown(null)"
+          >
             <router-link to="/accounting" class="nav-link"
               >회계/총무</router-link
             >
@@ -43,7 +48,8 @@
           </li>
           <li
             @mouseenter="toggleDropdown('sales')"
-            @mouseleave="toggleDropdown(null)">
+            @mouseleave="toggleDropdown(null)"
+          >
             <router-link to="/sales" class="nav-link">영업관리</router-link>
             <div v-if="dropdown === 'sales'" class="dropdown-content">
               <router-link to="/sales/partner">협력사관리</router-link>
@@ -67,10 +73,10 @@
 
 <script>
 export default {
-  name: 'Header',
+  name: "Header",
   data() {
     return {
-      someVar: 'pepe',
+      someVar: "pepe",
       dropdown: null,
     };
   },
