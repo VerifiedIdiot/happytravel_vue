@@ -11,6 +11,7 @@ import SalesPartner from "../views/sales/SalesPartner.vue";
 import SalesPackage from "../views/sales/SalesPackage.vue";
 import SalaryData from "@/views/salary/SalaryData.vue";
 import SalaryPayment from "@/views/salary/SalaryPayment.vue";
+import MyPage from "@/views/mypage/MyPage.vue";
 
 const routes = [
   {
@@ -81,6 +82,11 @@ const routes = [
     path: "/salary/payment",
     name: "SalaryPayment",
     component: SalaryPayment,
+  },
+  {
+    path: "/mypage",
+    name: "MyPage",
+    component: MyPage,
   },
 ];
 
