@@ -3,13 +3,26 @@
     <!-- 사원등록 / 수정 화면 -->
     <div class="flex w-full text-3xl pl-10">사원 정보 {{ buttonText }}</div>
     <div class="relative flex flex-col w-11/12 mt-5">
-      <!-- 사진 -->
-      <div class="absolute right-0 top-1 w-4/12 h-48 bg-green-100">
-        <h2>사원 사진 영역</h2>
-      </div>
+      <!-- 사원 사진 영역 시작 -->
       <div
-        class="absolute top-1 right-1 w-5/12 h-48 border border-green-400"
-      ></div>
+        class="absolute w-2/5 right-0 top-1 flex justify-end items-end bg-green-100"
+      >
+        <div class="w-36 h-40 bg-gray-100">
+          <img
+            :src="thisEmployee.photo_url || '사진 미리보기 영역'"
+            alt="사진 미리보기"
+            v-if="thisEmployee.photo_url"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <button
+          @click="openModal"
+          class="w-3/12 h-[25px] ml-1 bg-slate-200 hover:bg-slate-300 rounded text-xs shadow-md outline-none"
+        >
+          사진 등록
+        </button>
+      </div>
+      <!-- 사원 사진 영역 끝-->
       <div class="flex my-1 gap-1">
         <label
           for="emp_id"
@@ -24,7 +37,6 @@
           class="flex w-2/6 h-8 px-1 border border-slate-200 outline-none"
         />
       </div>
-      <!-- 사원번호 자동생성 ex) 입사년도4자리 + 입사순서 4자리 -->
       <div class="flex my-1 gap-1">
         <label
           for="password"
@@ -334,29 +346,44 @@
       </div>
     </div>
   </div>
-  <!-- 사진 업로드 모달 -->
+  <!-- 사진 업로드 모달 시작 -->
   <div
     v-if="showModal"
     class="fixed inset-0 flex items-center justify-center z-50 bg-gray-500 bg-opacity-75"
   >
     <div class="bg-white p-5 rounded-md">
       <h2 class="text-xl mb-4">사진 업로드</h2>
-      <input type="file" />
       <div class="mt-4">
-        <button
-          class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
+        <div
+          id="modalPreview"
+          class="w-full mt-2 flex justify-center mb-3"
+          v-if="imagePreviewUrl"
         >
-          업로드
-        </button>
-        <button
-          @click="closeModal"
-          class="px-3 py-1 bg-slate-600 hover:bg-slate-500 rounded-md text-white ml-2"
-        >
-          취소
-        </button>
+          <img
+            :src="imagePreviewUrl"
+            alt="미리보기 이미지"
+            class="block w-1/2 object-cover"
+          />
+        </div>
+        <input type="file" @change="onFileChange" />
+        <div class="w-full flex justify-center mt-3">
+          <button
+            @click="uploadPhoto"
+            class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
+          >
+            업로드
+          </button>
+          <button
+            @click="closeModal"
+            class="px-3 py-1 bg-slate-600 hover:bg-slate-500 rounded-md text-white ml-2"
+          >
+            취소
+          </button>
+        </div>
       </div>
     </div>
   </div>
+  <!-- 사진 업로드 모달 끝 -->
 </template>
 
 <script>
@@ -369,6 +396,7 @@ import {
   insertEmployee,
   updateEmployee,
   checkDuplicate,
+  uploadPhotoFile,
 } from "@/api/hr/EmpApi";
 
 export default {
@@ -407,6 +435,8 @@ export default {
     const thisEmployee = ref({ ...props.employee });
 
     const showModal = ref(false);
+    const imagePreviewUrl = ref(null);
+    const selectedImageFile = ref(null);
 
     const ssnFirst = ref("");
     const ssnLast = ref("");
@@ -594,6 +624,38 @@ export default {
 
     const closeModal = () => {
       showModal.value = false;
+      imagePreviewUrl.value = null;
+      selectedImageFile.value = null;
+    };
+
+    const onFileChange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        selectedImageFile.value = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          imagePreviewUrl.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    const uploadPhoto = async () => {
+      //업로드 버튼 눌렀을때 함수 작동
+      if (!selectedImageFile.value) {
+        alert("사진을 선택해주세요.");
+        return;
+      }
+
+      try {
+        const photoUrl = await uploadPhotoFile(selectedImageFile.value);
+        thisEmployee.value.photo_url = photoUrl;
+        closeModal();
+        alert("사진 업로드가 완료되었습니다.");
+      } catch (error) {
+        console.error("Error uploading photo: ", error);
+        alert("사진 업로드에 실패했습니다.");
+      }
     };
 
     const validateSSNFirst = () => {
@@ -749,6 +811,10 @@ export default {
       closeModal,
       isResignedOrOnLeave,
       checkDuplicates,
+      imagePreviewUrl,
+      onFileChange,
+      uploadPhoto,
+      selectedImageFile,
     };
   },
 };
