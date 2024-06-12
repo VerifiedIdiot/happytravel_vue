@@ -5,7 +5,8 @@
     <div class="relative flex flex-col w-11/12 mt-5">
       <!-- 사원 사진 영역 시작 -->
       <div
-        class="absolute w-2/5 right-0 top-1 flex justify-end items-end bg-green-100"
+        class="absolute w-2/5 right-0 top-1 flex justify-end items-end"
+        style="border: 1px solid red"
       >
         <div class="w-36 h-40 bg-gray-100">
           <img
@@ -126,7 +127,25 @@
         />
         <button @click="searchAddress" class="w-1/12 bg-slate-200">검색</button>
       </div>
-      <!-- 주소 검색 팝업창 -->
+      <!--주소 검색 영역 시작-->
+      <div class="flex gap-1 justify-end">
+        <div id="wrap" class="hidden relative w-10/12 h-[600px]">
+          <img
+            src="//t1.daumcdn.net/postcode/resource/images/close.png"
+            id="btnFoldWrap"
+            style="
+              cursor: pointer;
+              position: absolute;
+              right: 0px;
+              top: 0px;
+              z-index: 1;
+            "
+            @click="foldDaumPostcode"
+            alt="접기 버튼"
+          />
+        </div>
+      </div>
+      <!-- 주소 검색 영역 끝 -->
       <div class="flex my-1 gap-1">
         <label
           for="address_detail"
@@ -768,14 +787,49 @@ export default {
 
     /*************** kakao 주소 검색 api *******************/
 
+    const foldDaumPostcode = () => {
+      const wrap = document.getElementById("wrap");
+      wrap.innerHTML = "";
+      wrap.style.display = "none";
+      addCloseButton(wrap);
+    };
+
+    const addCloseButton = (wrap) => {
+      const closeButton = document.createElement("img");
+      closeButton.src = "//t1.daumcdn.net/postcode/resource/images/close.png";
+      closeButton.id = "btnFoldWrap";
+      closeButton.style = `
+        cursor: pointer;
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        z-index: 1;
+      `;
+      closeButton.alt = "접기 버튼";
+      closeButton.addEventListener("click", foldDaumPostcode);
+      wrap.appendChild(closeButton);
+    };
+
     const searchAddress = () => {
+      const wrap = document.getElementById("wrap");
+      wrap.style.display = "block";
       new daum.Postcode({
         oncomplete: function (data) {
           thisEmployee.value.zip_code = data.zonecode;
           thisEmployee.value.address = data.address;
           document.getElementById("address_detail").focus();
+          foldDaumPostcode();
         },
-      }).open();
+        onresize: function (size) {
+          const elementWrap = document.getElementById("wrap");
+          if (elementWrap) {
+            elementWrap.style.height = size.height + "px";
+          }
+        },
+        width: "100%",
+        height: "100%",
+      }).embed(wrap);
+      addCloseButton(wrap);
     };
 
     /*************** kakao 주소 검색 api *******************/
@@ -824,6 +878,7 @@ export default {
       onFileChange,
       uploadPhoto,
       selectedImageFile,
+      foldDaumPostcode,
     };
   },
 };
