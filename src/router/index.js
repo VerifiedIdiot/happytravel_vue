@@ -82,6 +82,11 @@ const routes = [
     name: "SalaryPayment",
     component: SalaryPayment,
   },
+  {
+    path: "/mypage",
+    name: "MyPage",
+    component: MyPage,
+  },
 ];
 
 const router = createRouter({
