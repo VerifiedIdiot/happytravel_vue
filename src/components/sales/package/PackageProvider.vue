@@ -80,20 +80,20 @@ const submitForm = async () => {
     
     const response = packageState.crudState === CRUDStateEnum.CREATE
       ? await insertPackage(params)
-      : await updatePackage(params);
+      : await updatePackage(params)
       
     if (response === true) {
-      packageState.isEditing = false;
-      resetPackageState();
-      resetPartnerState();
-      
+      packageState.isEditing = false
+      resetPackageState()
+      resetPartnerState()
+      fetchPackages()
     } else {
       console.log('저장에 실패하였음');
     }
   } catch (error) {
-    console.error('Failed to save package:', error);
+    console.error('Failed to save package:', error)
   }
-};
+}
 
 const filterPartners = () => {
     const selectedCountryCode = partnerState.selectedCountry;
