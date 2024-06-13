@@ -1,7 +1,7 @@
 <template>
-    <PackageProvider>
-      <component :is="currentComponent"></component>
-    </PackageProvider>
+  <PackageProvider>
+    <component :is="currentComponent"></component>
+  </PackageProvider>
 </template>
 
 <script setup>
@@ -10,10 +10,9 @@ import PackageDashboard from '@/components/sales/package/PackageDashboard.vue';
 import PackageProvider from '@/components/sales/package/PackageProvider.vue';
 
 const currentComponent = ref(markRaw(PackageDashboard));
+const currentProvider = ref(markRaw(PackageProvider));
 
 const showPackageDashboard = () => {
   currentComponent.value = PackageDashboard;
 };
 </script>
-
-

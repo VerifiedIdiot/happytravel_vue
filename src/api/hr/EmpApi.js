@@ -100,18 +100,27 @@ export const uploadPhotoFile = async (file) => {
   formData.append("file", file);
 
   try {
-    const response = await axios.post(
-      "http://localhost:8088/hr/emp/upload-photo",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await apiClient.post("/hr/emp/upload-photo", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error uploading photo: ", error);
+    throw error;
+  }
+};
+
+// 사원 정보 중복 확인
+export const checkDuplicate = async (field, value) => {
+  try {
+    const response = await apiClient.get("/hr/emp/check-duplicate", {
+      params: { field, value },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error checking duplicate:", error);
     throw error;
   }
 };

@@ -8,7 +8,7 @@
       </div>
       <div class="header-box status-box">
         <h1 class="status-text">{{ someVar }} 님</h1>
-        <router-link to="/mypage" class="profile-link">
+        <router-link to="/mypage">
           <img
             src="@/assets/img/pepe.png"
             alt="Profile-img"

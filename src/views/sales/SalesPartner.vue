@@ -6,43 +6,53 @@
       </div>
     </div>
     <div class="sales-item">
-      <button :class="{ 'active-tab': currentComponent === 'HotelDashboard' }"
-        @click="currentComponent = 'HotelDashboard'">
-        호텔
-      </button>
-      <button :class="{ 'active-tab': currentComponent === 'FlightDashboard' }"
-        @click="currentComponent = 'FlightDashboard'">
+        <button
+          :class="{ 'active-tab': currentComponent === 'HotelDashboard' }"
+          @click="currentComponent = 'HotelDashboard'"
+        >
+          호텔
+        </button>
+      <button
+        :class="{ 'active-tab': currentComponent === 'FlightDashboard' }"
+        @click="currentComponent = 'FlightDashboard'"
+      >
         항공사
       </button>
-      <button :class="{ 'active-tab': currentComponent === 'AgencyDashboard' }"
-        @click="currentComponent = 'AgencyDashboard'">
+      <button
+        :class="{ 'active-tab': currentComponent === 'AgencyDashboard' }"
+        @click="currentComponent = 'AgencyDashboard'"
+      >
         여행사
       </button>
     </div>
-
   </div>
   <div class="sales-container">
-    <component :is="currentComponent"></component>
+    <component :is="currentProvider">
+      <component :is="currentComponent"></component>
+    </component>
+    
   </div>
-
 </template>
 
 
 <script>
-import HotelDashboard from '@/components/sales/hotel/HotelDashboard.vue';
-import AgencyDashboard from '@/components/sales/agency/AgencyDashboard.vue';
-import FlightDashboard from '@/components/sales/flight/FlightDashboard.vue';
+import HotelDashboard from "@/components/sales/hotel/HotelDashboard.vue";
+import AgencyDashboard from "@/components/sales/agency/AgencyDashboard.vue";
+import FlightDashboard from "@/components/sales/flight/FlightDashboard.vue";
+import HotelProvider from "@/components/sales/hotel/HotelProvider.vue";
 
 export default {
-  name: 'SalesPartner',
+  name: "SalesPartner",
   components: {
     HotelDashboard,
     AgencyDashboard,
     FlightDashboard,
+    HotelProvider,
   },
   data() {
     return {
-      currentComponent: 'HotelDashboard',
+      currentComponent: "HotelDashboard",
+      currentProvider: "HotelProvider"
     };
   },
 };

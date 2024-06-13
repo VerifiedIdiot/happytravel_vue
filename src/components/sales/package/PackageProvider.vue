@@ -5,6 +5,7 @@
 <script setup>
 import { provide, ref, reactive } from 'vue'
 import { getPackageList, getPackageCnt } from '@/api/sales/PackageApi'
+import cloneDeep from 'lodash/cloneDeep'
 //// 상태 관리들 ////
 const empId = sessionStorage.getItem('empId') || 'EMP30002'
 const packages = ref([])
@@ -16,7 +17,7 @@ const initialPackageState = {
   packageDetail: {},
   countries: [],
 }
-const packageState = reactive({ ...initialPackageState })
+const packageState = reactive(cloneDeep(initialPackageState));
 
 const initialPaginationState = {
   packageCnt: 0,
@@ -32,15 +33,15 @@ const initialParterState = {
     hotels : [],
     agencies : []
 }
-const partnerState = reactive({ ...initialParterState})
+const partnerState = reactive(cloneDeep(initialParterState))
 
 
 const resetPartnerState = () => {
-    Object.assign(partnerState, initialParterState)
+  Object.assign(partnerState, cloneDeep(initialParterState))
 }
 
 const resetPackageState = () => {
-  Object.assign(packageState, initialPackageState);
+  Object.assign(packageState, cloneDeep(initialPackageState))
 }
 
 //// 함수들 ////
