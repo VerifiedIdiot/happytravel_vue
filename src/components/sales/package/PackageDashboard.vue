@@ -23,7 +23,7 @@
         <tbody>
           <tr
             v-for="pkg in packages"
-            :key="pkg.package_code"
+            :key="pkg.packageCode"
             @click="openModal(pkg.packageCode)">
             <td>{{ pkg.packageName }}</td>
             <td>{{ pkg.country }}</td>
@@ -37,7 +37,6 @@
       </table>
       <Pagination />
     </div>
-
     <PackageModal v-if="packageState.isModalOpen" @close="closeModal">
       <PackageDetail />
     </PackageModal>
@@ -62,7 +61,7 @@ const empId = inject('empId');
 
 onMounted(() => {
   fetchPackages()
-  console.log()
+  
 });
 
 const openModal = async (pkgCode = '') => {
@@ -76,9 +75,9 @@ const openModal = async (pkgCode = '') => {
       });
       packageState.packageDetail = data;
       if (packageState.packageDetail)
-      partnerState.selectedCountryCode = packageState.packageDetail.country_code
-      console.log(packageState.packageDetail)
-      console.log(partnerState.selectedCountryCode)
+      partnerState.selectedCountryCode = packageState.packageDetail.countryCode
+      // console.log(packageState.packageDetail)
+      // console.log(partnerState.selectedCountryCode)
     } else {
       packageState.packageDetail = {};
     }
@@ -107,10 +106,6 @@ const closeModal = () => {
   packageState.isModalOpen = false
 };
 </script>
-
-<style scoped>
-/* 스타일 정의 */
-</style>
 
 <style scoped lang="scss">
 @import 'tailwindcss/base';
