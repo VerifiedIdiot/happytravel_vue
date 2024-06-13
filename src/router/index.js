@@ -108,6 +108,11 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/mypage",
+    name: "MyPage",
+    component: MyPage,
+  },
 ];
 
 const router = createRouter({
