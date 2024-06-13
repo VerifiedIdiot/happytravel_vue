@@ -11,7 +11,9 @@
             loading="lazy"
           />
         </div>
-        <h1>{{ title }}</h1>
+        <div class="modal-header-title">
+          <h1>{{ title }}</h1>
+        </div>
       </div>
       <slot></slot>
       <div class="button-container">
@@ -26,7 +28,7 @@
         <button
           type="submit"
           class="btn-update"
-          v-if="packageState.isEditing"
+          v-if="hotelState.isEditing"
           @click="handleSave"
         >
           저장
@@ -62,20 +64,27 @@ export default {
 
     const toggleEditing = async () => {
       const countryData = await getCountries();
-      packageState.countries = countryData;
-      if (packageState.countries) packageState.isEditing = true;
+      hotelState.countries = countryData;
+      if (hotelState.countries) {
+        hotelState.isEditing = true;
+      }
     };
 
-    const isEditing = inject("isEditing");
-
     const handleSave = () => {
-      emit("update:isEditing", false);
       resetHotelState();
+      emit("update:isEditing", false);
     };
 
     const handleClose = () => {
       resetHotelState();
       emit("close");
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        resetHotelState();
+        handleClose();
+      }
     };
 
     onMounted(() => {
