@@ -405,6 +405,58 @@
     </div>
   </div>
   <!-- 사진 업로드 모달 끝 -->
+  <!--
+    모달 내용
+    퇴사자 사원번호/사원명/부서/직급/퇴사일자 확인
+    v-if="showConfirmModal"
+  -->
+  <div
+    id="confirmModal"
+    class="hidden fixed inset-0 flex items-center justify-center z-50 bg-gray-500 bg-opacity-75"
+  >
+    <div class="bg-white p-5 rounded-md w-3/12">
+      <div id="leaveEmpInfo" class="w-full my-5 border border-red-200">
+        <div class="w-full flex justify-evenly bg-slate-200">
+          <p>사원번호</p>
+          <p>사원명</p>
+        </div>
+        <div class="w-full flex justify-evenly">
+          <p>20240001</p>
+          <p>천우희</p>
+        </div>
+        <div class="w-full flex justify-evenly bg-slate-200">
+          <p>부서</p>
+          <p>직급</p>
+        </div>
+        <div class="w-full flex justify-evenly">
+          <p>회계</p>
+          <p>과장</p>
+        </div>
+        <div class="w-full flex justify-evenly bg-slate-200">
+          <p>근속년월</p>
+        </div>
+        <div class="w-full flex justify-evenly">
+          <p>2024-02-05 ~ 2024-06-12</p>
+        </div>
+        <div class="w-full flex justify-evenly bg-slate-200"><p>퇴직일</p></div>
+        <div class="w-full flex justify-evenly"><p>2024-06-13</p></div>
+      </div>
+      <p class="w-full text-center">재직상태를 '퇴직'으로 변경하시겠습니까?</p>
+      <div class="w-full flex justify-center">
+        <button
+          class="px-3 py-1 mx-1 bg-red-400 hover:bg-red-200 rounded text-white"
+        >
+          확인
+        </button>
+        <button class="px-3 py-1 mx-1 bg-slate-200 hover:bg-slate-400 rounded">
+          취소
+        </button>
+      </div>
+    </div>
+  </div>
+  <!--퇴사 확인 모달 시작-->
+
+  <!--퇴사 확인 모달 끝-->
 </template>
 
 <script>
@@ -467,6 +519,27 @@ export default {
     const mobileFirst = ref("");
     const mobileSecond = ref("");
     const mobileThird = ref("");
+
+    const showConfirmModal = ref(true);
+    const pendingStatusChange = ref(null);
+
+    const openConfirmModal = (status) => {
+      pendingStatusChange.value = status;
+      showConfirmModal.value = true;
+    };
+
+    const closeConfirmModal = () => {
+      showConfirmModal.value = false;
+      pendingStatusChange.value = null;
+    };
+
+    const confirmLeave = () => {
+      if (pendingStatusChange.value === "퇴직") {
+        thisEmployee.value.leave_date = new Date().toISOString().split("T")[0]; // 퇴사일자 저장
+      }
+      thisEmployee.value.status_code = pendingStatusChange.value;
+      closeConfirmModal();
+    };
 
     const phoneOptions = [
       "02",
@@ -897,5 +970,15 @@ thead,
 tbody th,
 td {
   background-color: #fff;
+}
+
+#leaveEmpInfo {
+}
+#leaveEmpInfo div p {
+  width: 100%;
+  padding: 4px;
+  text-align: center;
+  border: 1px solid rgb(243, 244, 246);
+  box-sizing: border-box;
 }
 </style>
