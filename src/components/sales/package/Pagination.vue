@@ -32,86 +32,69 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { inject, computed } from 'vue';
 
-export default {
-  name: 'Pagination',
-  setup() {
-    const paginationState = inject('paginationState');
-    const fetchPackages = inject('fetchPackages');
+const paginationState = inject('paginationState');
+const fetchPackages = inject('fetchPackages');
 
-    const setCurrentPage = (page) => {
-      paginationState.currentPage = page;
-      fetchPackages();
-    };
+const setCurrentPage = (page) => {
+  paginationState.currentPage = page;
+  fetchPackages();
+}
 
-    const prevPage = () => {
-      if (paginationState.currentPage > 1) {
-        setCurrentPage(paginationState.currentPage - 1);
-      }
-    };
+const prevPage = () => {
+  if (paginationState.currentPage > 1) {
+    setCurrentPage(paginationState.currentPage - 1);
+  }
+}
 
-    const nextPage = () => {
-      if (paginationState.currentPage < paginationState.totalPages) {
-        setCurrentPage(paginationState.currentPage + 1);
-      }
-    };
+const nextPage = () => {
+  if (paginationState.currentPage < paginationState.totalPages) {
+    setCurrentPage(paginationState.currentPage + 1);
+  }
+}
 
-    const goToPage = (page) => {
-      setCurrentPage(page);
-    };
+const goToPage = (page) => {
+  setCurrentPage(page);
+}
 
-    const goToFirstPage = () => {
-      setCurrentPage(1);
-    };
+const goToFirstPage = () => {
+  setCurrentPage(1);
+}
 
-    const goToLastPage = () => {
-      setCurrentPage(paginationState.totalPages);
-    };
+const goToLastPage = () => {
+  setCurrentPage(paginationState.totalPages);
+}
 
-    const prevGroup = () => {
-      if (startPage.value > 1) {
-        setCurrentPage(startPage.value - 10);
-      }
-    };
+const prevGroup = () => {
+  if (startPage.value > 1) {
+    setCurrentPage(startPage.value - 10);
+  }
+}
 
-    const nextGroup = () => {
-      if (endPage.value < paginationState.totalPages) {
-        setCurrentPage(startPage.value + 10);
-      }
-    };
+const nextGroup = () => {
+  if (endPage.value < paginationState.totalPages) {
+    setCurrentPage(startPage.value + 10);
+  }
+}
 
-    const startPage = computed(
-      () => Math.floor((paginationState.currentPage - 1) / 10) * 10 + 1
-    );
-    const endPage = computed(() =>
-      Math.min(startPage.value + 9, paginationState.totalPages)
-    );
+const startPage = computed(() => 
+  Math.floor((paginationState.currentPage - 1) / 10) * 10 + 1
+)
 
-    const pageNumbers = computed(() => {
-      const pages = [];
-      for (let i = startPage.value; i <= endPage.value; i++) {
-        pages.push(i);
-      }
-      return pages;
-    });
+const endPage = computed(() => 
+  Math.min(startPage.value + 9, paginationState.totalPages)
+)
 
-    return {
-      paginationState,
-      prevPage,
-      nextPage,
-      goToPage,
-      goToFirstPage,
-      goToLastPage,
-      prevGroup,
-      nextGroup,
-      pageNumbers,
-      startPage,
-      endPage,
-    };
-  },
-};
+const pageNumbers = computed(() => {
+  const pages = []
+  for (let i = startPage.value; i <= endPage.value; i++) {
+    pages.push(i)
+  }
+  return pages;
+})
+
 </script>
 
 <style scoped="scss">

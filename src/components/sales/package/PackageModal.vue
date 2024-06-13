@@ -34,66 +34,56 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { inject, onMounted, onUnmounted } from 'vue'
 import { getCountries } from '@/api/sales/PackageApi'
-export default {
-  name: 'PackageModal',
-  props: {
-    title: {
-      type: String,
-      default: '여행상품 상세',
-    },
+
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: '여행상품 상세',
   },
-  emits: ['close', 'update:isEditing'],
-  setup(_, { emit }) {
-    const packageState = inject('packageState')
-    const resetPackageState = inject('resetPackageState')
-    const resetPartnerState = inject('resetPartnerState')
+})
 
-    const toggleEditing = async () => {
-      const countryData = await getCountries()
-      packageState.countries = countryData
-      if (packageState.countries) packageState.isEditing = true
-    };
+const packageState = inject('packageState')
+const resetPackageState = inject('resetPackageState')
+const resetPartnerState = inject('resetPartnerState')
+const submitForm = inject('submitForm')  
+const CRUDStateEnum = inject('CRUDStateEnum')
 
-    const handleSave = () => {
-      resetPackageState()
-      resetPartnerState()
-      emit('update:isEditing', false);
-      
-    };
+const toggleEditing = async () => {
+  const countryData = await getCountries()
+  packageState.crudState = CRUDStateEnum.UPDATE
+  packageState.countries = countryData
+  if (packageState.countries) packageState.isEditing = true
+}
 
-    const handleClose = () => {
-      resetPackageState()
-      resetPartnerState()
-      emit('close')
-    };
+const handleSave = async () => {
+  await submitForm()
+}
 
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        resetPackageState()
-        resetPartnerState()
-        handleClose()
-      }
-    };
+const handleClose = () => {
+  resetPackageState()
+  resetPartnerState()
+  emit('close')
+}
 
-    onMounted(() => {
-      document.addEventListener('keydown', handleKeyDown);
-    });
+const handleKeyDown = (event) => {
+  if (event.key === 'Escape') {
+    resetPackageState()
+    resetPartnerState()
+    handleClose()
+  }
+}
 
-    onUnmounted(() => {
-      document.removeEventListener('keydown', handleKeyDown);
-    });
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyDown)
+})
 
-    return {
-      packageState,
-      handleClose,
-      toggleEditing,
-      handleSave,
-    };
-  },
-};
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown)
+})
 </script>
 
 <style scoped lang="scss">
