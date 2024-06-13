@@ -6,14 +6,12 @@
       </div>
     </div>
     <div class="sales-item">
-      <HotelProvider>
         <button
           :class="{ 'active-tab': currentComponent === 'HotelDashboard' }"
           @click="currentComponent = 'HotelDashboard'"
         >
           호텔
         </button>
-      </HotelProvider>
       <button
         :class="{ 'active-tab': currentComponent === 'FlightDashboard' }"
         @click="currentComponent = 'FlightDashboard'"
@@ -29,7 +27,10 @@
     </div>
   </div>
   <div class="sales-container">
-    <component :is="currentComponent"></component>
+    <component :is="currentProvider">
+      <component :is="currentComponent"></component>
+    </component>
+    
   </div>
 </template>
 
@@ -51,6 +52,7 @@ export default {
   data() {
     return {
       currentComponent: "HotelDashboard",
+      currentProvider: "HotelProvider"
     };
   },
 };
