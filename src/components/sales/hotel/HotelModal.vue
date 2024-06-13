@@ -63,6 +63,7 @@ export default {
     const resetHotelState = inject("resetHotelState");
     const submitForm = inject("submitForm");
     const CRUDStateEnum = inject("CRUDStateEnum");
+    const countryCode = inject('countryCode')
 
     const toggleEditing = async () => {
       const countryData = await getCountries();
@@ -72,8 +73,7 @@ export default {
     };
 
     const handleSave = async () => {
-      console.log(hotelState.hotelDetail)
-      await submitForm();
+      await submitForm(countryCode);
     };
 
     const handleClose = () => {

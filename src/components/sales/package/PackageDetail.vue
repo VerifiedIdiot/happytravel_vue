@@ -285,24 +285,23 @@ const partnerState = inject('partnerState');
 
 
 const setCountryCode = () => {
-  const selectedCountry = packageState.countries.find(
-    (country) => country.koreanName === packageState.packageDetail.country
-  );
-  partnerState.selectedCountryCode = selectedCountry ? selectedCountry.countryCode : '';
-  packageState.packageDetail.countryCode = selectedCountry ? selectedCountry.countryCode : '';
+  const selectedCountry = packageState.countries.find((country) => country.koreanName === packageState.packageDetail.country
+  )
+  partnerState.selectedCountryCode = selectedCountry ? selectedCountry.countryCode : ''
+  packageState.packageDetail.countryCode = selectedCountry ? selectedCountry.countryCode : ''
   
   if (partnerState.selectedCountryCode) {
-    console.log(partnerState.selectedCountryCode);
+    console.log(partnerState.selectedCountryCode)
   }
-};
+}
 
 const handleSearch = () => {
-  isSmallModalOpen.value = true;
-};
+  isSmallModalOpen.value = true
+}
 
 const closeSmallModal = () => {
-  isSmallModalOpen.value = false;
-};
+  isSmallModalOpen.value = false
+}
 </script>
 
 <style scoped lang="scss">

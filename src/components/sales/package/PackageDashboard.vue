@@ -37,7 +37,7 @@
       </table>
       <Pagination />
     </div>
-    <PackageModal v-if="packageState.isModalOpen" @close="closeModal">
+    <PackageModal v-if="packageState.isModalOpen" @close="closeModal()">
       <PackageDetail />
     </PackageModal>
   </div>
@@ -103,7 +103,6 @@ const openModalForCreate = async () => {
 const closeModal = () => {
   resetPackageState()
   resetPartnerState()
-  packageState.isModalOpen = false
 };
 </script>
 
