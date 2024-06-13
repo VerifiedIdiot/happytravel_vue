@@ -11,8 +11,7 @@
             type="text"
             v-else
             v-model="hotelState.hotelDetail.hotel_name"
-            required
-          />
+            required />
         </div>
         <div class="form-item">
           <label for="phone">전화번호</label>
@@ -23,8 +22,7 @@
             type="text"
             v-else
             v-model="hotelState.hotelDetail.phone"
-            required
-          />
+            required />
         </div>
         <div class="form-item">
           <label for="country">국가</label>
@@ -36,14 +34,12 @@
             v-else
             id="country"
             v-model="hotelState.hotelDetail.country"
-            @change="setCountryCode"
-          >
+            @change="setCountryCode">
             >
             <option
               v-for="country in hotelState.countries"
               :key="country.country_code"
-              :value="country.korean_name"
-            >
+              :value="country.korean_name">
               {{ country.korean_name }}
             </option>
           </select>
@@ -57,8 +53,7 @@
             type="text"
             v-else
             v-model="hotelState.hotelDetail.address"
-            required
-          />
+            required />
         </div>
         <div class="form-item">
           <label for="price">가격</label>
@@ -69,8 +64,7 @@
             v-else
             type="text"
             v-model="hotelState.hotelDetail.price"
-            required
-          />
+            required />
         </div>
         <div class="form-item">
           <label for="is_used">사용유무</label>
@@ -88,50 +82,29 @@
 </template>
 
 <script>
-import { inject, ref } from "vue";
-import { updateHotel } from "@/api/sales/HotelApi";
+import { inject, ref } from 'vue';
+import { updateHotel } from '@/api/sales/HotelApi';
 
 export default {
-  name: "HotelDetail",
-  setup(_, { emit }) {
-    const hotelState = inject("hotelState");
-    let country_code = ref("");
+  name: 'HotelDetail',
+  setup() {
+    const hotelState = inject('hotelState');
+    let countryCode = inject('countryCode');
 
-    const submitForm = async () => {
-      try {
-        
-        if (country_code) {
-          console.log(country_code)
-          hotelState.hotelDetail = {
-            ...hotelState.hotelDetail,
-            country_code: country_code,
-          };
-        }
 
-        console.log(hotelState.hotelDetail); // hotelDetail의 상태 확인
-        if (hotelState.hotelDetail.country_code) {
-          await updateHotel(hotelState.hotelDetail);
-        }
-
-        fetchHotels();
-      } catch (error) {
-        console.error("Failed to update hotel:", error);
-      }
-    };
 
     const setCountryCode = () => {
       const data = hotelState.countries.find(
         (country) => country.korean_name === hotelState.hotelDetail.country
       );
       if (data) {
-        country_code = data.country_code;
-        console.log(country_code)
+        countryCode.value = data.country_code;
+        console.log(countryCode);
       }
     };
 
     return {
       hotelState,
-      submitForm,
       setCountryCode,
     };
   },
