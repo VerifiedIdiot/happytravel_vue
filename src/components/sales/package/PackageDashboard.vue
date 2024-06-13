@@ -24,14 +24,14 @@
           <tr
             v-for="pkg in packages"
             :key="pkg.package_code"
-            @click="openModal(pkg.package_code)">
-            <td>{{ pkg.package_name }}</td>
+            @click="openModal(pkg.packageCode)">
+            <td>{{ pkg.packageName }}</td>
             <td>{{ pkg.country }}</td>
-            <td>{{ pkg.start_date }}</td>
-            <td>{{ pkg.end_date }}</td>
-            <td>{{ pkg.sale_start_date }}</td>
-            <td>{{ pkg.sale_end_date }}</td>
-            <td>{{ pkg.assign_code }}</td>
+            <td>{{ pkg.startDate }}</td>
+            <td>{{ pkg.endDate }}</td>
+            <td>{{ pkg.saleStartDate }}</td>
+            <td>{{ pkg.saleEndDate }}</td>
+            <td>{{ pkg.assignCode }}</td>
           </tr>
         </tbody>
       </table>
@@ -53,10 +53,12 @@ import Pagination from '@/components/sales/package/Pagination.vue';
 
 const packages = inject('packages');
 const packageState = inject('packageState');
+const partnerState = inject('partnerState')
 const resetPackageState = inject('resetPackageState');
 const resetPartnerState = inject('resetPartnerState')
 const fetchPackages = inject('fetchPackages');
 const empId = inject('empId');
+
 
 onMounted(() => {
   fetchPackages()
@@ -74,12 +76,14 @@ const openModal = async (pkgCode = '') => {
       });
       packageState.packageDetail = data;
       if (packageState.packageDetail)
+      partnerState.selectedCountryCode = packageState.packageDetail.country_code
       console.log(packageState.packageDetail)
+      console.log(partnerState.selectedCountryCode)
     } else {
       packageState.packageDetail = {};
     }
 
-    if (packageState.packageDetail) {
+    if (packageState.packageDetail && partnerState.selectedCountryCode !== undefined) {
       packageState.isModalOpen = true;
     }
   } catch (error) {
