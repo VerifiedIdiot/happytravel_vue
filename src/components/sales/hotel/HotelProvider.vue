@@ -9,7 +9,6 @@ import { getHotelList, getHotelCnt } from '@/api/sales/HotelApi';
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
 const hotels = ref([]);
 
-// 초기화
 const initialHotelState = {
   isModalOpen: false,
   hotelCode: '',
@@ -20,19 +19,22 @@ const initialHotelState = {
 
 const hotelState = reactive({ ...initialHotelState });
 
-// 초기세팅
 const initialPaginationState = {
   hotelCnt: 0,
   currentPage: 1,
-  itemsPerPage: 5,
+  itemsPerPage: 8,
   totalPages: 0,
 };
 
-const paginationState = reactive({ ...initialHotelState });
+const paginationState = reactive({ ...initialPaginationState });
 
-// 필드 초기화
 const resetHotelState = () => {
   Object.assign(hotelState, initialHotelState);
+};
+
+const setCurrentPage = (page) => {
+  paginationState.currentPage = page;
+  fetchHotels();
 };
 
 const fetchHotels = async () => {
@@ -54,16 +56,11 @@ const fetchHotels = async () => {
   }
 };
 
-const setCurrentPage = (page) => {
-  paginationState.currentPage = page;
-  fetchHotels();
-};
-
 provide('empId', empId);
 provide('hotels', hotels);
 provide('hotelState', hotelState);
 provide('resetHotelState', resetHotelState);
-provide('paginationState', paginationState);
 provide('setCurrentPage', setCurrentPage);
 provide('fetchHotels', fetchHotels);
+provide('paginationState', paginationState);
 </script>
