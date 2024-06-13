@@ -10,7 +10,7 @@ import SalesMain from "../views/sales/SalesMain.vue";
 import SalesPartner from "../views/sales/SalesPartner.vue";
 import SalesPackage from "../views/sales/SalesPackage.vue";
 import SalaryData from "@/views/salary/SalaryData.vue";
-import SalaryPayment from "@/views/salary/Salarypayment.vue";
+import SalaryPayment from "@/views/salary/SalaryPayment.vue";
 import MyPage from "@/views/mypage/MyPage.vue";
 
 const routes = [
