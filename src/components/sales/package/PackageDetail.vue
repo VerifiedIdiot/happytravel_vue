@@ -7,13 +7,13 @@
         </div>
         <div class="form-item">
           <span v-if="!packageState.isEditing">{{
-            packageState.packageDetail.package_name
+            packageState.packageDetail.packageName
           }}</span>
           <input
             v-else
             type="text"
             id="packageName"
-            v-model="packageState.packageDetail.package_name"
+            v-model="packageState.packageDetail.packageName"
             autocomplete="off" />
         </div>
         <div class="form-item">
@@ -34,9 +34,9 @@
 
             <option
               v-for="country in packageState.countries"
-              :key="country.country_code"
-              :value="country.korean_name">
-              {{ country.korean_name }}
+              :key="country.countryCode"
+              :value="country.koreanName">
+              {{ country.koreanName }}
             </option>
           </select>
           <p
@@ -56,13 +56,13 @@
         </div>
         <div class="form-item">
           <span v-if="!packageState.isEditing">{{
-            packageState.packageDetail.start_date
+            packageState.packageDetail.startDate
           }}</span>
           <input
             v-else
             type="date"
             id="startDate"
-            v-model="packageState.packageDetail.start_date"
+            v-model="packageState.packageDetail.startDate"
             autocomplete="off" />
         </div>
         <div class="form-item">
@@ -70,13 +70,13 @@
         </div>
         <div class="form-item">
           <span v-if="!packageState.isEditing">{{
-            packageState.packageDetail.end_date
+            packageState.packageDetail.endDate
           }}</span>
           <input
             v-else
             type="date"
             id="endDate"
-            v-model="packageState.packageDetail.end_date"
+            v-model="packageState.packageDetail.endDate"
             autocomplete="off" />
         </div>
       </div>
@@ -86,13 +86,13 @@
         </div>
         <div class="form-item">
           <span v-if="!packageState.isEditing">{{
-            packageState.packageDetail.sale_start_date
+            packageState.packageDetail.saleStartDate
           }}</span>
           <input
             v-else
             type="date"
             id="saleStartDate"
-            v-model="packageState.packageDetail.sale_start_date"
+            v-model="packageState.packageDetail.saleStartDate"
             autocomplete="off" />
         </div>
         <div class="form-item">
@@ -100,13 +100,13 @@
         </div>
         <div class="form-item">
           <span v-if="!packageState.isEditing">{{
-            packageState.packageDetail.sale_end_date
+            packageState.packageDetail.saleEndDate
           }}</span>
           <input
             v-else
             type="date"
             id="saleEndDate"
-            v-model="packageState.packageDetail.sale_end_date"
+            v-model="packageState.packageDetail.saleEndDate"
             autocomplete="off" />
         </div>
       </div>
@@ -125,7 +125,9 @@
         <p
           class="verification-text"
           style="color: blue"
-          v-else-if="partnerState.selectedCountryCode !== '' && packageState.isEditing">
+          v-else-if="
+            partnerState.selectedCountryCode !== '' && packageState.isEditing
+          ">
           항공권을 선택해주세요
         </p>
         <label for="flightCode"><legend>항공권 정보</legend> </label>
@@ -144,9 +146,17 @@
             >도착지 {{ packageState.packageDetail.destination }}</span
           >
           <span v-if="!packageState.isEditing"
-            >왕복 {{ packageState.packageDetail.flight_price }}원</span
+            >왕복 {{ packageState.packageDetail.flightPrice }}원</span
           >
-          <button class="btn-search" v-if="packageState.packageDetail.country_code !== undefined && packageState.isEditing">검색</button>
+          <button
+            class="btn-search"
+            v-if="
+              packageState.packageDetail.countryCode !== undefined &&
+              packageState.isEditing
+            "
+            @click.prevent="handleSearch">
+            검색
+          </button>
         </div>
       </div>
       <div class="partner-info-container">
@@ -162,7 +172,9 @@
         <p
           class="verification-text"
           style="color: blue"
-          v-else-if="partnerState.selectedCountryCode !== '' && packageState.isEditing">
+          v-else-if="
+            partnerState.selectedCountryCode !== '' && packageState.isEditing
+          ">
           호텔을 선택해주세요
         </p>
         <label for="hotelCode"><legend>호텔 정보</legend> </label>
@@ -172,18 +184,26 @@
             alt="hotel image"
             loading="lazy" />
           <span v-if="!packageState.isEditing"
-            >호텔명 {{ packageState.packageDetail.hotel_name }}</span
+            >호텔명 {{ packageState.packageDetail.hotelName }}</span
           >
           <span v-if="!packageState.isEditing"
             >국가 {{ packageState.packageDetail.country }}</span
           >
           <span v-if="!packageState.isEditing"
-            >지역 {{ packageState.packageDetail.hotel_region }}</span
+            >지역 {{ packageState.packageDetail.hotelRegion }}</span
           >
           <span v-if="!packageState.isEditing"
-            >1박 {{ packageState.packageDetail.hotel_price }}원</span
+            >1박 {{ packageState.packageDetail.hotelPrice }}원</span
           >
-          <button class="btn-search" v-if="packageState.packageDetail.country_code !== undefined && packageState.isEditing">검색</button>
+          <button
+            class="btn-search"
+            v-if="
+              packageState.packageDetail.countryCode !== undefined &&
+              packageState.isEditing
+            "
+            @click.prevent="handleSearch">
+            검색
+          </button>
         </div>
       </div>
       <div class="partner-info-container">
@@ -199,7 +219,9 @@
         <p
           class="verification-text"
           style="color: blue"
-          v-else-if="partnerState.selectedCountryCode !== '' && packageState.isEditing">
+          v-else-if="
+            partnerState.selectedCountryCode !== '' && packageState.isEditing
+          ">
           현지여행사를 선택해주세요
         </p>
         <label for="agencyCode"><legend>현지 여행사 정보</legend> </label>
@@ -209,90 +231,77 @@
             alt="agency image"
             loading="lazy" />
           <span v-if="!packageState.isEditing"
-            >여행사 {{ packageState.packageDetail.agency_name }}</span
+            >여행사 {{ packageState.packageDetail.agencyName }}</span
           >
           <span v-if="!packageState.isEditing"
             >국가 {{ packageState.packageDetail.country }}</span
           >
           <span v-if="!packageState.isEditing"
-            >지역 {{ packageState.packageDetail.agency_region }}</span
+            >지역 {{ packageState.packageDetail.agencyRegion }}</span
           >
           <span v-if="!packageState.isEditing"
-            >하루 {{ packageState.packageDetail.agency_price }}원</span
+            >하루 {{ packageState.packageDetail.agencyPrice }}원</span
           >
-          <button class="btn-search" v-if="packageState.packageDetail.country_code !== undefined && packageState.isEditing">검색</button>
+          <button
+            class="btn-search"
+            v-if="
+              packageState.packageDetail.countryCode !== undefined &&
+              packageState.isEditing
+            "
+            @click.prevent="handleSearch">
+            검색
+          </button>
         </div>
       </div>
     </div>
     <div class="form-under">
       <div :class="[packageState.isEditing ? 'editing' : '']">
         <label for="totalPrice"><legend>총가격</legend></label>
-        <span>{{ packageState.packageDetail.total_price }}</span>
+        <span>{{ packageState.packageDetail.totalPrice }}</span>
       </div>
       <div :class="[packageState.isEditing ? 'editing' : '']">
         <label for="salePrice"><legend>판매가</legend></label>
-        <span>{{ packageState.packageDetail.sale_price }}</span>
+        <span>{{ packageState.packageDetail.salePrice }}</span>
       </div>
       <div v-if="!packageState.isEditing">
         <label for="saleAmount"><legend>판매량</legend></label>
-        <span>{{ packageState.packageDetail.sale_amount }}</span>
+        <span>{{ packageState.packageDetail.saleAmount }}</span>
       </div>
       <div v-if="!packageState.isEditing">
         <label for="assignCode"><legend>승인상태</legend></label>
         <span v-if="!packageState.isEditing">{{
-          packageState.packageDetail.assign_code
+          packageState.packageDetail.assignCode
         }}</span>
       </div>
     </div>
   </form>
 </template>
 
-<script>
-import { inject, onMounted } from 'vue';
-import { updatePackage } from '@/api/sales/PackageApi';
+<script setup>
+import { inject } from 'vue';
 
-export default {
-  name: 'PackageDetail',
-  setup(_, { emit }) {
-    const packageState = inject('packageState');
-    const partnerState = inject('partnerState');
+const packageState = inject('packageState');
+const partnerState = inject('partnerState');
 
-    onMounted(() => {
-      // console.log(packageState.packageDetail.country);
-    });
 
-    const submitForm = async () => {
-      try {
-        await updatePackage(packageState.packageDetail);
-        packageState.isEditing = false;
-        emit('update:isEditing', false);
-      } catch (error) {
-        console.error('Failed to update package:', error);
-      }
-    };
+const setCountryCode = () => {
+  const selectedCountry = packageState.countries.find(
+    (country) => country.koreanName === packageState.packageDetail.country
+  );
+  partnerState.selectedCountryCode = selectedCountry ? selectedCountry.countryCode : '';
+  packageState.packageDetail.countryCode = selectedCountry ? selectedCountry.countryCode : '';
+  
+  if (partnerState.selectedCountryCode) {
+    console.log(partnerState.selectedCountryCode);
+  }
+};
 
-    const setCountryCode = () => {
-      const selectedCountry = packageState.countries.find(
-        (country) => country.korean_name === packageState.packageDetail.country
-      );
-      if (selectedCountry) {
-        partnerState.selectedCountryCode = selectedCountry.country_code
-        packageState.packageDetail.country_code = selectedCountry.country_code
-      } else {
-        partnerState.selectedCountryCode = '';
-      }
-      if (partnerState.selectedCountryCode) {
-        console.log(partnerState.selectedCountryCode);
-      }
-    };
+const handleSearch = () => {
+  isSmallModalOpen.value = true;
+};
 
-    return {
-      packageState,
-      partnerState,
-      submitForm,
-      setCountryCode,
-    };
-  },
+const closeSmallModal = () => {
+  isSmallModalOpen.value = false;
 };
 </script>
 

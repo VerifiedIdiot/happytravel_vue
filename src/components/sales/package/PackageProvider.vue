@@ -4,16 +4,23 @@
 
 <script setup>
 import { provide, ref, reactive } from 'vue'
-import { getPackageList, getPackageCnt } from '@/api/sales/PackageApi'
+import { getPackageList, getPackageCnt, updatePackage, insertPackage } from '@/api/sales/PackageApi'
 import cloneDeep from 'lodash/cloneDeep'
 //// 상태 관리들 ////
 const empId = sessionStorage.getItem('empId') || 'EMP30002'
 const packages = ref([])
 
+const CRUDStateEnum = Object.freeze({
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'delete',
+});
+
 const initialPackageState = {
   isModalOpen: false,
   packageCode: '',
   isEditing: false,
+  crudState: CRUDStateEnum.CREATE,
   packageDetail: {},
   countries: [],
 }
@@ -64,6 +71,30 @@ const fetchPackages = async () => {
   }
 }
 
+const submitForm = async () => {
+  try {
+    const params = {
+      empId,
+      ...packageState.packageDetail, 
+    }
+    
+    const response = packageState.crudState === CRUDStateEnum.CREATE
+      ? await insertPackage(params)
+      : await updatePackage(params);
+      
+    if (response === true) {
+      packageState.isEditing = false;
+      resetPackageState();
+      resetPartnerState();
+      
+    } else {
+      console.log('저장에 실패하였음');
+    }
+  } catch (error) {
+    console.error('Failed to save package:', error);
+  }
+};
+
 const filterPartners = () => {
     const selectedCountryCode = partnerState.selectedCountry;
     partnerState.flights = packageState.allFlights.filter(flight => flight.country_code === selectedCountryCode);
@@ -72,13 +103,15 @@ const filterPartners = () => {
   };
 
 provide('empId', empId)
-provide('fetchPackages', fetchPackages)
 provide('packages', packages)
+provide('CRUDStateEnum', CRUDStateEnum)
 provide('packageState', packageState)
 provide('resetPackageState', resetPackageState)
 provide('partnerState', partnerState)
 provide('resetPartnerState', resetPartnerState)
 provide('paginationState', paginationState)
+provide('fetchPackages', fetchPackages)
+provide('submitForm', submitForm)
 
 
 </script>
