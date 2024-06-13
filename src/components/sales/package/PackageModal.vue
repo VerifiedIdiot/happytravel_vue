@@ -16,17 +16,17 @@
           type="button"
           class="btn-update"
           v-if="!packageState.isEditing"
-          @click="toggleEditing">
+          @click="toggleEditing()">
           수정하기
         </button>
         <button
           type="submit"
           class="btn-update"
           v-if="packageState.isEditing"
-          @click="handleSave">
+          @click="handleSave()">
           저장
         </button>
-        <button type="button" class="btn-close" @click="handleClose">
+        <button type="button" class="btn-close" @click="handleClose()">
           닫기
         </button>
       </div>
@@ -66,7 +66,6 @@ const handleSave = async () => {
 const handleClose = () => {
   resetPackageState()
   resetPartnerState()
-  emit('close')
 }
 
 const handleKeyDown = (event) => {

@@ -28,8 +28,6 @@
           >
             <router-link to="/hr" class="nav-link">인사/급여</router-link>
             <div v-if="dropdown === 'hr'" class="dropdown-content">
-              <router-link to="/hr/subpage1">페이지 1</router-link>
-              <router-link to="/hr/subpage2">페이지 2</router-link>
               <router-link to="/salary/data">급여 내역</router-link>
               <router-link to="/salary/payment">급여 지급 내역</router-link>
             </div>

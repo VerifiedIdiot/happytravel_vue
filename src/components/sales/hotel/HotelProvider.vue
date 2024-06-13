@@ -8,6 +8,7 @@ import { getHotelList, getHotelCnt, insertHotel, updateHotel } from '@/api/sales
 
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
 const hotels = ref([]);
+const countryCode = ref('')
 
 const CRUDStateEnum = Object.freeze({
   CREATE: 'create',
@@ -20,7 +21,9 @@ const initialHotelState = {
   hotelCode: '',
   isEditing: false,
   crudState: CRUDStateEnum.CREATE,
-  hotelDetail: {},
+  hotelDetail: {
+    country_code: '',
+  },
   countries: [],
 };
 
@@ -63,11 +66,12 @@ const fetchHotels = async () => {
   }
 };
 
-const submitForm = async () => {
+const submitForm = async (countryCode) => {
   try {
     const params = {
       empId,
       ...hotelState.hotelDetail, 
+      country_code : countryCode.value
     }
     
     const response = hotelState.crudState === CRUDStateEnum.CREATE
@@ -95,4 +99,5 @@ provide('fetchHotels', fetchHotels);
 provide('paginationState', paginationState);
 provide('submitForm', submitForm)
 provide('CRUDStateEnum', CRUDStateEnum)
+provide('countryCode', countryCode)
 </script>
