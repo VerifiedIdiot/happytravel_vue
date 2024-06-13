@@ -3,13 +3,27 @@
     <!-- 사원등록 / 수정 화면 -->
     <div class="flex w-full text-3xl pl-10">사원 정보 {{ buttonText }}</div>
     <div class="relative flex flex-col w-11/12 mt-5">
-      <!-- 사진 -->
-      <div class="absolute right-0 top-1 w-4/12 h-48 bg-green-100">
-        <h2>사원 사진 영역</h2>
-      </div>
+      <!-- 사원 사진 영역 시작 -->
       <div
-        class="absolute top-1 right-1 w-5/12 h-48 border border-green-400"
-      ></div>
+        class="absolute w-2/5 right-0 top-1 flex justify-end items-end"
+        style="border: 1px solid red"
+      >
+        <div class="w-36 h-40 bg-gray-100">
+          <img
+            :src="thisEmployee.photo_url || '사진 미리보기 영역'"
+            alt="사진 미리보기"
+            v-if="thisEmployee.photo_url"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <button
+          @click="openModal"
+          class="w-3/12 h-[25px] ml-1 bg-slate-200 hover:bg-slate-300 rounded text-xs shadow-md outline-none"
+        >
+          사진 등록
+        </button>
+      </div>
+      <!-- 사원 사진 영역 끝-->
       <div class="flex my-1 gap-1">
         <label
           for="emp_id"
@@ -24,7 +38,6 @@
           class="flex w-2/6 h-8 px-1 border border-slate-200 outline-none"
         />
       </div>
-      <!-- 사원번호 자동생성 ex) 입사년도4자리 + 입사순서 4자리 -->
       <div class="flex my-1 gap-1">
         <label
           for="password"
@@ -76,6 +89,7 @@
           type="text"
           id="ssn_first"
           v-model="ssnFirst"
+          :readonly="isReadOnly"
           @input="validateSSNFirst"
           maxlength="6"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -85,6 +99,7 @@
           type="text"
           id="ssn_last"
           v-model="ssnLast"
+          :readonly="isReadOnly"
           @input="validateSSNLast"
           maxlength="7"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -112,7 +127,25 @@
         />
         <button @click="searchAddress" class="w-1/12 bg-slate-200">검색</button>
       </div>
-      <!-- 주소 검색 팝업창 -->
+      <!--주소 검색 영역 시작-->
+      <div class="flex gap-1 justify-end">
+        <div id="wrap" class="hidden relative w-10/12 h-[600px]">
+          <img
+            src="//t1.daumcdn.net/postcode/resource/images/close.png"
+            id="btnFoldWrap"
+            style="
+              cursor: pointer;
+              position: absolute;
+              right: 0px;
+              top: 0px;
+              z-index: 1;
+            "
+            @click="foldDaumPostcode"
+            alt="접기 버튼"
+          />
+        </div>
+      </div>
+      <!-- 주소 검색 영역 끝 -->
       <div class="flex my-1 gap-1">
         <label
           for="address_detail"
@@ -334,29 +367,44 @@
       </div>
     </div>
   </div>
-  <!-- 사진 업로드 모달 -->
+  <!-- 사진 업로드 모달 시작 -->
   <div
     v-if="showModal"
     class="fixed inset-0 flex items-center justify-center z-50 bg-gray-500 bg-opacity-75"
   >
     <div class="bg-white p-5 rounded-md">
       <h2 class="text-xl mb-4">사진 업로드</h2>
-      <input type="file" />
       <div class="mt-4">
-        <button
-          class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
+        <div
+          id="modalPreview"
+          class="w-full mt-2 flex justify-center mb-3"
+          v-if="imagePreviewUrl"
         >
-          업로드
-        </button>
-        <button
-          @click="closeModal"
-          class="px-3 py-1 bg-slate-600 hover:bg-slate-500 rounded-md text-white ml-2"
-        >
-          취소
-        </button>
+          <img
+            :src="imagePreviewUrl"
+            alt="미리보기 이미지"
+            class="block w-1/2 object-cover"
+          />
+        </div>
+        <input type="file" @change="onFileChange" />
+        <div class="w-full flex justify-center mt-3">
+          <button
+            @click="uploadPhoto"
+            class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
+          >
+            업로드
+          </button>
+          <button
+            @click="closeModal"
+            class="px-3 py-1 bg-slate-600 hover:bg-slate-500 rounded-md text-white ml-2"
+          >
+            취소
+          </button>
+        </div>
       </div>
     </div>
   </div>
+  <!-- 사진 업로드 모달 끝 -->
 </template>
 
 <script>
@@ -368,6 +416,8 @@ import {
   getbankList,
   insertEmployee,
   updateEmployee,
+  checkDuplicate,
+  uploadPhotoFile,
 } from "@/api/hr/EmpApi";
 
 export default {
@@ -380,6 +430,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    // 기본 데이터 초기화
     const defaultEmployee = {
       emp_id: "",
       password: "",
@@ -405,14 +456,14 @@ export default {
     const thisEmployee = ref({ ...props.employee });
 
     const showModal = ref(false);
+    const imagePreviewUrl = ref(null);
+    const selectedImageFile = ref(null);
 
     const ssnFirst = ref("");
     const ssnLast = ref("");
-
     const phoneFirst = ref("");
     const phoneSecond = ref("");
     const phoneThird = ref("");
-
     const mobileFirst = ref("");
     const mobileSecond = ref("");
     const mobileThird = ref("");
@@ -461,17 +512,6 @@ export default {
         ? "등록"
         : "수정";
     });
-
-    /** kakao 주소 검색 api */
-    const searchAddress = () => {
-      new daum.Postcode({
-        oncomplete: function (data) {
-          thisEmployee.value.zip_code = data.zonecode;
-          thisEmployee.value.address = data.address;
-          document.getElementById("address_detail").focus();
-        },
-      }).open();
-    };
 
     const getStatusName = (statusCode) => {
       const status = empStatusList.value.find(
@@ -593,37 +633,125 @@ export default {
 
     const closeModal = () => {
       showModal.value = false;
+      imagePreviewUrl.value = null;
+      selectedImageFile.value = null;
+    };
+
+    const onFileChange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        selectedImageFile.value = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          imagePreviewUrl.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    const uploadPhoto = async () => {
+      //업로드 버튼 눌렀을때 함수 작동
+      if (!selectedImageFile.value) {
+        alert("사진을 선택해주세요.");
+        return;
+      }
+
+      try {
+        const photoUrl = await uploadPhotoFile(selectedImageFile.value);
+        thisEmployee.value.photo_url = photoUrl;
+        closeModal();
+        alert("사진 업로드가 완료되었습니다.");
+      } catch (error) {
+        console.error("Error uploading photo: ", error);
+        alert("사진 업로드에 실패했습니다.");
+      }
+    };
+
+    /********************* 사원정보 중복 체크 ****************************/
+    const validateInput = (input, maxLength) => {
+      input.value = input.value.replace(/\D/g, "").slice(0, maxLength);
     };
 
     const validateSSNFirst = () => {
-      ssnFirst.value = ssnFirst.value.replace(/\D/g, "").slice(0, 6);
+      validateInput(ssnFirst, 6);
     };
 
     const validateSSNLast = () => {
-      ssnLast.value = ssnLast.value.replace(/\D/g, "").slice(0, 7);
+      validateInput(ssnLast, 7);
     };
 
     const validatePhoneSecond = () => {
-      phoneSecond.value = phoneSecond.value.replace(/\D/g, "").slice(0, 4);
+      validateInput(phoneSecond, 4);
     };
 
     const validatePhoneThird = () => {
-      phoneThird.value = phoneThird.value.replace(/\D/g, "").slice(0, 4);
+      validateInput(phoneThird, 4);
     };
 
     const validateMobileSecond = () => {
-      mobileSecond.value = mobileSecond.value.replace(/\D/g, "").slice(0, 4);
+      validateInput(mobileSecond, 4);
+    };
+    const validateMobileThird = () => {
+      validateInput(mobileThird, 4);
+    };
+    const validatePassword = (password) => {
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/;
+      return regex.test(password);
     };
 
-    const validateMobileThird = () => {
-      mobileThird.value = mobileThird.value.replace(/\D/g, "").slice(0, 4);
+    const checkDuplicates = async (fieldsToCheck) => {
+      for (const { field, value } of fieldsToCheck) {
+        const isDuplicate = await checkDuplicate(field, value);
+        if (isDuplicate) {
+          alert(
+            `중복된 ${
+              field === "ssn"
+                ? "주민등록번호"
+                : field === "mobile"
+                ? "휴대전화"
+                : "은행 계좌"
+            }입니다.`
+          );
+          return true;
+        }
+      }
+      return false;
     };
+    /********************* 사원정보 중복 체크 ****************************/
 
     const saveEmpHandler = async () => {
       try {
+        const fieldsToCheck = [];
+        // 사원 수정시 && 기존 비밀번호와 다를때 비밀번호 유효성 검사
+        if (
+          buttonText.value === "수정" &&
+          props.employee.password !== thisEmployee.value.password &&
+          !validatePassword(thisEmployee.value.password)
+        ) {
+          alert(
+            "비밀번호는 영문 대문자, 소문자, 숫자, 특수문자 중 최소 3가지 이상을 포함해야 합니다."
+          );
+          return;
+        }
+
         //주민번호 13자리 유효성 검사
         if (ssnFirst.value.length !== 6 || ssnLast.value.length !== 7) {
           alert("주민등록번호를 확인해주세요.");
+          return;
+        }
+
+        // 계좌번호 유효성 검사, 기존 계좌번호와 다를 때만 검사
+        if (
+          `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}` !==
+          `${props.employee.bank_code}-${props.employee.account_no}`
+        ) {
+          fieldsToCheck.push({
+            field: "bank",
+            value: `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}`,
+          });
+        }
+
+        if (await checkDuplicates(fieldsToCheck)) {
           return;
         }
 
@@ -656,6 +784,55 @@ export default {
         }
       }
     };
+
+    /*************** kakao 주소 검색 api *******************/
+
+    const foldDaumPostcode = () => {
+      const wrap = document.getElementById("wrap");
+      wrap.innerHTML = "";
+      wrap.style.display = "none";
+      addCloseButton(wrap);
+    };
+
+    const addCloseButton = (wrap) => {
+      const closeButton = document.createElement("img");
+      closeButton.src = "//t1.daumcdn.net/postcode/resource/images/close.png";
+      closeButton.id = "btnFoldWrap";
+      closeButton.style = `
+        cursor: pointer;
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        z-index: 1;
+      `;
+      closeButton.alt = "접기 버튼";
+      closeButton.addEventListener("click", foldDaumPostcode);
+      wrap.appendChild(closeButton);
+    };
+
+    const searchAddress = () => {
+      const wrap = document.getElementById("wrap");
+      wrap.style.display = "block";
+      new daum.Postcode({
+        oncomplete: function (data) {
+          thisEmployee.value.zip_code = data.zonecode;
+          thisEmployee.value.address = data.address;
+          document.getElementById("address_detail").focus();
+          foldDaumPostcode();
+        },
+        onresize: function (size) {
+          const elementWrap = document.getElementById("wrap");
+          if (elementWrap) {
+            elementWrap.style.height = size.height + "px";
+          }
+        },
+        width: "100%",
+        height: "100%",
+      }).embed(wrap);
+      addCloseButton(wrap);
+    };
+
+    /*************** kakao 주소 검색 api *******************/
 
     onMounted(() => {
       fetchDepartmentListHandler();
@@ -696,6 +873,12 @@ export default {
       openModal,
       closeModal,
       isResignedOrOnLeave,
+      checkDuplicates,
+      imagePreviewUrl,
+      onFileChange,
+      uploadPhoto,
+      selectedImageFile,
+      foldDaumPostcode,
     };
   },
 };
