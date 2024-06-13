@@ -1,9 +1,9 @@
-import apiClient from '../axios';
+import customApiClient from '../CustomAxiosInstance';
 
 // GET Package List
 export const getPackageList = async (params) => {
   try {
-    const response = await apiClient.get('/sales/package-list', { params });
+    const response = await customApiClient.get('/sales/package-list', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching package list:', error);
@@ -14,8 +14,7 @@ export const getPackageList = async (params) => {
 // GET Single Package
 export const getPackage = async (params) => {
   try {
-  
-    const response = await apiClient.get('/sales/package-detail', { params });
+    const response = await customApiClient.get('/sales/package-detail', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching package:', error);
@@ -26,7 +25,7 @@ export const getPackage = async (params) => {
 // POST Insert Package
 export const insertPackage = async (packageItem) => {
   try {
-    const response = await apiClient.post('/sales/package', packageItem);
+    const response = await customApiClient.post('/sales/package', packageItem);
     return response.data;
   } catch (error) {
     console.error('Error inserting package:', error);
@@ -37,7 +36,7 @@ export const insertPackage = async (packageItem) => {
 // PUT Update Package
 export const updatePackage = async (packageItem) => {
   try {
-    const response = await apiClient.put('/sales/package', packageItem);
+    const response = await customApiClient.put('/sales/package', packageItem);
     return response.data;
   } catch (error) {
     console.error('Error updating package:', error);
@@ -48,7 +47,7 @@ export const updatePackage = async (packageItem) => {
 // PUT Update Package Y/N
 export const updatePackageYN = async (params) => {
   try {
-    const response = await apiClient.put('/sales/package-yn', null, { params });
+    const response = await customApiClient.put('/sales/package-yn', null, { params });
     return response.data;
   } catch (error) {
     console.error('Error updating package Y/N:', error);
@@ -59,7 +58,7 @@ export const updatePackageYN = async (params) => {
 // PUT Assign Package
 export const assignPackage = async (params) => {
   try {
-    const response = await apiClient.put('/sales/package-assign', null, { params });
+    const response = await customApiClient.put('/sales/package-assign', null, { params });
     return response.data;
   } catch (error) {
     console.error('Error assigning package:', error);
@@ -67,9 +66,10 @@ export const assignPackage = async (params) => {
   }
 };
 
+// GET Countries
 export const getCountries = async (params) => {
   try {
-    const response = await apiClient.get('sales/get-countries', {params});
+    const response = await customApiClient.get('sales/get-countries', { params });
     return response.data;
   } catch (error) {
     console.error('Error getting countries:', error);
@@ -77,13 +77,13 @@ export const getCountries = async (params) => {
   }
 }
 
+// GET Package Count
 export const getPackageCnt = async (params) => {
   try {
-    const response = await apiClient.get('sales/package-count', {params});
+    const response = await customApiClient.get('sales/package-count', { params });
     return response.data;
   } catch (error) {
-    console.error('Error getting packageCnt:', error);
+    console.error('Error getting package count:', error);
     throw error;
   }
-
 }
