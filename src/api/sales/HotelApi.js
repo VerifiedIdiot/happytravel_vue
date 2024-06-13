@@ -34,9 +34,9 @@ export const insertHotel = async (hotel, empId) => {
 };
 
 // PUT Update Hotel
-export const updateHotel = async (hotelCode, hotel, empId) => {
+export const updateHotel = async (hotelItem) => {
   try {
-    const response = await apiClient.put(`/sales/hotel/${hotelCode}`, hotel, empId);
+    const response = await apiClient.put(`/sales/hotel`, hotelItem);
     return response.data;
   } catch (error) {
     console.error('Error updating hotel:', error);
