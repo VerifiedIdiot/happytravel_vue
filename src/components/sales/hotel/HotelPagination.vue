@@ -36,14 +36,14 @@
 import { inject, computed } from 'vue';
 
 export default {
-  name: 'Pagination',
+  name: 'HotelPagination',
   setup() {
     const paginationState = inject('paginationState');
-    const fetchPackages = inject('fetchPackages');
+    const fetchHotels = inject('fetchHotels');
 
     const setCurrentPage = (page) => {
       paginationState.currentPage = page;
-      fetchPackages();
+      fetchHotels();
     };
 
     const prevPage = () => {

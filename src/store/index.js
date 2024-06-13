@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import flight from "./modules/flight";
 import {
   getMyPageUserInfo,
   getNotices,
@@ -33,6 +34,9 @@ export default createStore({
     getPosName: (state) => (posCode) => {
       const pos = state.positions.find((p) => p.posCode === posCode);
       return pos ? pos.posName : "";
+    },
+    user(state) {
+      return state.user;
     },
   },
   mutations: {

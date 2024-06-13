@@ -11,15 +11,39 @@
             loading="lazy"
           />
         </div>
-        <h1>{{ title }}</h1>
+        <div class="modal-header-title">
+          <h1>{{ title }}</h1>
+        </div>
       </div>
       <slot></slot>
+      <div class="button-container">
+        <button
+          type="button"
+          class="btn-update"
+          v-if="!hotelState.isEditing"
+          @click="toggleEditing"
+        >
+          수정하기
+        </button>
+        <button
+          type="submit"
+          class="btn-update"
+          v-if="hotelState.isEditing"
+          @click="handleSave"
+        >
+          저장
+        </button>
+        <button type="button" class="btn-close" @click="handleClose">
+          닫기
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { inject } from "vue";
+import { inject, onMounted, onUnmounted } from "vue";
+import { getCountries } from "@/api/sales/HotelApi";
 
 export default {
   name: "HotelModal",
@@ -33,17 +57,49 @@ export default {
       default: "@/assets/icons/hotel2.png",
     },
   },
-  emits: ['close' ],
+  emits: ["close", "update:isEditing"],
   setup(_, { emit }) {
-    const isEditing = inject('isEditing');
+    const hotelState = inject("hotelState");
+    const resetHotelState = inject("resetHotelState");
 
-    const handleClose = () => {
-      isEditing.value = false;
-      emit('close');
+    const toggleEditing = async () => {
+      const countryData = await getCountries();
+      hotelState.countries = countryData;
+      if (hotelState.countries) {
+        hotelState.isEditing = true;
+      }
     };
 
+    const handleSave = () => {
+      resetHotelState();
+      emit("update:isEditing", false);
+    };
+
+    const handleClose = () => {
+      resetHotelState();
+      emit("close");
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        resetHotelState();
+        handleClose();
+      }
+    };
+
+    onMounted(() => {
+      document.addEventListener("keydown", handleKeyDown);
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener("keydown", handleKeyDown);
+    });
+
     return {
+      hotelState,
       handleClose,
+      handleSave,
+      toggleEditing,
     };
   },
 };
