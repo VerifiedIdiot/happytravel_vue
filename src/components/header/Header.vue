@@ -56,6 +56,15 @@
               <router-link to="/sales/package">여행상품관리</router-link>
             </div>
           </li>
+          <li @mouseenter="toggleDropdown('attendance')" @mouseleave="toggleDropdown(null)">
+            <router-link to="/attendance" class="nav-link">근태 테스트</router-link>
+            <div v-if="dropdown === 'attendance'" class="dropdown-content">
+              <router-link to="/attendance/myAttendance">나의 근테</router-link>
+              <router-link to="/attendance/teamAttendance">팀원 근태</router-link>
+              <router-link to="/attendance/adminAttendance">근태 관리</router-link>
+            </div>
+          </li>
+          
         </ul>
       </nav>
     </div>
