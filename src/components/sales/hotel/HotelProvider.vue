@@ -4,15 +4,22 @@
 
 <script setup>
 import { provide, ref, reactive } from 'vue';
-import { getHotelList, getHotelCnt } from '@/api/sales/HotelApi';
+import { getHotelList, getHotelCnt, insertHotel, updateHotel } from '@/api/sales/HotelApi';
 
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
 const hotels = ref([]);
+
+const CRUDStateEnum = Object.freeze({
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'delete',
+});
 
 const initialHotelState = {
   isModalOpen: false,
   hotelCode: '',
   isEditing: false,
+  crudState: CRUDStateEnum.CREATE,
   hotelDetail: {},
   countries: [],
 };
@@ -56,6 +63,29 @@ const fetchHotels = async () => {
   }
 };
 
+const submitForm = async () => {
+  try {
+    const params = {
+      empId,
+      ...hotelState.hotelDetail, 
+    }
+    
+    const response = hotelState.crudState === CRUDStateEnum.CREATE
+      ? await insertHotel(params)
+      : await updateHotel(params);
+      
+    if (response === true) {
+      hotelState.isEditing = false;
+      resetHotelState();
+      
+    } else {
+      console.log('save failed');
+    }
+  } catch (error) {
+    console.error('Failed to save hotels:', error);
+  }
+};
+
 provide('empId', empId);
 provide('hotels', hotels);
 provide('hotelState', hotelState);
@@ -63,4 +93,6 @@ provide('resetHotelState', resetHotelState);
 provide('setCurrentPage', setCurrentPage);
 provide('fetchHotels', fetchHotels);
 provide('paginationState', paginationState);
+provide('submitForm', submitForm)
+provide('CRUDStateEnum', CRUDStateEnum)
 </script>
