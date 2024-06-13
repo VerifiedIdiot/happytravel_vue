@@ -1,50 +1,51 @@
 <template>
-  <div class="hotel-container">
-    <div class="hotel-box">
-      <div class="hotel-item">
-        <button class="btn-create" @click="openModalForCreate">
-          <p>신규등록</p>
-        </button>
+    <div class="hotel-container">
+      <div class="hotel-box">
+        <div class="hotel-item">
+          <button class="btn-create" @click="openModalForCreate">
+            <p>신규등록</p>
+          </button>
+        </div>
       </div>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>호텔명</th>
+              <th>전화번호</th>
+              <th>국가</th>
+              <th>주소</th>
+              <th>가격</th>
+              <th>
+                <select>
+                  <option value="all">사용유무</option>
+                  <option value="Y">사용</option>
+                  <option value="N">미사용</option>
+                </select>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="htl in hotels"
+              :key="htl.hotel_code"
+              @click="openModal(htl.hotel_code)"
+            >
+              <td>{{ htl.hotel_name }}</td>
+              <td>{{ htl.phone }}</td>
+              <td>{{ htl.country }}</td>
+              <td>{{ htl.address }}</td>
+              <td>{{ htl.price }}</td>
+              <td>{{ htl.is_used }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <HotelModal v-if="hotelState.isModalOpen" @close="closeModal">
+        <HotelDetail />
+      </HotelModal>
     </div>
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>호텔명</th>
-            <th>전화번호</th>
-            <th>국가</th>
-            <th>주소</th>
-            <th>가격</th>
-            <th>
-              <select>
-                <option value="all">사용유무</option>
-                <option value="Y">사용</option>
-                <option value="N">미사용</option>
-              </select>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="htl in hotels"
-            :key="htl.hotel_code"
-            @click="openModal(htl.hotel_code)"
-          >
-            <td>{{ htl.hotel_name }}</td>
-            <td>{{ htl.phone }}</td>
-            <td>{{ htl.country }}</td>
-            <td>{{ htl.address }}</td>
-            <td>{{ htl.price }}</td>
-            <td>{{ htl.is_used }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <HotelModal v-if="hotelState.isModalOpen" @close="closeModal">
-      <HotelDetail />
-    </HotelModal>
-  </div>
+  
 </template>
 
 <script setup>
@@ -62,13 +63,11 @@ const empId = inject("empId");
 onMounted(fetchHotels);
 
 onMounted(() => {
-  console.log(hotelState.isModalOpen)
-  console.log('ㅎㅇ')
-})
+  console.log(hotelState.isModalOpen);
+});
 
 const openModal = async (htlCode = "") => {
   hotelState.hotelCode = htlCode;
-  hotelState.isModalOpen = false;
   try {
     if (htlCode) {
       const data = await getHotel({
@@ -100,11 +99,8 @@ const openModalForCreate = async () => {
 
 const closeModal = () => {
   resetHotelState();
+  hotelState.isModalOpen = false;
 };
-
-
-
-
 </script>
 
 <style src="./HotelDashboard.css"></style>
