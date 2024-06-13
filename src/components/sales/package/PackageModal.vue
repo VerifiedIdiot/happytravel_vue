@@ -52,7 +52,6 @@ export default {
     const resetPartnerState = inject('resetPartnerState')
 
     const toggleEditing = async () => {
-      resetPartnerState()
       const countryData = await getCountries()
       packageState.countries = countryData
       if (packageState.countries) packageState.isEditing = true
