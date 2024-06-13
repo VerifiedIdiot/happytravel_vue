@@ -40,6 +40,7 @@
             </tr>
           </tbody>
         </table>
+        <Pagination />
       </div>
       <HotelModal v-if="hotelState.isModalOpen" @close="closeModal">
         <HotelDetail />
@@ -53,6 +54,7 @@ import { inject, onMounted } from "vue";
 import { getHotel, getCountries } from "@/api/sales/HotelApi";
 import HotelDetail from "@/components/sales/hotel/HotelDetail.vue";
 import HotelModal from "@/components/sales/hotel/HotelModal.vue";
+import Pagination from "@/components/sales/hotel/HotelPagination.vue";
 
 const hotels = inject("hotels");
 const hotelState = inject("hotelState");
@@ -61,10 +63,6 @@ const fetchHotels = inject("fetchHotels");
 const empId = inject("empId");
 
 onMounted(fetchHotels);
-
-onMounted(() => {
-  console.log(hotelState.isModalOpen);
-});
 
 const openModal = async (htlCode = "") => {
   hotelState.hotelCode = htlCode;
