@@ -61,18 +61,19 @@ export default {
   setup(_, { emit }) {
     const hotelState = inject("hotelState");
     const resetHotelState = inject("resetHotelState");
+    const submitForm = inject("submitForm");
+    const CRUDStateEnum = inject("CRUDStateEnum");
 
     const toggleEditing = async () => {
       const countryData = await getCountries();
+      hotelState.crudState = CRUDStateEnum.UPDATE;
       hotelState.countries = countryData;
-      if (hotelState.countries) {
-        hotelState.isEditing = true;
-      }
+      if (hotelState.countries) hotelState.isEditing = true;
     };
 
-    const handleSave = () => {
-      resetHotelState();
-      emit("update:isEditing", false);
+    const handleSave = async () => {
+      console.log(hotelState.hotelDetail)
+      await submitForm();
     };
 
     const handleClose = () => {
@@ -100,6 +101,8 @@ export default {
       handleClose,
       handleSave,
       toggleEditing,
+      submitForm,
+      CRUDStateEnum,
     };
   },
 };

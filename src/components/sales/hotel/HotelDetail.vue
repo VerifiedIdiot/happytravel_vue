@@ -36,7 +36,9 @@
             v-else
             id="country"
             v-model="hotelState.hotelDetail.country"
+            @change="setCountryCode"
           >
+            >
             <option
               v-for="country in hotelState.countries"
               :key="country.country_code"
@@ -86,24 +88,51 @@
 </template>
 
 <script>
-import { inject } from "vue";
+import { inject, ref } from "vue";
 import { updateHotel } from "@/api/sales/HotelApi";
 
 export default {
   name: "HotelDetail",
   setup(_, { emit }) {
     const hotelState = inject("hotelState");
+    let country_code = ref("");
+
     const submitForm = async () => {
       try {
-        await updateHotel(hotelDetail.value);
+        
+        if (country_code) {
+          console.log(country_code)
+          hotelState.hotelDetail = {
+            ...hotelState.hotelDetail,
+            country_code: country_code,
+          };
+        }
+
+        console.log(hotelState.hotelDetail); // hotelDetail의 상태 확인
+        if (hotelState.hotelDetail.country_code) {
+          await updateHotel(hotelState.hotelDetail);
+        }
+
+        fetchHotels();
       } catch (error) {
         console.error("Failed to update hotel:", error);
+      }
+    };
+
+    const setCountryCode = () => {
+      const data = hotelState.countries.find(
+        (country) => country.korean_name === hotelState.hotelDetail.country
+      );
+      if (data) {
+        country_code = data.country_code;
+        console.log(country_code)
       }
     };
 
     return {
       hotelState,
       submitForm,
+      setCountryCode,
     };
   },
 };
