@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submitForm">
+  <form @submit.prevent="submitForm()">
     <div class="form-upper">
       <div>
         <div class="form-item">
@@ -132,10 +132,10 @@
         </p>
         <label for="flightCode"><legend>항공권 정보</legend> </label>
         <div class="partner-info-box">
-          <img
+          <!-- <img
             src="@/assets/icons/passport.png"
             alt="passport image"
-            loading="lazy" />
+            loading="lazy" /> -->
           <span v-if="!packageState.isEditing"
             >항공사 {{ packageState.packageDetail.airline }}</span
           >
@@ -154,7 +154,7 @@
               packageState.packageDetail.countryCode !== undefined &&
               packageState.isEditing
             "
-            @click.prevent="handleSearch">
+            @click.prevent="handleSearch()">
             검색
           </button>
         </div>
@@ -179,10 +179,10 @@
         </p>
         <label for="hotelCode"><legend>호텔 정보</legend> </label>
         <div class="partner-info-box">
-          <img
+          <!-- <img
             src="@/assets/icons/hotel2.png"
             alt="hotel image"
-            loading="lazy" />
+            loading="lazy" /> -->
           <span v-if="!packageState.isEditing"
             >호텔명 {{ packageState.packageDetail.hotelName }}</span
           >
@@ -201,7 +201,7 @@
               packageState.packageDetail.countryCode !== undefined &&
               packageState.isEditing
             "
-            @click.prevent="handleSearch">
+            @click.prevent="handleSearch()">
             검색
           </button>
         </div>
@@ -226,10 +226,10 @@
         </p>
         <label for="agencyCode"><legend>현지 여행사 정보</legend> </label>
         <div class="partner-info-box">
-          <img
+          <!-- <img
             src="@/assets/icons/agency.png"
             alt="agency image"
-            loading="lazy" />
+            loading="lazy" /> -->
           <span v-if="!packageState.isEditing"
             >여행사 {{ packageState.packageDetail.agencyName }}</span
           >
@@ -248,7 +248,7 @@
               packageState.packageDetail.countryCode !== undefined &&
               packageState.isEditing
             "
-            @click.prevent="handleSearch">
+            @click.prevent="handleSearch()">
             검색
           </button>
         </div>
@@ -275,14 +275,16 @@
       </div>
     </div>
   </form>
+  <PartnerModal v-if="partnerState.isSmallModalOpen" @close="closeModal()">
+    </PartnerModal>
 </template>
 
 <script setup>
 import { inject } from 'vue';
-
-const packageState = inject('packageState');
-const partnerState = inject('partnerState');
-
+import PartnerModal from '@/components/sales/package/PartnerModal.vue';
+const packageState = inject('packageState')
+const partnerState = inject('partnerState')
+// const fetchPartners = inject('fetchPartnsers')
 
 const setCountryCode = () => {
   const selectedCountry = packageState.countries.find((country) => country.koreanName === packageState.packageDetail.country
@@ -292,16 +294,15 @@ const setCountryCode = () => {
   
   if (partnerState.selectedCountryCode) {
     console.log(partnerState.selectedCountryCode)
+    // fetchPartners(partnerState.selectedCountryCode)
   }
 }
 
 const handleSearch = () => {
-  isSmallModalOpen.value = true
+  partnerState.isSmallModalOpen = true
+  console.log('test')
 }
 
-const closeSmallModal = () => {
-  isSmallModalOpen.value = false
-}
 </script>
 
 <style scoped lang="scss">
@@ -320,6 +321,7 @@ form {
 }
 legend {
   font-size: 1.5rem;
+  white-space: nowrap;
 }
 .verification-text {
   position: absolute;

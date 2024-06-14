@@ -61,11 +61,10 @@ const empId = inject('empId');
 
 onMounted(() => {
   fetchPackages()
-  
-});
+})
 
 const openModal = async (pkgCode = '') => {
-  packageState.packageCode = pkgCode;
+  packageState.packageCode = pkgCode
  
   try {
     if (pkgCode) {
@@ -73,37 +72,35 @@ const openModal = async (pkgCode = '') => {
         packageCode: pkgCode,
         empId: empId,
       });
-      packageState.packageDetail = data;
+      packageState.packageDetail = data
       if (packageState.packageDetail)
       partnerState.selectedCountryCode = packageState.packageDetail.countryCode
-      // console.log(packageState.packageDetail)
-      // console.log(partnerState.selectedCountryCode)
     } else {
-      packageState.packageDetail = {};
+      packageState.packageDetail = {}
     }
 
-    if (packageState.packageDetail && partnerState.selectedCountryCode !== undefined) {
-      packageState.isModalOpen = true;
+    if ((packageState.packageDetail.packageCode !== undefined)  && (partnerState.selectedCountryCode !== undefined)) {
+      packageState.isModalOpen = true
     }
   } catch (error) {
-    console.error('Failed to load package details:', error);
+    console.error('Failed to load package details:', error)
   }
-};
+}
 
 const openModalForCreate = async () => {
   resetPackageState();
   packageState.isEditing = true;
-  const countryData = await getCountries();
-  packageState.countries = countryData;
+  const countryData = await getCountries()
+  packageState.countries = countryData
   if (packageState.countries.length > 0 && packageState.isEditing) {
-    packageState.isModalOpen = true;
+    packageState.isModalOpen = true
   }
-};
+}
 
 const closeModal = () => {
   resetPackageState()
   resetPartnerState()
-};
+}
 </script>
 
 <style scoped lang="scss">
