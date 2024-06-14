@@ -4,11 +4,10 @@
 
 <script setup>
 import { provide, ref, reactive } from 'vue';
-import { getHotelList, getHotelCnt, insertHotel, updateHotel } from '@/api/sales/HotelApi';
+import { getAgencyList, getAgencyCnt, insertAgency, updateAgency } from '@/api/sales/AgencyApi';
 
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
-const hotels = ref([]);
-const countryCode = ref('')
+const agencies = ref([]);
 
 const CRUDStateEnum = Object.freeze({
   CREATE: 'create',
@@ -16,21 +15,19 @@ const CRUDStateEnum = Object.freeze({
   DELETE: 'delete',
 });
 
-const initialHotelState = {
+const initialAgencyState = {
   isModalOpen: false,
-  hotelCode: '',
+  agencyCode: '',
   isEditing: false,
   crudState: CRUDStateEnum.CREATE,
-  hotelDetail: {
-    country_code: '',
-  },
+  agencyDetail: {},
   countries: [],
 };
 
-const hotelState = reactive({ ...initialHotelState });
+const agencyState = reactive({ ...initialAgencyState });
 
 const initialPaginationState = {
-  hotelCnt: 0,
+  agencyCnt: 0,
   currentPage: 1,
   itemsPerPage: 5,
   totalPages: 0,
@@ -38,16 +35,16 @@ const initialPaginationState = {
 
 const paginationState = reactive({ ...initialPaginationState });
 
-const resetHotelState = () => {
-  Object.assign(hotelState, initialHotelState);
+const resetAgencyState = () => {
+  Object.assign(agencyState, initialAgencyState);
 };
 
 const setCurrentPage = (page) => {
   paginationState.currentPage = page;
-  fetchHotels();
+  fetchAgencies();
 };
 
-const fetchHotels = async () => {
+const fetchAgencies = async () => {
   try {
     const params = {
       empId,
@@ -55,49 +52,48 @@ const fetchHotels = async () => {
       offset: paginationState.itemsPerPage * (paginationState.currentPage - 1),
     };
     const [data, cnt] = await Promise.all([
-      getHotelList(params),
-      getHotelCnt({ empId }),
+      getAgencyList(params),
+      getAgencyCnt({ empId }),
     ]);
-    hotels.value = data;
-    paginationState.hotelCnt = cnt;
+    agencies.value = data;
+    paginationState.agencyCnt = cnt;
     paginationState.totalPages = Math.ceil(cnt / paginationState.itemsPerPage);
   } catch (error) {
-    console.error('Failed to fetch hotels:', error);
+    console.error('Failed to fetch agency:', error);
   }
 };
 
-const submitForm = async (countryCode) => {
+const submitForm = async () => {
   try {
     const params = {
       empId,
-      ...hotelState.hotelDetail, 
-      country_code : countryCode.value
+      ...agencyState.agencyDetail, 
     }
     
-    const response = hotelState.crudState === CRUDStateEnum.CREATE
-      ? await insertHotel(params)
-      : await updateHotel(params);
+    const response = agencyState.crudState === CRUDStateEnum.CREATE
+      ? await insertAgency(params)
+      : await updateAgency(params);
       
     if (response === true) {
-      hotelState.isEditing = false;
-      resetHotelState();
-      fetchHotels();
+      agencyState.isEditing = false;
+      resetAgencyState();
+      fetchAgencies();
     } else {
       console.log('save failed');
     }
   } catch (error) {
-    console.error('Failed to save hotels:', error);
+    console.error('Failed to save agencies:', error);
   }
 };
 
 provide('empId', empId);
-provide('hotels', hotels);
-provide('hotelState', hotelState);
-provide('resetHotelState', resetHotelState);
+provide('agencies', agencies);
+provide('agencyState', agencyState);
+provide('resetAgencyState', resetAgencyState);
 provide('setCurrentPage', setCurrentPage);
-provide('fetchHotels', fetchHotels);
+provide('fetchAgencies', fetchAgencies);
 provide('paginationState', paginationState);
 provide('submitForm', submitForm)
 provide('CRUDStateEnum', CRUDStateEnum)
-provide('countryCode', countryCode)
+
 </script>

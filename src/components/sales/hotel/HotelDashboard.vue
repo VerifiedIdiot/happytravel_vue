@@ -1,4 +1,5 @@
 <template>
+  <div class="wrapper">
     <div class="hotel-container">
       <div class="hotel-box">
         <div class="hotel-item">
@@ -40,13 +41,13 @@
             </tr>
           </tbody>
         </table>
-        <Pagination />
       </div>
       <HotelModal v-if="hotelState.isModalOpen" @close="closeModal">
         <HotelDetail />
       </HotelModal>
     </div>
-  
+    <Pagination />
+  </div>
 </template>
 
 <script setup>

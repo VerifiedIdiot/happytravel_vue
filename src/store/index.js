@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import flight from "./modules/flight";
+
 import {
   getMyPageUserInfo,
   getNotices,
@@ -117,7 +117,5 @@ export default createStore({
       }
     },
   },
-  modules: {
-    flight,
-  },
+  
 });
