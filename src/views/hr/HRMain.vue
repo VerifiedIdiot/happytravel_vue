@@ -5,20 +5,12 @@
 </template>
 
 <script>
-import { ref } from "vue";
 import HREmp from "./HREmp.vue";
 
 export default {
   name: "HRMain",
   components: {
     HREmp,
-  },
-  setup() {
-    const showEmpComponent = ref(false);
-
-    return {
-      showEmpComponent,
-    };
   },
 };
 </script>
