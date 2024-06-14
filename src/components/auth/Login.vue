@@ -25,7 +25,6 @@
 import AuthApi from '@/api/auth/AuthApi';
 
 export default {
-  name: 'LoginMain',
   data() {
     return {
       username: '',
@@ -38,6 +37,7 @@ export default {
       try {
         const response = await AuthApi.login(this.username, this.password);
         if (response.data) {
+          this.$store.commit('setLoginInfo', response.data);
           this.$router.push('/main');
         }
       } catch (error) {
