@@ -4,15 +4,15 @@
     <div class="flex w-full text-3xl pl-10">사원 정보 {{ buttonText }}</div>
     <div class="relative flex flex-col w-11/12 mt-5">
       <!-- 사원 사진 영역 시작 -->
-      <div
-        class="absolute w-2/5 right-0 top-1 flex justify-end items-end"
-        style="border: 1px solid red"
-      >
+      <div class="absolute w-2/5 right-0 top-1 flex justify-end items-end">
         <div class="w-36 h-40 bg-gray-100">
           <img
-            :src="thisEmployee.photo_url || '사진 미리보기 영역'"
+            :src="
+              photoPreviewUrl
+                ? photoPreviewUrl
+                : thisEmployee.photo_url || '사진 미리보기 영역'
+            "
             alt="사진 미리보기"
-            v-if="thisEmployee.photo_url"
             class="w-full h-full object-cover"
           />
         </div>
@@ -345,15 +345,15 @@
       </div>
       <div class="flex my-1 gap-1">
         <label
-          for="remaerks"
+          for="remarks"
           class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
           >비고</label
         >
         <textarea
           rows="10"
           type="text"
-          id="remaerks"
-          v-model="thisEmployee.remaerks"
+          id="remarks"
+          v-model="thisEmployee.remarks"
           class="flex w-10/12 h-20 px-1 border border-gray-200 outline-none resize-none"
         ></textarea>
       </div>
@@ -389,10 +389,10 @@
         <input type="file" @change="onFileChange" />
         <div class="w-full flex justify-center mt-3">
           <button
-            @click="uploadPhoto"
+            @click="confirmPhoto"
             class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
           >
-            업로드
+            확인
           </button>
           <button
             @click="closeModal"
@@ -405,6 +405,58 @@
     </div>
   </div>
   <!-- 사진 업로드 모달 끝 -->
+  <!--
+    모달 내용
+    퇴사자 사원번호/사원명/부서/직급/퇴사일자 확인
+    v-if="showConfirmModal"
+  -->
+  <div
+    id="confirmModal"
+    class="hidden fixed inset-0 flex items-center justify-center z-50 bg-gray-500 bg-opacity-75"
+  >
+    <div class="bg-white p-5 rounded-md w-3/12">
+      <div id="leaveEmpInfo" class="w-full my-5 border border-red-200">
+        <div class="w-full flex justify-evenly bg-slate-200">
+          <p>사원번호</p>
+          <p>사원명</p>
+        </div>
+        <div class="w-full flex justify-evenly">
+          <p>20240001</p>
+          <p>천우희</p>
+        </div>
+        <div class="w-full flex justify-evenly bg-slate-200">
+          <p>부서</p>
+          <p>직급</p>
+        </div>
+        <div class="w-full flex justify-evenly">
+          <p>회계</p>
+          <p>과장</p>
+        </div>
+        <div class="w-full flex justify-evenly bg-slate-200">
+          <p>근속년월</p>
+        </div>
+        <div class="w-full flex justify-evenly">
+          <p>2024-02-05 ~ 2024-06-12</p>
+        </div>
+        <div class="w-full flex justify-evenly bg-slate-200"><p>퇴직일</p></div>
+        <div class="w-full flex justify-evenly"><p>2024-06-13</p></div>
+      </div>
+      <p class="w-full text-center">재직상태를 '퇴직'으로 변경하시겠습니까?</p>
+      <div class="w-full flex justify-center">
+        <button
+          class="px-3 py-1 mx-1 bg-red-400 hover:bg-red-200 rounded text-white"
+        >
+          확인
+        </button>
+        <button class="px-3 py-1 mx-1 bg-slate-200 hover:bg-slate-400 rounded">
+          취소
+        </button>
+      </div>
+    </div>
+  </div>
+  <!--퇴사 확인 모달 시작-->
+
+  <!--퇴사 확인 모달 끝-->
 </template>
 
 <script>
@@ -450,13 +502,14 @@ export default {
       bank_code: "",
       account_no: "",
       salary: "",
-      remaerks: "",
+      remarks: "",
     };
 
     const thisEmployee = ref({ ...props.employee });
 
     const showModal = ref(false);
     const imagePreviewUrl = ref(null);
+    const photoPreviewUrl = ref(null);
     const selectedImageFile = ref(null);
 
     const ssnFirst = ref("");
@@ -467,6 +520,27 @@ export default {
     const mobileFirst = ref("");
     const mobileSecond = ref("");
     const mobileThird = ref("");
+
+    const showConfirmModal = ref(true);
+    const pendingStatusChange = ref(null);
+
+    const openConfirmModal = (status) => {
+      pendingStatusChange.value = status;
+      showConfirmModal.value = true;
+    };
+
+    const closeConfirmModal = () => {
+      showConfirmModal.value = false;
+      pendingStatusChange.value = null;
+    };
+
+    const confirmLeave = () => {
+      if (pendingStatusChange.value === "퇴직") {
+        thisEmployee.value.leave_date = new Date().toISOString().split("T")[0]; // 퇴사일자 저장
+      }
+      thisEmployee.value.status_code = pendingStatusChange.value;
+      closeConfirmModal();
+    };
 
     const phoneOptions = [
       "02",
@@ -641,6 +715,7 @@ export default {
       const file = event.target.files[0];
       if (file) {
         selectedImageFile.value = file;
+        console.log("selectedImageFile.value" + selectedImageFile.value);
         const reader = new FileReader();
         reader.onload = (e) => {
           imagePreviewUrl.value = e.target.result;
@@ -649,21 +724,13 @@ export default {
       }
     };
 
-    const uploadPhoto = async () => {
-      //업로드 버튼 눌렀을때 함수 작동
-      if (!selectedImageFile.value) {
-        alert("사진을 선택해주세요.");
-        return;
-      }
-
-      try {
-        const photoUrl = await uploadPhotoFile(selectedImageFile.value);
-        thisEmployee.value.photo_url = photoUrl;
+    const confirmPhoto = () => {
+      if (selectedImageFile.value) {
+        photoPreviewUrl.value = imagePreviewUrl.value;
         closeModal();
-        alert("사진 업로드가 완료되었습니다.");
-      } catch (error) {
-        console.error("Error uploading photo: ", error);
-        alert("사진 업로드에 실패했습니다.");
+        alert("사진 미리보기가 업데이트되었습니다.");
+      } else {
+        alert("사진을 선택해주세요.");
       }
     };
 
@@ -763,13 +830,28 @@ export default {
         thisEmployee.value.phone = `${phoneFirst.value}-${phoneSecond.value}-${phoneThird.value}`;
         thisEmployee.value.mobile = `${mobileFirst.value}-${mobileSecond.value}-${mobileThird.value}`;
 
+        // 파일이 선택된 경우에만 업로드
+        if (selectedImageFile.value) {
+          const fileName = await uploadPhotoFile(selectedImageFile.value);
+          thisEmployee.value.photo_url = fileName; // 파일 업로드 후 파일 이름 설정
+        }
+
         const data = thisEmployee.value;
 
+        const formData = new FormData();
+        formData.append(
+          "employee",
+          new Blob([JSON.stringify(thisEmployee.value)], {
+            type: "application/json",
+          })
+        );
+        formData.append("file", selectedImageFile.value);
+
         if (buttonText.value === "등록") {
-          await insertEmployee(thisEmployee.value);
+          await insertEmployee(formData);
           alert("사원정보 저장이 완료되었습니다.");
         } else {
-          await updateEmployee(thisEmployee.value);
+          await updateEmployee(formData); // 얘도 formData 써야하나용?
           alert("사원정보 수정이 완료되었습니다.");
         }
 
@@ -875,8 +957,9 @@ export default {
       isResignedOrOnLeave,
       checkDuplicates,
       imagePreviewUrl,
+      photoPreviewUrl,
       onFileChange,
-      uploadPhoto,
+      confirmPhoto,
       selectedImageFile,
       foldDaumPostcode,
     };
@@ -897,5 +980,12 @@ thead,
 tbody th,
 td {
   background-color: #fff;
+}
+#leaveEmpInfo div p {
+  width: 100%;
+  padding: 4px;
+  text-align: center;
+  border: 1px solid rgb(243, 244, 246);
+  box-sizing: border-box;
 }
 </style>

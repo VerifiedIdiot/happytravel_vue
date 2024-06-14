@@ -147,7 +147,7 @@ export default {
         bank_code: "",
         account_no: "",
         salary: "",
-        remaerks: "",
+        remarks: "",
       };
       onEmpForm.value = true;
     };
