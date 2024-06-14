@@ -345,15 +345,15 @@
       </div>
       <div class="flex my-1 gap-1">
         <label
-          for="remaerks"
+          for="remarks"
           class="flex items-center justify-end w-2/12 h-8 px-1 text-base"
           >비고</label
         >
         <textarea
           rows="10"
           type="text"
-          id="remaerks"
-          v-model="thisEmployee.remaerks"
+          id="remarks"
+          v-model="thisEmployee.remarks"
           class="flex w-10/12 h-20 px-1 border border-gray-200 outline-none resize-none"
         ></textarea>
       </div>
@@ -502,7 +502,7 @@ export default {
       bank_code: "",
       account_no: "",
       salary: "",
-      remaerks: "",
+      remarks: "",
     };
 
     const thisEmployee = ref({ ...props.employee });
