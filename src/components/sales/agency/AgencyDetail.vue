@@ -1,92 +1,103 @@
 <template>
-  <div class="modal-overlay" @keydown.esc="handleClose">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1>{{ flightDetail.flight_code ? "✈️ Edit" : "✈️ New" }}</h1>
-      </div>
-      <form @submit.prevent="submitForm">
-        <div class="form-upper">
-          <div>
-            <label for="packageName"><legend>여행사 이름</legend></label>
-            <span v-if="!isEditing">{{ packageDetail.package_name }}</span>
-            <input
-              v-else
-              type="text"
-              id="packageName"
-              v-model="packageDetail.package_name" />
-
-            <label for="country"><legend>국가</legend></label>
-            <span v-if="!isEditing">{{ packageDetail.country }}</span>
-            <input
-              v-else
-              type="text"
-              id="country"
-              v-model="packageDetail.country" />
-          </div>
-          <div>
-            <label for="startDate"><legend>여행시작일</legend></label>
-            <span v-if="!isEditing">{{ packageDetail.start_date }}</span>
-            <input
-              v-else
-              type="date"
-              id="startDate"
-              v-model="packageDetail.start_date" />
-            <label for="endDate"><legend>여행종료일</legend></label>
-            <span v-if="!isEditing">{{ packageDetail.end_date }}</span>
-            <input
-              v-else
-              type="date"
-              id="endDate"
-              v-model="packageDetail.end_date" />
-          </div>
-          <div>
-            <label for="saleStartDate"><legend>판매시작일</legend></label>
-            <span v-if="!isEditing">{{ packageDetail.sale_start_date }}</span>
-            <input
-              v-else
-              type="date"
-              id="saleStartDate"
-              v-model="packageDetail.sale_start_date" />
-            <label for="saleEndDate"><legend>판매종료일</legend></label>
-            <span v-if="!isEditing">{{ packageDetail.sale_end_date }}</span>
-            <input
-              v-else
-              type="date"
-              id="saleEndDate"
-              v-model="packageDetail.sale_end_date" />
-          </div>
+  <form @submit.prevent="submitForm">
+    <div class="form-container">
+      <div class="form-box">
+        <div class="form-item">
+          <label for="agency_name">여행사명</label>
+          <span v-if="!agencyState.isEditing">{{
+            agencyState.agencyDetail.agency_name
+          }}</span>
+          <input
+            type="text"
+            v-else
+            v-model="agencyState.agencyDetail.agency_name"
+            required
+          />
         </div>
-      </form>
+        <div class="form-item">
+          <label for="phone">전화번호</label>
+          <span v-if="!agencyState.isEditing">{{
+            agencyState.agencyDetail.phone
+          }}</span>
+          <input
+            type="text"
+            v-else
+            v-model="agencyState.agencyDetail.phone"
+            required
+          />
+        </div>
+        <div class="form-item">
+          <label for="country">국가</label>
+          <span v-if="!agencyState.isEditing">{{
+            agencyState.agencyDetail.country
+          }}</span>
+          <select
+            class="select-country"
+            v-else
+            id="country"
+            v-model="agencyState.agencyDetail.country"
+            @change="setCountryCode"
+          >
+            <option
+              v-for="country in agencyState.countries"
+              :key="country.country_code"
+              :value="country.korean_name"
+            >
+              {{ country.korean_name }}
+            </option>
+          </select>
+        </div>
+        <div class="form-item">
+          <label for="address">주소</label>
+          <span v-if="!agencyState.isEditing">{{
+            agencyState.agencyDetail.address
+          }}</span>
+          <input
+            type="text"
+            v-else
+            v-model="agencyState.agencyDetail.address"
+            required
+          />
+        </div>
+        <div class="form-item">
+          <label for="price">가격</label>
+          <span v-if="!agencyState.isEditing">{{
+            agencyState.agencyDetail.price
+          }}</span>
+          <input
+            type="text"
+            v-else
+            v-model="agencyState.agencyDetail.price"
+            required
+          />
+        </div>
+        <div class="form-item">
+          <label for="is_used">사용유무</label>
+          <span v-if="!agencyState.isEditing">{{
+            agencyState.agencyDetail.is_used
+          }}</span>
+          <select v-else v-model="agencyState.agencyDetail.is_used" required>
+            <option value="Y">Yes</option>
+            <option value="N">No</option>
+          </select>
+        </div>
+      </div>
     </div>
-  </div>
+  </form>
 </template>
 
-<script>
-export default {
-  name: 'AgencyDetail',
-  setup() {
-    const agencies = ref([]);
+<script setup>
+import { inject } from "vue";
 
-    const fetchAgencies = async () => {
-      try {
-        agencies.value = await getAgencyList();
-        console.log('Fetched agencies:', agencies.value);
-      } catch (error) {
-        console.error('Error fetching agencies list:', error);
-      }
-    };
+const agencyState = inject("agencyState");
 
-    const formatPrice = (price) => {
-      return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(price);
-    };
-
-    onMounted(fetchAgencies);
-
-    return {
-      agencies,
-      formatPrice,
-    };
-  },
+const setCountryCode = () => {
+  const data = agencyState.countries.find(
+    (country) => country.korean_name === agencyState.agencyDetail.country
+  );
+  if (data) {
+    agencyState.agencyDetail.country_code = data.country_code;
+  }
 };
 </script>
 

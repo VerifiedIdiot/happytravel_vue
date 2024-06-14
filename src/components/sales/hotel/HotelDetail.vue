@@ -35,7 +35,6 @@
             id="country"
             v-model="hotelState.hotelDetail.country"
             @change="setCountryCode">
-            >
             <option
               v-for="country in hotelState.countries"
               :key="country.country_code"
@@ -82,16 +81,13 @@
 </template>
 
 <script>
-import { inject, ref } from 'vue';
-import { updateHotel } from '@/api/sales/HotelApi';
+import { inject } from 'vue';
 
 export default {
   name: 'HotelDetail',
   setup() {
     const hotelState = inject('hotelState');
     let countryCode = inject('countryCode');
-
-
 
     const setCountryCode = () => {
       const data = hotelState.countries.find(

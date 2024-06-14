@@ -58,7 +58,7 @@ export const updateHotelYN = async (params) => {
 // GET Country List
 export const getCountries = async (params) => {
   try {
-    const response = await apiClient.get("sales/countries", { params });
+    const response = await apiClient.get("/sales/hotel-countries", { params });
     return response.data;
   } catch (error) {
     console.error("Error getting countries:", error);
@@ -69,7 +69,7 @@ export const getCountries = async (params) => {
 // // GET Hotel Count
 export const getHotelCnt = async (params) => {
   try {
-    const response = await apiClient.get('sales/hotel-count', { params });
+    const response = await apiClient.get('/sales/hotel-count', { params });
     return response.data;
   } catch (error) {
     console.error('Error getting hotel count:', error);
