@@ -3,10 +3,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-header-item">
-          <img
+          <!-- <img
             src="@/assets/icons/flight.png"
             alt="flight image"
-            loading="lazy" />
+            loading="lazy" /> -->
         </div>
         <h1>{{ title }}</h1>
       </div>
@@ -47,6 +47,7 @@ const props = defineProps({
 })
 
 const packageState = inject('packageState')
+const partnerState = inject('partnerState')
 const resetPackageState = inject('resetPackageState')
 const resetPartnerState = inject('resetPartnerState')
 const submitForm = inject('submitForm')  
@@ -69,7 +70,7 @@ const handleClose = () => {
 }
 
 const handleKeyDown = (event) => {
-  if (event.key === 'Escape') {
+  if (event.key === 'Escape' && partnerState.isSmallModalOpen !== true ) {
     resetPackageState()
     resetPartnerState()
     handleClose()
@@ -127,6 +128,7 @@ onUnmounted(() => {
     color: white;
     text-align: center;
     vertical-align: middle;
+    white-space: nowrap;
   }
 }
 
