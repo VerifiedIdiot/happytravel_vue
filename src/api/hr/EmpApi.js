@@ -105,7 +105,7 @@ export const uploadPhotoFile = async (file) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    return response.data;
+    return response.data.fileName; // fileName을 반환
   } catch (error) {
     console.error("Error uploading photo: ", error);
     throw error;
@@ -130,7 +130,7 @@ export const insertEmployee = async (employee) => {
   try {
     const response = await apiClient.post("/hr/emp/save", employee, {
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/form-data",
       },
     });
     return response.data;
@@ -145,7 +145,7 @@ export const updateEmployee = async (employee) => {
   try {
     const response = await apiClient.put("/hr/emp/update", employee, {
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/form-data",
       },
     });
     return response.data;

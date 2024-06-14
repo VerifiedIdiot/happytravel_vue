@@ -4,15 +4,15 @@
     <div class="flex w-full text-3xl pl-10">사원 정보 {{ buttonText }}</div>
     <div class="relative flex flex-col w-11/12 mt-5">
       <!-- 사원 사진 영역 시작 -->
-      <div
-        class="absolute w-2/5 right-0 top-1 flex justify-end items-end"
-        style="border: 1px solid red"
-      >
+      <div class="absolute w-2/5 right-0 top-1 flex justify-end items-end">
         <div class="w-36 h-40 bg-gray-100">
           <img
-            :src="thisEmployee.photo_url || '사진 미리보기 영역'"
+            :src="
+              photoPreviewUrl
+                ? photoPreviewUrl
+                : thisEmployee.photo_url || '사진 미리보기 영역'
+            "
             alt="사진 미리보기"
-            v-if="thisEmployee.photo_url"
             class="w-full h-full object-cover"
           />
         </div>
@@ -389,10 +389,10 @@
         <input type="file" @change="onFileChange" />
         <div class="w-full flex justify-center mt-3">
           <button
-            @click="uploadPhoto"
+            @click="confirmPhoto"
             class="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-md text-white"
           >
-            업로드
+            확인
           </button>
           <button
             @click="closeModal"
@@ -509,6 +509,7 @@ export default {
 
     const showModal = ref(false);
     const imagePreviewUrl = ref(null);
+    const photoPreviewUrl = ref(null);
     const selectedImageFile = ref(null);
 
     const ssnFirst = ref("");
@@ -714,6 +715,7 @@ export default {
       const file = event.target.files[0];
       if (file) {
         selectedImageFile.value = file;
+        console.log("selectedImageFile.value" + selectedImageFile.value);
         const reader = new FileReader();
         reader.onload = (e) => {
           imagePreviewUrl.value = e.target.result;
@@ -722,21 +724,13 @@ export default {
       }
     };
 
-    const uploadPhoto = async () => {
-      //업로드 버튼 눌렀을때 함수 작동
-      if (!selectedImageFile.value) {
-        alert("사진을 선택해주세요.");
-        return;
-      }
-
-      try {
-        const photoUrl = await uploadPhotoFile(selectedImageFile.value);
-        thisEmployee.value.photo_url = photoUrl;
+    const confirmPhoto = () => {
+      if (selectedImageFile.value) {
+        photoPreviewUrl.value = imagePreviewUrl.value;
         closeModal();
-        alert("사진 업로드가 완료되었습니다.");
-      } catch (error) {
-        console.error("Error uploading photo: ", error);
-        alert("사진 업로드에 실패했습니다.");
+        alert("사진 미리보기가 업데이트되었습니다.");
+      } else {
+        alert("사진을 선택해주세요.");
       }
     };
 
@@ -836,13 +830,28 @@ export default {
         thisEmployee.value.phone = `${phoneFirst.value}-${phoneSecond.value}-${phoneThird.value}`;
         thisEmployee.value.mobile = `${mobileFirst.value}-${mobileSecond.value}-${mobileThird.value}`;
 
+        // 파일이 선택된 경우에만 업로드
+        if (selectedImageFile.value) {
+          const fileName = await uploadPhotoFile(selectedImageFile.value);
+          thisEmployee.value.photo_url = fileName; // 파일 업로드 후 파일 이름 설정
+        }
+
         const data = thisEmployee.value;
 
+        const formData = new FormData();
+        formData.append(
+          "employee",
+          new Blob([JSON.stringify(thisEmployee.value)], {
+            type: "application/json",
+          })
+        );
+        formData.append("file", selectedImageFile.value);
+
         if (buttonText.value === "등록") {
-          await insertEmployee(thisEmployee.value);
+          await insertEmployee(formData);
           alert("사원정보 저장이 완료되었습니다.");
         } else {
-          await updateEmployee(thisEmployee.value);
+          await updateEmployee(formData); // 얘도 formData 써야하나용?
           alert("사원정보 수정이 완료되었습니다.");
         }
 
@@ -948,8 +957,9 @@ export default {
       isResignedOrOnLeave,
       checkDuplicates,
       imagePreviewUrl,
+      photoPreviewUrl,
       onFileChange,
-      uploadPhoto,
+      confirmPhoto,
       selectedImageFile,
       foldDaumPostcode,
     };
