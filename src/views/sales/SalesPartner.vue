@@ -14,7 +14,7 @@
       </button>
       <button
         :class="{ 'active-tab': currentComponent === 'FlightDashboard' }"
-        @click="setCurrentComponent('FlightDashboard')"
+        @click="setCurrentComponent('FlightDashboard', 'FlightProvider')"
       >
         항공사
       </button>
@@ -39,7 +39,7 @@ import AgencyDashboard from "@/components/sales/agency/AgencyDashboard.vue";
 import FlightDashboard from "@/components/sales/flight/FlightDashboard.vue";
 import HotelProvider from "@/components/sales/hotel/HotelProvider.vue";
 import AgencyProvider from "@/components/sales/agency/AgencyProvider.vue";
-// import FlightProvider from "@/components/sales/flight/FlightProvider.vue";
+import FlightProvider from "@/components/sales/flight/FlightProvider.vue";
 
 export default {
   name: "SalesPartner",
@@ -49,7 +49,7 @@ export default {
     FlightDashboard,
     HotelProvider,
     AgencyProvider,
-    // FlightProvider,
+    FlightProvider,
   },
   data() {
     return {

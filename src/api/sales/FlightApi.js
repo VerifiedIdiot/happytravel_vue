@@ -33,9 +33,9 @@ export const insertFlight = async (flight) => {
 };
 
 // PUT Update Flight
-export const updateFlight = async (flightCode, flightData) => {
+export const updateFlight = async (flightItem) => {
   try {
-    const response = await apiClient.put(`/sales/flight/${flightCode}`, flightData);
+    const response = await apiClient.put(`/sales/flight`, flightItem);
     return response.data;
   } catch (error) {
     console.error('Error updating flight:', error);
