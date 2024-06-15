@@ -20,13 +20,6 @@
               <th>도착지</th>
               <th>도착시간</th>
               <th>가격</th>
-              <th>
-                <select>
-                  <option value="all">사용유무</option>
-                  <option value="Y">사용</option>
-                  <option value="N">미사용</option>
-                </select>
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -43,7 +36,6 @@
               <td>{{ flt.destination }}</td>
               <td>{{ flt.arrival_time }}</td>
               <td>{{ flt.price }}</td>
-              <td>{{ flt.is_used }}</td>
             </tr>
           </tbody>
         </table>
@@ -90,6 +82,16 @@ const openModal = async (fltCode = "") => {
     }
   } catch (error) {
     console.error("Failed to load flight details:", error);
+  }
+};
+
+const openModalForCreate = async () => {
+  resetFlightState();
+  flightState.isEditing = true;
+  const countryData = await getCountries();
+  flightState.countries = countryData;
+  if (flightState.countries.length > 0 && flightState.isEditing) {
+    flightState.isModalOpen = true;
   }
 };
 </script>

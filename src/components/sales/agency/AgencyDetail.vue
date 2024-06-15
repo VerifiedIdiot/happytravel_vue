@@ -71,16 +71,6 @@
             required
           />
         </div>
-        <div class="form-item">
-          <label for="is_used">사용유무</label>
-          <span v-if="!agencyState.isEditing">{{
-            agencyState.agencyDetail.is_used
-          }}</span>
-          <select v-else v-model="agencyState.agencyDetail.is_used" required>
-            <option value="Y">Yes</option>
-            <option value="N">No</option>
-          </select>
-        </div>
       </div>
     </div>
   </form>

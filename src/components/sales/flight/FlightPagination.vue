@@ -36,7 +36,7 @@
 import { inject, computed } from 'vue';
 
 export default {
-  name: 'AgencyPagination',
+  name: 'FlightPagination',
   setup() {
     const paginationState = inject('paginationState');
     const fetchFlights = inject('fetchFlights');

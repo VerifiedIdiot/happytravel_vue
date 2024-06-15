@@ -15,7 +15,7 @@
           />
         </div>
         <div class="form-item">
-          <label for="flight_number">항공편</label>
+          <label for="airline">항공편</label>
           <span v-if="!flightState.isEditing">{{
             flightState.flightDetail.airline
           }}</span>
@@ -38,8 +38,27 @@
             required
           />
         </div>
-
-        <!---------- 출발 및 도착 시간------------->
+        <div class="form-item">
+          <label for="country">국가</label>
+          <span v-if="!flightState.isEditing">{{
+            flightState.flightDetail.country
+          }}</span>
+          <select
+            class="select-country"
+            v-else
+            id="country"
+            v-model="flightState.flightDetail.country"
+            @change="setCountryCode"
+          >
+            <option
+              v-for="country in flightState.countries"
+              :key="country.country_code"
+              :value="country.korean_name"
+            >
+              {{ country.korean_name }}
+            </option>
+          </select>
+        </div>
         <div class="form-row">
           <div class="form-item">
             <label for="departure">출발지</label>
@@ -59,7 +78,7 @@
               flightState.flightDetail.departure_time
             }}</span>
             <input
-              type="text"
+              type="datetime-local"
               v-else
               v-model="flightState.flightDetail.departure_time"
               required
@@ -68,32 +87,30 @@
         </div>
         <div class="form-row">
           <div class="form-item">
-          <label for="destination">도착지</label>
-          <span v-if="!flightState.isEditing">{{
-            flightState.flightDetail.destination
-          }}</span>
-          <input
-            type="text"
-            v-else
-            v-model="flightState.flightDetail.destination"
-            required
-          />
+            <label for="destination">도착지</label>
+            <span v-if="!flightState.isEditing">{{
+              flightState.flightDetail.destination
+            }}</span>
+            <input
+              type="text"
+              v-else
+              v-model="flightState.flightDetail.destination"
+              required
+            />
+          </div>
+          <div class="form-item">
+            <label for="arrival_time">도착시간</label>
+            <span v-if="!flightState.isEditing">{{
+              flightState.flightDetail.arrival_time
+            }}</span>
+            <input
+              type="datetime-local"
+              v-else
+              v-model="flightState.flightDetail.arrival_time"
+              required
+            />
+          </div>
         </div>
-        <div class="form-item">
-          <label for="arrival_time">도착시간</label>
-          <span v-if="!flightState.isEditing">{{
-            flightState.flightDetail.arrival_time
-          }}</span>
-          <input
-            type="text"
-            v-else
-            v-model="flightState.flightDetail.arrival_time"
-            required
-          />
-        </div>
-        </div>
-        
-
         <div class="form-item">
           <label for="price">가격</label>
           <span v-if="!flightState.isEditing">{{
@@ -105,16 +122,6 @@
             v-model="flightState.flightDetail.price"
             required
           />
-        </div>
-        <div class="form-item">
-          <label for="is_used">사용유무</label>
-          <span v-if="!flightState.isEditing">{{
-            flightState.flightDetail.is_used
-          }}</span>
-          <select v-else v-model="flightState.flightDetail.is_used" required>
-            <option value="Y">Yes</option>
-            <option value="N">No</option>
-          </select>
         </div>
       </div>
     </div>
@@ -136,5 +143,6 @@ const setCountryCode = () => {
 };
 </script>
 
-<style src="./FlightDashboard.css"></style>
+<style src="./FlightDashboard.css">
+</style>
 

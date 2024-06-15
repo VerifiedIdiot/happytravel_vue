@@ -17,13 +17,6 @@
               <th>국가</th>
               <th>주소</th>
               <th>가격</th>
-              <th>
-                <select>
-                  <option value="all">사용유무</option>
-                  <option value="Y">사용</option>
-                  <option value="N">미사용</option>
-                </select>
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -37,7 +30,6 @@
               <td>{{ agy.country }}</td>
               <td>{{ agy.address }}</td>
               <td>{{ agy.price }}</td>
-              <td>{{ agy.is_used }}</td>
             </tr>
           </tbody>
         </table>
