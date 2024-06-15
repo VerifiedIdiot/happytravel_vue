@@ -23,9 +23,9 @@ export const getFlight = async (params) => {
 };
 
 // POST Insert Flight
-export const insertFlight = async (flight) => {
+export const insertFlight = async (params) => {
   try {
-    const response = await apiClient.post('/sales/flight', { flight });
+    const response = await apiClient.post('/sales/flight', params );
     return response.data;
   } catch (error) {
     throw new Error('Error adding flight');
@@ -82,7 +82,7 @@ export const getFlightCnt = async (params) => {
     const response = await apiClient.get("/sales/flight-count", { params });
     return response.data;
   } catch (error) {
-    console.error("Error getting agency count:", error);
+    console.error("Error getting flight count:", error);
     throw error;
   }
 };

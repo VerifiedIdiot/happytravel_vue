@@ -65,16 +65,6 @@
             v-model="hotelState.hotelDetail.price"
             required />
         </div>
-        <div class="form-item">
-          <label for="is_used">사용유무</label>
-          <span v-if="!hotelState.isEditing">{{
-            hotelState.hotelDetail.is_used
-          }}</span>
-          <select v-else v-model="hotelState.hotelDetail.is_used" required>
-            <option value="Y">Yes</option>
-            <option value="N">No</option>
-          </select>
-        </div>
       </div>
     </div>
   </form>
