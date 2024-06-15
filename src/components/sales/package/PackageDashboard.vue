@@ -50,63 +50,62 @@ import PackageDetail from '@/components/sales/package/PackageDetail.vue';
 import PackageModal from '@/components/sales/package/PackageModal.vue';
 import Pagination from '@/components/sales/package/Pagination.vue';
 
-const empId = inject('empId')
-const packages = inject('packages')
-const fetchPackages = inject('fetchPackages')
-const packageState = inject('packageState')
-const partnerState = inject('partnerState')
-const resetPartnerState = inject('resetPartnerState')
-const resetPackageState = inject('resetPackageState')
-const resetFlightState = inject('resetFlightState') 
-const resetHotelState = inject('resetHotelState')
-const resetAgencyState = inject('resetAgencyState')  
-
-
-
+const empId = inject('empId');
+const packages = inject('packages');
+const fetchPackages = inject('fetchPackages');
+const packageState = inject('packageState');
+const partnerState = inject('partnerState');
+const resetPackageState = inject('resetPackageState');
 
 onMounted(() => {
-  fetchPackages()
-})
+  fetchPackages();
+});
 
 // unmounted(() => {
 
-// }) 
-  
-
+// })
 
 const openModal = async (pkgCode = '') => {
-  packageState.packageCode = pkgCode
- 
+  packageState.packageCode = pkgCode;
+
   try {
     if (pkgCode) {
-      const data = await getPackage({
-        packageCode: pkgCode,
-        empId: empId,
-      });
-      packageState.packageDetail = data
-      if (packageState.packageDetail)
-      partnerState.selectedCountryCode = packageState.packageDetail.countryCode
+      const data = await getPackage({ packageCode: pkgCode, empId: empId });
+      if (data) {
+        packageState.packageDetail = {
+          ...data,
+          hotelCountry: data.country,
+          flightCountry: data.country,
+          agencyCountry: data.country,
+        };
+        partnerState.selectedCountryCode = data.countryCode;
+      } else {
+        packageState.packageDetail = {};
+      }
     } else {
-      packageState.packageDetail = {}
+      packageState.packageDetail = {};
     }
 
-    if ((packageState.packageDetail.packageCode !== undefined)  && (partnerState.selectedCountryCode !== undefined)) {
-      packageState.isModalOpen = true
+    const { packageCode } = packageState.packageDetail;
+    const { selectedCountryCode } = partnerState;
+
+    if (packageCode !== undefined && selectedCountryCode !== undefined) {
+      packageState.isModalOpen = true;
     }
   } catch (error) {
-    console.error('Failed to load package details:', error)
+    console.error('Failed to load package details:', error);
   }
-}
+};
 
 const openModalForCreate = async () => {
   resetPackageState();
   packageState.isEditing = true;
-  const countryData = await getCountries()
-  packageState.countries = countryData
+  const countryData = await getCountries();
+  packageState.countries = countryData;
   if (packageState.countries.length > 0 && packageState.isEditing) {
-    packageState.isModalOpen = true
+    packageState.isModalOpen = true;
   }
-}
+};
 
 const closeModal = () => {
   // resetPackageState()
@@ -114,7 +113,7 @@ const closeModal = () => {
   // resetFlightState()
   // resetHotelState()
   // resetAgencyState()
-}
+};
 </script>
 
 <style scoped lang="scss">

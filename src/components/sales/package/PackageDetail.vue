@@ -27,13 +27,13 @@
             class="custom-select"
             v-else
             id="country"
-            v-model="partnerState.selectedCountryCode"
+            v-model="packageState.packageDetail.country"
             @change="setCountryCode">
             >
             <option
               v-for="country in packageState.countries"
               :key="country.countryCode"
-              :value="country.countryCode">
+              :value="country.koreanName">
               {{ country.koreanName }}
             </option>
           </select>
@@ -133,7 +133,7 @@
             alt="passport image"
             loading="lazy" /> -->
           <span>항공사 {{ packageState.packageDetail.airline }}</span>
-          <span>국가 {{ packageState.packageDetail.country }}</span>
+          <span>국가 {{ packageState.packageDetail.flightCountry }}</span>
           <span>지역 {{ packageState.packageDetail.destination }}</span>
           <span>왕복 {{ packageState.packageDetail.flightPrice }}원</span>
           <button
@@ -171,7 +171,7 @@
             alt="hotel image"
             loading="lazy" /> -->
           <span>호텔명 {{ packageState.packageDetail.hotelName }}</span>
-          <span>국가 {{ packageState.packageDetail.country }}</span>
+          <span>국가 {{ packageState.packageDetail.hotelCountry }}</span>
           <span>지역 {{ packageState.packageDetail.hotelRegion }}</span>
           <span>1박 {{ packageState.packageDetail.hotelPrice }}원</span>
           <button
@@ -209,7 +209,7 @@
             alt="agency image"
             loading="lazy" /> -->
           <span>여행사 {{ packageState.packageDetail.agencyName }}</span>
-          <span>국가 {{ packageState.packageDetail.country }}</span>
+          <span>국가 {{ packageState.packageDetail.agencyCountry }}</span>
           <span>지역 {{ packageState.packageDetail.agencyRegion }}</span>
           <span>하루 {{ packageState.packageDetail.agencyPrice }}원</span>
           <button
@@ -252,8 +252,8 @@
 
 <script setup>
 import { inject } from 'vue';
-import PartnerModal from '@/components/sales/package/PartnerModal.vue';
-import PartnerDashboard from '@/components/sales/package/PartnerDashboard.vue';
+import PartnerModal from '@/components/sales/partner/PartnerModal.vue';
+import PartnerDashboard from '@/components/sales/partner/PartnerDashboard.vue';
 
 const packageState = inject('packageState');
 const partnerState = inject('partnerState');
