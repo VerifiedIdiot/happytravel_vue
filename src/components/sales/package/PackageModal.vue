@@ -50,6 +50,10 @@ const packageState = inject('packageState')
 const partnerState = inject('partnerState')
 const resetPackageState = inject('resetPackageState')
 const resetPartnerState = inject('resetPartnerState')
+const resetFlightState = inject('resetFlightState') 
+const resetHotelState = inject('resetHotelState')
+const resetAgencyState = inject('resetAgencyState')  
+
 const submitForm = inject('submitForm')  
 const CRUDStateEnum = inject('CRUDStateEnum')
 
@@ -67,12 +71,13 @@ const handleSave = async () => {
 const handleClose = () => {
   resetPackageState()
   resetPartnerState()
+  resetFlightState()
+  resetHotelState()
+  resetAgencyState()
 }
 
 const handleKeyDown = (event) => {
   if (event.key === 'Escape' && partnerState.isSmallModalOpen !== true ) {
-    resetPackageState()
-    resetPartnerState()
     handleClose()
   }
 }

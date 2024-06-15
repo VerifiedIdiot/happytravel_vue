@@ -23,28 +23,25 @@
           <span v-if="!packageState.isEditing">{{
             packageState.packageDetail.country
           }}</span>
-
           <select
             class="custom-select"
             v-else
             id="country"
-            v-model="packageState.packageDetail.country"
+            v-model="partnerState.selectedCountryCode"
             @change="setCountryCode">
             >
-
             <option
               v-for="country in packageState.countries"
               :key="country.countryCode"
-              :value="country.koreanName">
+              :value="country.countryCode">
               {{ country.koreanName }}
             </option>
           </select>
           <p
             class="verification-text"
             v-if="
-              partnerState.selectedCountryCode === '' &&
               packageState.isEditing &&
-              packageState.packageDetail.country == undefined
+              packageState.packageDetail.countryCode == undefined
             ">
             국가를 먼저 선택해 주세요
           </p>
@@ -116,9 +113,8 @@
         <p
           class="verification-text"
           v-if="
-            partnerState.selectedCountryCode === '' &&
             packageState.isEditing &&
-            packageState.packageDetail.country == undefined
+            packageState.packageDetail.countryCode == undefined
           ">
           국가를 먼저 선택해주세요
         </p>
@@ -126,7 +122,7 @@
           class="verification-text"
           style="color: blue"
           v-else-if="
-            partnerState.selectedCountryCode !== '' && packageState.isEditing
+            packageState.isEditing && packageState.packageDetail.flightCode === undefined
           ">
           항공권을 선택해주세요
         </p>
@@ -136,23 +132,15 @@
             src="@/assets/icons/passport.png"
             alt="passport image"
             loading="lazy" /> -->
-          <span v-if="!packageState.isEditing"
-            >항공사 {{ packageState.packageDetail.airline }}</span
-          >
-          <span v-if="!packageState.isEditing"
-            >출발지 {{ packageState.packageDetail.departure }}</span
-          >
-          <span v-if="!packageState.isEditing"
-            >도착지 {{ packageState.packageDetail.destination }}</span
-          >
-          <span v-if="!packageState.isEditing"
-            >왕복 {{ packageState.packageDetail.flightPrice }}원</span
-          >
+          <span>항공사 {{ packageState.packageDetail.airline }}</span>
+          <span>국가 {{ packageState.packageDetail.country }}</span>
+          <span>지역 {{ packageState.packageDetail.destination }}</span>
+          <span>왕복 {{ packageState.packageDetail.flightPrice }}원</span>
           <button
             class="btn-search"
             v-if="
-              packageState.packageDetail.countryCode !== undefined &&
-              packageState.isEditing
+              packageState.isEditing &&
+              packageState.packageDetail.countryCode !== undefined
             "
             @click.prevent="handleSearch()">
             검색
@@ -163,9 +151,8 @@
         <p
           class="verification-text"
           v-if="
-            partnerState.selectedCountryCode === '' &&
             packageState.isEditing &&
-            packageState.packageDetail.country == undefined
+            packageState.packageDetail.countryCode == undefined
           ">
           국가를 먼저 선택해 주세요
         </p>
@@ -173,7 +160,7 @@
           class="verification-text"
           style="color: blue"
           v-else-if="
-            partnerState.selectedCountryCode !== '' && packageState.isEditing
+            packageState.isEditing && packageState.packageDetail.hotelCode == undefined
           ">
           호텔을 선택해주세요
         </p>
@@ -183,23 +170,15 @@
             src="@/assets/icons/hotel2.png"
             alt="hotel image"
             loading="lazy" /> -->
-          <span v-if="!packageState.isEditing"
-            >호텔명 {{ packageState.packageDetail.hotelName }}</span
-          >
-          <span v-if="!packageState.isEditing"
-            >국가 {{ packageState.packageDetail.country }}</span
-          >
-          <span v-if="!packageState.isEditing"
-            >지역 {{ packageState.packageDetail.hotelRegion }}</span
-          >
-          <span v-if="!packageState.isEditing"
-            >1박 {{ packageState.packageDetail.hotelPrice }}원</span
-          >
+          <span>호텔명 {{ packageState.packageDetail.hotelName }}</span>
+          <span>국가 {{ packageState.packageDetail.country }}</span>
+          <span>지역 {{ packageState.packageDetail.hotelRegion }}</span>
+          <span>1박 {{ packageState.packageDetail.hotelPrice }}원</span>
           <button
             class="btn-search"
             v-if="
-              packageState.packageDetail.countryCode !== undefined &&
-              packageState.isEditing
+              packageState.isEditing &&
+              packageState.packageDetail.countryCode !== undefined
             "
             @click.prevent="handleSearch()">
             검색
@@ -210,9 +189,8 @@
         <p
           class="verification-text"
           v-if="
-            partnerState.selectedCountryCode === '' &&
             packageState.isEditing &&
-            packageState.packageDetail.country == undefined
+            packageState.packageDetail.countryCode == undefined
           ">
           국가를 먼저 선택해 주세요
         </p>
@@ -220,7 +198,7 @@
           class="verification-text"
           style="color: blue"
           v-else-if="
-            partnerState.selectedCountryCode !== '' && packageState.isEditing
+            packageState.isEditing && packageState.packageDetail.agencyCode == undefined
           ">
           현지여행사를 선택해주세요
         </p>
@@ -230,23 +208,15 @@
             src="@/assets/icons/agency.png"
             alt="agency image"
             loading="lazy" /> -->
-          <span v-if="!packageState.isEditing"
-            >여행사 {{ packageState.packageDetail.agencyName }}</span
-          >
-          <span v-if="!packageState.isEditing"
-            >국가 {{ packageState.packageDetail.country }}</span
-          >
-          <span v-if="!packageState.isEditing"
-            >지역 {{ packageState.packageDetail.agencyRegion }}</span
-          >
-          <span v-if="!packageState.isEditing"
-            >하루 {{ packageState.packageDetail.agencyPrice }}원</span
-          >
+          <span>여행사 {{ packageState.packageDetail.agencyName }}</span>
+          <span>국가 {{ packageState.packageDetail.country }}</span>
+          <span>지역 {{ packageState.packageDetail.agencyRegion }}</span>
+          <span>하루 {{ packageState.packageDetail.agencyPrice }}원</span>
           <button
             class="btn-search"
             v-if="
-              packageState.packageDetail.countryCode !== undefined &&
-              packageState.isEditing
+              packageState.isEditing &&
+              packageState.packageDetail.countryCode !== undefined
             "
             @click.prevent="handleSearch()">
             검색
@@ -276,33 +246,31 @@
     </div>
   </form>
   <PartnerModal v-if="partnerState.isSmallModalOpen" @close="closeModal()">
-    </PartnerModal>
+    <PartnerDashboard />
+  </PartnerModal>
 </template>
 
 <script setup>
 import { inject } from 'vue';
 import PartnerModal from '@/components/sales/package/PartnerModal.vue';
-const packageState = inject('packageState')
-const partnerState = inject('partnerState')
-// const fetchPartners = inject('fetchPartnsers')
+import PartnerDashboard from '@/components/sales/package/PartnerDashboard.vue';
+
+const packageState = inject('packageState');
+const partnerState = inject('partnerState');
 
 const setCountryCode = () => {
-  const selectedCountry = packageState.countries.find((country) => country.koreanName === packageState.packageDetail.country
-  )
-  partnerState.selectedCountryCode = selectedCountry ? selectedCountry.countryCode : ''
-  packageState.packageDetail.countryCode = selectedCountry ? selectedCountry.countryCode : ''
-  
-  if (partnerState.selectedCountryCode) {
-    console.log(partnerState.selectedCountryCode)
-    // fetchPartners(partnerState.selectedCountryCode)
-  }
-}
+  const selectedCountry = packageState.countries.find(
+    (country) => country.koreanName === packageState.packageDetail.country
+  );
+  partnerState.selectedCountryCode = selectedCountry
+    ? selectedCountry.countryCode
+    : ''
+};
 
 const handleSearch = () => {
-  partnerState.isSmallModalOpen = true
-  console.log('test')
-}
-
+  partnerState.isSmallModalOpen = true;
+  console.log(packageState.packageDetail.countryCode);
+};
 </script>
 
 <style scoped lang="scss">

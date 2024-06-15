@@ -17,7 +17,7 @@ const CRUDStateEnum = Object.freeze({
   UPDATE: 'update',
   DELETE: 'delete',
 })
-
+// 패키지 상세정보 원본객체
 const initialPackageState = {
   isModalOpen: false,
   packageCode: '',
@@ -27,7 +27,7 @@ const initialPackageState = {
   countries: [],
 }
 
-
+// 패키지 게시판 페이지네이션 원본객체
 const initialPaginationState = {
   packageCnt: 0,
   currentPage: 1,
@@ -35,34 +35,61 @@ const initialPaginationState = {
   totalPages: 0,
 }
 
-
-const initialParterState = {
-    selectedCountryCode : '',
-    isSmallModalOpen : false,
+const initialPartnerState = {
+  selectedCountryCode : '',
+  isSmallModalOpen : false,
+}
+// 항공사 리스트 원본객체
+const initialFlightState = {
     flights : [],
-    hotels : [],
-    agencies : [],
     flightCnt: 0,
+    currentPage: 1,
+    itemsPerPage: 5,
+    TotalPages: 0,
+}
+
+const initialHotelState = {
+    hotels : [],
     hotelCnt: 0,
+    currentPage: 1,
+    itemsPerPage: 5,
+    TotalPages: 0,
+}
+
+const initialAgencyState = {
+    agencies : [],
     agencyCnt: 0,
     currentPage: 1,
     itemsPerPage: 5,
-    flightTotalPages: 0,
-    hotelTotalPages: 0,
-    agencyTotalPages: 0,
+    TotalPages: 0,
 }
 //// 상태관리 원본객체 복사 ////
 const packageState = reactive(cloneDeep(initialPackageState))
 const paginationState = reactive({ ...initialPaginationState })
-const partnerState = reactive(cloneDeep(initialParterState))
+const partnerState = reactive({ ...initialPartnerState})
+const flightState = reactive(cloneDeep(initialFlightState))
+const hotelState = reactive(cloneDeep(initialHotelState))
+const agencyState = reactive(cloneDeep(initialAgencyState))
 
 //// 객체 초기화 ////
-const resetPartnerState = () => {
-  Object.assign(partnerState, cloneDeep(initialParterState))
-}
-
 const resetPackageState = () => {
   Object.assign(packageState, cloneDeep(initialPackageState))
+}
+
+const resetPartnerState = () => {
+  Object.assign(partnerState, initialPartnerState)
+}
+
+const resetFlightState = () => {
+  Object.assign(flightState, cloneDeep(initialFlightState))
+}
+
+const resetHotelState = () => {
+  Object.assign(hotelState, cloneDeep(initialHotelState))
+}
+
+const resetAgencyState = () => {
+  Object.assign(agencyState, cloneDeep(initialAgencyState))
 }
 
 //// 비즈니스 로직 함수들  ////
@@ -85,37 +112,63 @@ const fetchPackages = async () => {
   }
 }
 
-// const fetchPartners = async (countryCode) => {
-//   const params = {
-//       empId,
-//       countryCode : countryCode,
-//       limit: partnerState.itemsPerPage,
-//       offset: partnerState.itemsPerPage * (partnerState.currentPage - 1),
-//     }
-//   try {
-//     const [ hotelData, hotelCnt, flightData, flightCnt, agencyData, agencyCnt] =await Promise.all([
-//       getHotelList(params),
-//       getHotelCnt({empId}),
-//       getFlightList(params),
-//       getFlightCnt({empId}),
-//       getAgencyList(params),
-//       getAgencyCnt({empId}),
-//     ])
-//     Object.assign(partnerState, {
-//       hotels: hotelData,
-//       hotelCnt,
-//       hotelTotalPages: Math.ceil(hotelCnt / partnerState.itemsPerPage),
-//       flights: flightData,
-//       flightCnt,
-//       flightTotalPages: Math.ceil(flightCnt / partnerState.itemsPerPage),
-//       agencies: agencyData,
-//       agencyCnt,
-//       agencyTotalPages: Math.ceil(agencyCnt / partnerState.itemsPerPage),
-//     })
-//   } catch (error) {
-//     console.error('Failed to fetch partners:', error)
-//   }
-// } 
+const fetchFlights = async () => {
+  const params = {
+      empId,
+      limit: flightState.itemsPerPage,
+      offset: flightState.itemsPerPage * (flightState.currentPage - 1),
+    }
+    try {
+      const [data, cnt] = await Promise.all([
+      getFlightList(params),
+      getFlightCnt({ empId }),
+    ])
+    flightState.flights = data
+    flightState.flightCnt = cnt
+    flightState.totalPages = Math.ceil(cnt / flightState.itemsPerPage)
+  } catch (error) {
+    console.error('Failed to fetch flights:', error)
+  }
+}
+
+const fetchHotels = async () => {
+  const params = {
+      empId,
+      limit: hotelState.itemsPerPage,
+      offset: hotelState.itemsPerPage * (hotelState.currentPage - 1),
+    }
+    try {
+      const [data, cnt] = await Promise.all([
+      getHotelList(params),
+      getHotelCnt({ empId }),
+    ])
+    hotelState.flights = data
+    hotelState.flightCnt = cnt
+    hotelState.totalPages = Math.ceil(cnt / hotelState.itemsPerPage)
+  } catch (error) {
+    console.error('Failed to fetch flights:', error)
+  }
+}
+
+const fetchAgencies = async () => {
+  const params = {
+      empId,
+      limit: agencyState.itemsPerPage,
+      offset: agencyState.itemsPerPage * (agencyState.currentPage - 1),
+    }
+    try {
+      const [data, cnt] = await Promise.all([
+      getAgencyList(params),
+      getAgencyCnt({ empId }),
+    ])
+    agencyState.flights = data
+    agencyState.flightCnt = cnt
+    agencyState.totalPages = Math.ceil(cnt / agencyState.itemsPerPage)
+  } catch (error) {
+    console.error('Failed to fetch flights:', error)
+  }
+}
+
 
 const submitForm = async () => {
   try {
@@ -141,24 +194,33 @@ const submitForm = async () => {
   }
 }
 
-const filterPartners = () => {
-    const selectedCountryCode = partnerState.selectedCountry;
-    partnerState.flights = packageState.allFlights.filter(flight => flight.country_code === selectedCountryCode);
-    partnerState.hotels = packageState.allHotels.filter(hotel => hotel.country_code === selectedCountryCode);
-    partnerState.agencies = packageState.allAgencies.filter(agency => agency.country_code === selectedCountryCode);
-  }
 
 
 //// 자식 컴포넌트들에게 공유하는 상태들 (inject() 사용으로 필요시에만 접근가능)////
 provide('empId', empId)
-provide('packages', packages)
 provide('CRUDStateEnum', CRUDStateEnum)
+
+provide('packages', packages)
+provide('fetchPackages', fetchPackages)
 provide('packageState', packageState)
 provide('resetPackageState', resetPackageState)
+provide('paginationState', paginationState)
+provide('submitForm', submitForm)
+
 provide('partnerState', partnerState)
 provide('resetPartnerState', resetPartnerState)
-provide('paginationState', paginationState)
-provide('fetchPackages', fetchPackages)
-// provide('fetchPartners', fetchPartners)
-provide('submitForm', submitForm)
+
+provide('flightState', flightState)
+provide('fetchFlights', fetchFlights)
+provide('resetFlightState', resetFlightState)
+
+provide('hotelState', hotelState)
+provide('fetchHotels', fetchHotels)
+provide('resetHotelState', resetHotelState)
+
+provide('agencyState', agencyState)
+provide('fetchAgencies', fetchAgencies)
+provide('resetAgencyState', resetAgencyState)
+
+
 </script>
