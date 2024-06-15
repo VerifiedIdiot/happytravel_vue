@@ -50,18 +50,29 @@ import PackageDetail from '@/components/sales/package/PackageDetail.vue';
 import PackageModal from '@/components/sales/package/PackageModal.vue';
 import Pagination from '@/components/sales/package/Pagination.vue';
 
-const packages = inject('packages');
-const packageState = inject('packageState');
+const empId = inject('empId')
+const packages = inject('packages')
+const fetchPackages = inject('fetchPackages')
+const packageState = inject('packageState')
 const partnerState = inject('partnerState')
-const resetPackageState = inject('resetPackageState');
 const resetPartnerState = inject('resetPartnerState')
-const fetchPackages = inject('fetchPackages');
-const empId = inject('empId');
+const resetPackageState = inject('resetPackageState')
+const resetFlightState = inject('resetFlightState') 
+const resetHotelState = inject('resetHotelState')
+const resetAgencyState = inject('resetAgencyState')  
+
+
 
 
 onMounted(() => {
   fetchPackages()
 })
+
+// unmounted(() => {
+
+// }) 
+  
+
 
 const openModal = async (pkgCode = '') => {
   packageState.packageCode = pkgCode
@@ -98,8 +109,11 @@ const openModalForCreate = async () => {
 }
 
 const closeModal = () => {
-  resetPackageState()
-  resetPartnerState()
+  // resetPackageState()
+  // resetPartnerState()
+  // resetFlightState()
+  // resetHotelState()
+  // resetAgencyState()
 }
 </script>
 
