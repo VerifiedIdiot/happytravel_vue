@@ -23,7 +23,11 @@ const initialPackageState = {
   packageCode: '',
   isEditing: false,
   crudState: CRUDStateEnum.CREATE,
-  packageDetail: {},
+  packageDetail: {
+    flightCountry : undefined,
+    hotelCountry : undefined,
+    agencyCountry : undefined,
+  },
   countries: [],
 }
 
