@@ -71,7 +71,6 @@ const submitForm = async (countryCode) => {
     const params = {
       empId,
       ...hotelState.hotelDetail, 
-      country_code : countryCode.value
     }
     
     const response = hotelState.crudState === CRUDStateEnum.CREATE
