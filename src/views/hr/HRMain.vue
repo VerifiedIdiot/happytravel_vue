@@ -15,4 +15,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#hr-main {
+  height: 80vh;
+}
+</style>
