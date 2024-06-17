@@ -1,9 +1,14 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { getFirestore, doc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  deleteObject,
+} from "firebase/storage";
 
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
   authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
@@ -18,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-
+// 이미지 업로드
 const uploadImage = async (file, path) => {
   const storageRef = ref(storage, path);
   await uploadBytes(storageRef, file);
@@ -26,10 +31,47 @@ const uploadImage = async (file, path) => {
   return url;
 };
 
-// Firebase에 저장.
-const saveImageUrl = async (hotelCode, imageUrl) => {
-  const hotelRef = doc(db, "hotels", hotelCode); 
-  await setDoc(hotelRef, { imageUrl }, { merge: true }); 
+// 호텔 Img를 Firebase에 저장하는 함수
+const saveHotelImageUrl = async (hotelCode, imageUrl) => {
+  const hotelRef = doc(db, "hotels", hotelCode);
+  await setDoc(hotelRef, { imageUrl }, { merge: true });
 };
 
-export { uploadImage, saveImageUrl, db };
+// 에이전시 Img를 Firebase에 저장하는 함수
+const saveAgencyImageUrl = async (agencyCode, imageUrl) => {
+  const agencyRef = doc(db, "agencies", agencyCode);
+  await setDoc(agencyRef, { imageUrl }, { merge: true });
+};
+
+const deleteImage = async (imageUrl) => {
+  const fileRef = ref(storage, imageUrl);
+
+  try {
+    await deleteObject(fileRef);
+    console.log("File deleted successfully");
+  } catch (error) {
+    console.error("Error deleting file:", error);
+  }
+};
+
+const removeImageUrl = async (agencyCode) => {
+  const agencyRef = doc(db, "agencies", agencyCode);
+
+  try {
+    await updateDoc(agencyRef, {
+      image_url: "",
+    });
+    console.log("Image URL removed successfully");
+  } catch (error) {
+    console.error("Error removing image URL:", error);
+  }
+};
+
+export {
+  uploadImage,
+  saveHotelImageUrl,
+  saveAgencyImageUrl,
+  deleteImage,
+  removeImageUrl,
+  db,
+};

@@ -4,38 +4,109 @@
       <div class="form-box">
         <div class="form-item">
           <label for="hotel_name">호텔명</label>
-          <span v-if="!hotelState.isEditing">{{ hotelState.hotelDetail.hotel_name }}</span>
-          <input type="text" v-else v-model="hotelState.hotelDetail.hotel_name" required />
+          <span v-if="!hotelState.isEditing">{{
+            hotelState.hotelDetail.hotel_name
+          }}</span>
+          <input
+            type="text"
+            v-else
+            v-model="hotelState.hotelDetail.hotel_name"
+            required
+          />
         </div>
         <div class="form-item">
           <label for="phone">전화번호</label>
-          <span v-if="!hotelState.isEditing">{{ hotelState.hotelDetail.phone }}</span>
-          <input type="text" v-else v-model="hotelState.hotelDetail.phone" required />
+          <span v-if="!hotelState.isEditing">{{
+            hotelState.hotelDetail.phone
+          }}</span>
+          <input
+            type="text"
+            v-else
+            v-model="hotelState.hotelDetail.phone"
+            required
+          />
         </div>
         <div class="form-item">
           <label for="country">국가</label>
-          <span v-if="!hotelState.isEditing">{{ hotelState.hotelDetail.country }}</span>
-          <select class="select-country" v-else id="country" v-model="hotelState.hotelDetail.country" @change="setCountryCode">
-            <option v-for="country in hotelState.countries" :key="country.country_code" :value="country.korean_name">{{ country.korean_name }}</option>
+          <span v-if="!hotelState.isEditing">{{
+            hotelState.hotelDetail.country
+          }}</span>
+          <select
+            class="select-country"
+            v-else
+            id="country"
+            v-model="hotelState.hotelDetail.country"
+            @change="setCountryCode"
+          >
+            <option
+              v-for="country in hotelState.countries"
+              :key="country.country_code"
+              :value="country.korean_name"
+            >
+              {{ country.korean_name }}
+            </option>
           </select>
         </div>
         <div class="form-item">
           <label for="address">주소</label>
-          <span v-if="!hotelState.isEditing">{{ hotelState.hotelDetail.address }}</span>
-          <input type="text" v-else v-model="hotelState.hotelDetail.address" required />
+          <span v-if="!hotelState.isEditing">{{
+            hotelState.hotelDetail.address
+          }}</span>
+          <input
+            type="text"
+            v-else
+            v-model="hotelState.hotelDetail.address"
+            required
+          />
         </div>
         <div class="form-item">
           <label for="price">가격</label>
-          <span v-if="!hotelState.isEditing">{{ hotelState.hotelDetail.price }}</span>
-          <input v-else type="text" v-model="hotelState.hotelDetail.price" required />
+          <span v-if="!hotelState.isEditing">{{
+            hotelState.hotelDetail.price
+          }}</span>
+          <input
+            v-else
+            type="text"
+            v-model="hotelState.hotelDetail.price"
+            required
+          />
         </div>
-        <div class="form-item">
+        <!-- <div class="form-item">
           <label for="image">이미지</label>
           <span v-if="!hotelState.isEditing">
             <img :src="hotelState.hotelDetail.image_url" alt="Hotel Image" />
           </span>
           <div v-if="hotelState.isEditing" class="form-img">
             <img :src="hotelState.hotelDetail.image_url" alt="Hotel Image" />
+            <input type="file" @change="onFileChange" />
+          </div>
+        </div> -->
+        <div class="form-item">
+          <label for="image">이미지</label>
+          <span v-if="!hotelState.isEditing">
+            <img
+              v-if="hotelState.hotelDetail.image_url"
+              :src="hotelState.hotelDetail.image_url"
+              alt="Agency Image"
+            />
+            <span v-else>이미지가 없습니다</span>
+          </span>
+          <div v-if="hotelState.isEditing" class="form-img">
+            <div class="form-img-pos">
+              <img
+                v-if="state.previewImageUrl || hotelState.hotelDetail.image_url"
+                :src="state.previewImageUrl || hotelState.hotelDetail.image_url"
+                alt="Agency Image"
+              />
+              <span v-else>이미지가 없습니다</span>
+              <button
+                v-if="hotelState.hotelDetail.image_url"
+                @click="deleteImageFile"
+                class="delete-btn"
+              >
+                X
+              </button>
+            </div>
             <input type="file" @change="onFileChange" />
           </div>
         </div>
@@ -45,14 +116,24 @@
 </template>
 
 <script>
-import { inject } from "vue";
-import { uploadImage, saveImageUrl } from "../../../firebase";
+import { inject, reactive } from "vue";
+import {
+  uploadImage,
+  saveHotelImageUrl,
+  deleteImage,
+  removeImageUrl,
+} from "../../../firebase";
 
 export default {
   name: "HotelDetail",
   setup() {
     const hotelState = inject("hotelState");
-    
+
+    // 반응형 상태로 설정
+    const state = reactive({
+      previewImageUrl: null,
+    });
+
     const setCountryCode = () => {
       const data = hotelState.countries.find(
         (country) => country.korean_name === hotelState.hotelDetail.country
@@ -66,28 +147,55 @@ export default {
     const onFileChange = async (event) => {
       const file = event.target.files[0];
       if (file) {
+        // 파일업로드시 미리보기
+        state.previewImageUrl = URL.createObjectURL(file);
         try {
-          // URL 
+          // URL
           const imageUrl = await uploadImage(
             file,
             `images/${hotelState.hotelDetail.hotel_code}`
           );
           hotelState.hotelDetail.imageUrl = imageUrl;
-          console.log("New image URL:", imageUrl);
 
           const storedImageUrl = imageUrl;
 
-          await saveImageUrl(hotelState.hotelDetail.hotel_code, storedImageUrl);
+          await saveHotelImageUrl(
+            hotelState.hotelDetail.hotel_code,
+            storedImageUrl
+          );
         } catch (error) {
           console.error("Error uploading image:", error);
         }
       }
     };
 
+    const deleteImageFile = async () => {
+      const imageUrl = hotelState.hotelDetail.image_url;
+      const hotelCode = hotelState.hotelDetail.hotel_code;
+
+      if (imageUrl && hotelCode) {
+        try {
+          // 이미지 숨기기
+          hotelState.hotelDetail.image_url = "";
+          state.previewImageUrl = null;
+
+          // Firebase에서 이미지 삭제
+          await deleteImage(imageUrl);
+          await removeImageUrl(hotelCode);
+        } catch (error) {
+          console.error("Error deleting image:", error);
+        }
+      } else {
+        console.warn("No image URL or agency code found");
+      }
+    };
+
     return {
       hotelState,
+      state,
       setCountryCode,
       onFileChange,
+      deleteImageFile,
     };
   },
 };
