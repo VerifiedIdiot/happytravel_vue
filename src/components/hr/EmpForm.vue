@@ -411,51 +411,30 @@
     v-if="showConfirmModal"
   -->
   <div
+    v-if="showConfirmModal"
     id="confirmModal"
-    class="hidden fixed inset-0 flex items-center justify-center z-50 bg-gray-500 bg-opacity-75"
+    class="fixed inset-0 flex items-center justify-center z-50 bg-gray-500 bg-opacity-75"
   >
-    <div class="bg-white p-5 rounded-md w-3/12">
-      <div id="leaveEmpInfo" class="w-full my-5 border border-red-200">
-        <div class="w-full flex justify-evenly bg-slate-200">
-          <p>사원번호</p>
-          <p>사원명</p>
-        </div>
-        <div class="w-full flex justify-evenly">
-          <p>20240001</p>
-          <p>천우희</p>
-        </div>
-        <div class="w-full flex justify-evenly bg-slate-200">
-          <p>부서</p>
-          <p>직급</p>
-        </div>
-        <div class="w-full flex justify-evenly">
-          <p>회계</p>
-          <p>과장</p>
-        </div>
-        <div class="w-full flex justify-evenly bg-slate-200">
-          <p>근속년월</p>
-        </div>
-        <div class="w-full flex justify-evenly">
-          <p>2024-02-05 ~ 2024-06-12</p>
-        </div>
-        <div class="w-full flex justify-evenly bg-slate-200"><p>퇴직일</p></div>
-        <div class="w-full flex justify-evenly"><p>2024-06-13</p></div>
-      </div>
-      <p class="w-full text-center">재직상태를 '퇴직'으로 변경하시겠습니까?</p>
+    <div class="bg-white p-5 rounded-md px-10">
+      <p class="w-full text-center mb-5 text-xl">
+        재직상태를 '퇴사'로 변경하시겠습니까?
+      </p>
       <div class="w-full flex justify-center">
         <button
-          class="px-3 py-1 mx-1 bg-red-400 hover:bg-red-200 rounded text-white"
+          class="w-3/12 h-10 mx-1 bg-red-600 hover:bg-red-500 rounded-md text-white font-medium shadow-md outline-none"
+          @click="confirmLeave"
         >
           확인
         </button>
-        <button class="px-3 py-1 mx-1 bg-slate-200 hover:bg-slate-400 rounded">
+        <button
+          class="w-3/12 h-10 mx-1 bg-slate-500 hover:bg-slate-600 rounded-md text-white font-medium shadow-md outline-none"
+          @click="cancelLeave"
+        >
           취소
         </button>
       </div>
     </div>
   </div>
-  <!--퇴사 확인 모달 시작-->
-
   <!--퇴사 확인 모달 끝-->
 </template>
 
@@ -468,8 +447,6 @@ import {
   getbankList,
   insertEmployee,
   updateEmployee,
-  checkDuplicate,
-  uploadPhotoFile,
 } from "@/api/hr/EmpApi";
 
 export default {
@@ -521,25 +498,15 @@ export default {
     const mobileSecond = ref("");
     const mobileThird = ref("");
 
-    const showConfirmModal = ref(true);
-    const pendingStatusChange = ref(null);
+    const showConfirmModal = ref(false);
 
-    const openConfirmModal = (status) => {
-      pendingStatusChange.value = status;
-      showConfirmModal.value = true;
-    };
-
-    const closeConfirmModal = () => {
+    const confirmLeave = async () => {
       showConfirmModal.value = false;
-      pendingStatusChange.value = null;
+      await saveEmployee();
     };
 
-    const confirmLeave = () => {
-      if (pendingStatusChange.value === "퇴직") {
-        thisEmployee.value.leave_date = new Date().toISOString().split("T")[0]; // 퇴사일자 저장
-      }
-      thisEmployee.value.status_code = pendingStatusChange.value;
-      closeConfirmModal();
+    const cancelLeave = () => {
+      showConfirmModal.value = false;
     };
 
     const phoneOptions = [
@@ -635,6 +602,10 @@ export default {
                 newVal.phone.lastIndexOf("-") + 1
               );
             }
+          } else {
+            phoneFirst.value = "";
+            phoneSecond.value = "";
+            phoneThird.value = "";
           }
 
           if (newVal.mobile) {
@@ -649,6 +620,10 @@ export default {
             mobileThird.value = newVal.mobile.slice(
               newVal.mobile.lastIndexOf("-") + 1
             );
+          } else {
+            mobileFirst.value = "";
+            mobileSecond.value = "";
+            mobileThird.value = "";
           }
         } else {
           thisEmployee.value = { ...defaultEmployee };
@@ -707,8 +682,8 @@ export default {
 
     const closeModal = () => {
       showModal.value = false;
-      imagePreviewUrl.value = null;
-      selectedImageFile.value = null;
+      // imagePreviewUrl.value = null;
+      // selectedImageFile.value = null;
     };
 
     const onFileChange = (event) => {
@@ -762,33 +737,25 @@ export default {
       validateInput(mobileThird, 4);
     };
     const validatePassword = (password) => {
-      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/;
+      const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$/;
+      console.log(password);
       return regex.test(password);
     };
 
-    const checkDuplicates = async (fieldsToCheck) => {
-      for (const { field, value } of fieldsToCheck) {
-        const isDuplicate = await checkDuplicate(field, value);
-        if (isDuplicate) {
-          alert(
-            `중복된 ${
-              field === "ssn"
-                ? "주민등록번호"
-                : field === "mobile"
-                ? "휴대전화"
-                : "은행 계좌"
-            }입니다.`
-          );
-          return true;
-        }
-      }
-      return false;
-    };
     /********************* 사원정보 중복 체크 ****************************/
-
     const saveEmpHandler = async () => {
+      if (thisEmployee.value.status_code === "3000") {
+        showConfirmModal.value = true;
+      } else {
+        console.log("재직상태코드" + thisEmployee.value.status_code);
+        await saveEmployee();
+      }
+    };
+
+    const saveEmployee = async () => {
       try {
         const fieldsToCheck = [];
+        console.log(validatePassword(thisEmployee.value.password));
         // 사원 수정시 && 기존 비밀번호와 다를때 비밀번호 유효성 검사
         if (
           buttonText.value === "수정" &&
@@ -807,21 +774,6 @@ export default {
           return;
         }
 
-        // 계좌번호 유효성 검사, 기존 계좌번호와 다를 때만 검사
-        if (
-          `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}` !==
-          `${props.employee.bank_code}-${props.employee.account_no}`
-        ) {
-          fieldsToCheck.push({
-            field: "bank",
-            value: `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}`,
-          });
-        }
-
-        if (await checkDuplicates(fieldsToCheck)) {
-          return;
-        }
-
         if (thisEmployee.value.leave_date === "") {
           thisEmployee.value.leave_date = null;
         }
@@ -829,12 +781,6 @@ export default {
         thisEmployee.value.ssn = `${ssnFirst.value}-${ssnLast.value}`;
         thisEmployee.value.phone = `${phoneFirst.value}-${phoneSecond.value}-${phoneThird.value}`;
         thisEmployee.value.mobile = `${mobileFirst.value}-${mobileSecond.value}-${mobileThird.value}`;
-
-        // 파일이 선택된 경우에만 업로드
-        if (selectedImageFile.value) {
-          const fileName = await uploadPhotoFile(selectedImageFile.value);
-          thisEmployee.value.photo_url = fileName; // 파일 업로드 후 파일 이름 설정
-        }
 
         const data = thisEmployee.value;
 
@@ -845,7 +791,10 @@ export default {
             type: "application/json",
           })
         );
-        formData.append("file", selectedImageFile.value);
+        console.log(thisEmployee.value);
+        if (selectedImageFile.value) {
+          formData.append("file", selectedImageFile.value);
+        }
 
         if (buttonText.value === "등록") {
           await insertEmployee(formData);
@@ -955,13 +904,15 @@ export default {
       openModal,
       closeModal,
       isResignedOrOnLeave,
-      checkDuplicates,
       imagePreviewUrl,
       photoPreviewUrl,
       onFileChange,
       confirmPhoto,
       selectedImageFile,
       foldDaumPostcode,
+      showConfirmModal,
+      confirmLeave,
+      cancelLeave,
     };
   },
 };

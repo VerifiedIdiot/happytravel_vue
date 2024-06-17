@@ -28,7 +28,7 @@
         신규등록
       </button>
     </div>
-    <div id="emp-table" class="flex w-full mt-1">
+    <div id="emp-table" class="flex w-full h-5/6 mt-1">
       <table class="text-center shadow-md border-0">
         <colgroup>
           <col class="w-1/4" />
@@ -36,7 +36,7 @@
           <col class="w-1/4" />
           <col class="w-1/4" />
         </colgroup>
-        <thead class="bg-slate-20">
+        <thead class="bg-slate-20 sticky top-[-1px]">
           <tr>
             <th class="text-center font-bold border border-gray-200">
               사원번호
@@ -51,7 +51,7 @@
             <template v-for="emp in filteredEmpList" :key="emp.emp_id">
               <tr
                 @click="updateEmpInfoHandler(emp.emp_id)"
-                class="bg-white hover:bg-slate-50 test"
+                class="bg-white hover:bg-slate-50"
               >
                 <td class="border border-gray-200">
                   {{ emp.emp_id }}
@@ -77,7 +77,7 @@
       </table>
     </div>
   </div>
-  <div id="hr-emp-form" class="flex w-6/12 mx-2 p-px">
+  <div id="hr-emp-form" class="flex w-6/12 mx-2 p-px h-full overflow-scroll">
     <EmpForm v-if="onEmpForm" :employee="employee" @saved="handleEmpSaved" />
   </div>
 </template>
@@ -219,6 +219,16 @@ export default {
 </script>
 
 <style scoped>
+#hr-emp-form::-webkit-scrollbar {
+  display: none;
+}
+#emp-table {
+  overflow: scroll;
+  -ms-overflow-style: none;
+}
+#emp-table::-webkit-scrollbar {
+  display: none;
+}
 table * {
   background-color: white;
 }
@@ -231,6 +241,9 @@ td {
 }
 tr {
   background-color: #fff;
+}
+tbody tr {
+  height: 30px;
 }
 tbody tr:hover {
   background: rgb(235, 235, 235);
