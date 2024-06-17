@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { computed, inject } from 'vue';
+import { computed, inject, watch } from 'vue';
 import PartnerPagination from '@/components/sales/package/partner/PartnerPagination.vue';
 
 const columns = {
@@ -33,12 +33,14 @@ const columns = {
   hotel: ['호텔명', '국가', '지역', '1박금액'],
   agency: ['여행사', '국가', '지역', '하루금액'],
 };
-
+const packageState = inject('packageState')
+const partnerDisable = inject('partnerDisable')
 const partnerState = inject('partnerState');
 const flightState = inject('flightState');
 const hotelState = inject('hotelState');
 const agencyState = inject('agencyState');
 const selectRow = inject('selectRow');
+const updateTotalPrice = inject('updateTotalPrice')
 
 const currentData = computed(() => {
   if (partnerState.selectedCategory === 'flight') {
@@ -56,10 +58,42 @@ const currentColumns = computed(() => columns[partnerState.selectedCategory]);
 const selectPartner = (row) => {
   const isRowSelected = selectRow(row);
   if (isRowSelected) {
-    console.log(partnerState);
-    partnerState.isSmallModalOpen = false
+    const category = partnerState.selectedCategory;
+    const detailMap = {
+      flight: ['flightCode', 'airline', 'flightCountry', 'destination', 'flightPrice', 'flightDisable'],
+      hotel: ['hotelCode', 'hotelName', 'hotelCountry', 'hotelRegion', 'hotelPrice', 'hotelDisable'],
+      agency: ['agencyCode', 'agencyName', 'agencyCountry', 'agencyRegion', 'agencyPrice', 'agencyDisable']
+    };
+
+    if (detailMap[category]) {
+      const [code, name, country, region, price, disable] = detailMap[category];
+      packageState.packageDetail[code] = row.code;
+      packageState.packageDetail[name] = row.name;
+      packageState.packageDetail[country] = row.country;
+      packageState.packageDetail[region] = row.region;
+      packageState.packageDetail[price] = parseInt(row.price) || 0;
+      partnerDisable[disable] = true;
+    }
+    console.log(packageState.packageDetail.flightPrice)
+  console.log(packageState.packageDetail.hotelPrice)
+  console.log(packageState.packageDetail.agencyPrice)
+    updateTotalPrice();
+    partnerState.isSmallModalOpen = false;
   }
 };
+
+watch(
+  () => [
+    packageState.packageDetail.flightPrice,
+    packageState.packageDetail.hotelPrice,
+    packageState.packageDetail.agencyPrice,
+    packageState.packageDetail.startDate,
+    packageState.packageDetail.endDate
+  ],
+  updateTotalPrice
+);
+
+
 </script>
 
 <style lang="scss" scoped>

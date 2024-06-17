@@ -18,7 +18,7 @@ import {
 } from '@/api/sales/PackageApi';
 
 import cloneDeep from 'lodash/cloneDeep';
-//// 상태 관리 원본객체들 ////
+
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
 const packages = ref([]);
 
@@ -27,7 +27,7 @@ const CRUDStateEnum = Object.freeze({
   UPDATE: 'update',
   DELETE: 'delete',
 });
-// 패키지 상세정보 원본객체
+
 const initialPackageState = {
   isModalOpen: false,
   packageCode: '',
@@ -41,7 +41,12 @@ const initialPackageState = {
   countries: [],
 };
 
-// 패키지 게시판 페이지네이션 원본객체
+const initialpartnerDisable = {
+  flightDisable: true,
+  hotelDisable: true,
+  agencyDisable: true,
+};
+
 const initialPaginationState = {
   packageCnt: 0,
   currentPage: 1,
@@ -54,7 +59,7 @@ const initialPartnerState = {
   selectedCategory: '',
   isSmallModalOpen: false,
 };
-// 항공사 리스트 원본객체
+
 const initialFlightState = {
   flights: [],
   flightCnt: 0,
@@ -78,17 +83,21 @@ const initialAgencyState = {
   itemsPerPage: 5,
   TotalPages: 0,
 };
-//// 상태관리 원본객체 복사 ////
+
 const packageState = reactive(cloneDeep(initialPackageState));
+const partnerDisable = reactive({...initialpartnerDisable});
 const paginationState = reactive({ ...initialPaginationState });
 const partnerState = reactive({ ...initialPartnerState });
 const flightState = reactive(cloneDeep(initialFlightState));
 const hotelState = reactive(cloneDeep(initialHotelState));
 const agencyState = reactive(cloneDeep(initialAgencyState));
 
-//// 객체 초기화 ////
 const resetPackageState = () => {
   Object.assign(packageState, cloneDeep(initialPackageState));
+};
+
+const resetPartnerDisable = () => {
+  Object.assign(partnerDisable, initialpartnerDisable);
 };
 
 const resetPartnerState = () => {
@@ -113,9 +122,15 @@ const resetAllState = () => {
   Object.assign(flightState, cloneDeep(initialFlightState));
   Object.assign(hotelState, cloneDeep(initialHotelState));
   Object.assign(agencyState, cloneDeep(initialAgencyState));
+  Object.assign(partnerDisable, initialpartnerDisable);
 };
 
-//// 비즈니스 로직 함수들  ////
+const resetAllPartnerState = () => {
+  Object.assign(flightState, cloneDeep(initialFlightState));
+  Object.assign(hotelState, cloneDeep(initialHotelState));
+  Object.assign(agencyState, cloneDeep(initialAgencyState));
+};
+
 const fetchPackages = async () => {
   const params = {
     empId,
@@ -145,10 +160,9 @@ const fetchFlights = async () => {
   try {
     const [data, cnt] = await Promise.all([
       getFlightList(params),
-      getFlightCnt({ empId, countryCode : partnerState.selectedCountryCode }),
+      getFlightCnt({ empId, countryCode: partnerState.selectedCountryCode }),
     ]);
     if ((data, cnt)) {
-
       flightState.flights = data;
       flightState.flightCnt = cnt;
       flightState.totalPages = Math.ceil(cnt / flightState.itemsPerPage);
@@ -168,16 +182,15 @@ const fetchHotels = async () => {
   try {
     const [data, cnt] = await Promise.all([
       getHotelList(params),
-      getHotelCnt({ empId, countryCode : partnerState.selectedCountryCode }),
+      getHotelCnt({ empId, countryCode: partnerState.selectedCountryCode }),
     ]);
     if ((data, cnt)) {
-  
       hotelState.hotels = data;
       hotelState.hotelCnt = cnt;
       hotelState.totalPages = Math.ceil(cnt / hotelState.itemsPerPage);
     }
   } catch (error) {
-    console.error('Failed to fetch flights:', error);
+    console.error('Failed to fetch hotels:', error);
   }
 };
 
@@ -191,7 +204,7 @@ const fetchAgencies = async () => {
   try {
     const [data, cnt] = await Promise.all([
       getAgencyList(params),
-      getAgencyCnt({ empId, countryCode : partnerState.selectedCountryCode }),
+      getAgencyCnt({ empId, countryCode: partnerState.selectedCountryCode }),
     ]);
     if ((data, cnt)) {
       agencyState.agencies = data;
@@ -199,24 +212,55 @@ const fetchAgencies = async () => {
       agencyState.totalPages = Math.ceil(cnt / agencyState.itemsPerPage);
     }
   } catch (error) {
-    console.error('Failed to fetch flights:', error);
+    console.error('Failed to fetch agencies:', error);
   }
 };
 
 const selectRow = (row) => {
   if (partnerState.selectedCategory === 'flight') {
-    packageState.packageDetail.flightCode = row.code
-    console.log(packageState.packageDetail.flightCode)
-    return true
+    packageState.packageDetail.flightCode = row.code;
+    console.log(packageState.packageDetail.flightCode);
+    return true;
   } else if (partnerState.selectedCategory === 'hotel') {
-    packageState.packageDetail.hotelCode = row.code
-    return true
+    packageState.packageDetail.hotelCode = row.code;
+    return true;
   } else if (partnerState.selectedCategory === 'agency') {
-    packageState.packageDetail.agencyCode = row.code
-    return true
+    packageState.packageDetail.agencyCode = row.code;
+    return true;
   } else {
-    console.error('협력사를 선택하는데 실패 했습니다.', error)
+    console.error('협력사를 선택하는데 실패했습니다.');
   }
+};
+
+const calculateDateDifference = (startDate, endDate) => {
+  if (!startDate || !endDate) return 0; 
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const timeDiff = end - start;
+  const dayDiff = timeDiff / (1000 * 3600 * 24); 
+  return dayDiff 
+};
+
+const updateTotalPrice = () => {
+  let totalPrice = 0; 
+  const days = calculateDateDifference(packageState.packageDetail.startDate, packageState.packageDetail.endDate);
+
+  // 항목 별 가격을 계산하여 totalPrice에 누적
+  const flightPrice = parseInt(packageState.packageDetail.flightPrice) || 0;
+  const hotelPrice = (parseInt(packageState.packageDetail.hotelPrice) || 0) * days;
+  const agencyPrice = (parseInt(packageState.packageDetail.agencyPrice) || 0) * days;
+
+  totalPrice += flightPrice + hotelPrice + agencyPrice;
+
+  // 총 가격과 판매 가격 업데이트
+  packageState.packageDetail.totalPrice = totalPrice;
+  packageState.packageDetail.salePrice = totalPrice * 1.2;
+  // console.log(packageState.packageDetail.flightPrice)
+  // console.log(packageState.packageDetail.hotelPrice)
+  // console.log(packageState.packageDetail.agencyPrice)
+  // console.log(flightPrice)
+  // console.log(totalPrice)
+  // console.log(packageState.packageDetail.totalPrice)
 };
 
 const submitForm = async () => {
@@ -237,27 +281,28 @@ const submitForm = async () => {
       resetPartnerState();
       fetchPackages();
     } else {
-      console.log('저장에 실패하였음');
+      console.log('저장에 실패했습니다.');
     }
   } catch (error) {
-    console.error('Failed to save package:', error);
+    console.error('패키지 저장에 실패했습니다:', error);
   }
 };
 
-//// 자식 컴포넌트들에게 공유하는 상태들 (inject() 사용으로 필요시에만 접근가능)////
 provide('empId', empId);
 provide('CRUDStateEnum', CRUDStateEnum);
 
 provide('packages', packages);
 provide('fetchPackages', fetchPackages);
 provide('packageState', packageState);
+provide('partnerDisable', partnerDisable);
 provide('resetPackageState', resetPackageState);
 provide('paginationState', paginationState);
 provide('resetAllState', resetAllState);
 provide('submitForm', submitForm);
 
 provide('partnerState', partnerState);
-provide('selectRow' , selectRow)
+provide('selectRow', selectRow);
+provide('updateTotalPrice', updateTotalPrice)
 provide('resetPartnerState', resetPartnerState);
 
 provide('flightState', flightState);
@@ -271,4 +316,6 @@ provide('resetHotelState', resetHotelState);
 provide('agencyState', agencyState);
 provide('fetchAgencies', fetchAgencies);
 provide('resetAgencyState', resetAgencyState);
+
+provide('resetAllPartnerState', resetAllPartnerState);
 </script>
