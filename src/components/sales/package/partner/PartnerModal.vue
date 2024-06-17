@@ -33,6 +33,7 @@
 import { inject, onMounted, onUnmounted } from 'vue';
 
 const partnerState = inject('partnerState');
+const resetAllPartnerState = inject('resetAllPartnerState')
 const props = defineProps({
   title: {
     type: String,
@@ -40,6 +41,7 @@ const props = defineProps({
 });
 
 const handleClose = () => {
+  resetAllPartnerState()
   partnerState.isSmallModalOpen = false;
 };
 
