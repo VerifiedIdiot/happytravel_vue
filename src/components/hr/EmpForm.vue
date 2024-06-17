@@ -602,6 +602,10 @@ export default {
                 newVal.phone.lastIndexOf("-") + 1
               );
             }
+          } else {
+            phoneFirst.value = "";
+            phoneSecond.value = "";
+            phoneThird.value = "";
           }
 
           if (newVal.mobile) {
@@ -616,6 +620,10 @@ export default {
             mobileThird.value = newVal.mobile.slice(
               newVal.mobile.lastIndexOf("-") + 1
             );
+          } else {
+            mobileFirst.value = "";
+            mobileSecond.value = "";
+            mobileThird.value = "";
           }
         } else {
           thisEmployee.value = { ...defaultEmployee };
