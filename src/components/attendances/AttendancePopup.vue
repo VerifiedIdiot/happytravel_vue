@@ -1,3 +1,4 @@
+
 <template>
   <div class="popup-overlay">
     <div class="popup">
@@ -70,8 +71,6 @@
                 type="date"
                 id="startDate"
                 v-model="startDate"
-                :min="minDate"
-                :max="maxDate"
               />
             </div>
             <div class="tilde">~</div>
@@ -80,8 +79,6 @@
                 type="date"
                 id="endDate"
                 v-model="endDate"
-                :min="minDate"
-                :max="maxDate"
               />
             </div>
           </div>
@@ -91,7 +88,8 @@
           <textarea id="reason" v-model="reason"></textarea>
         </div>
         <div class="button-group">
-          <button type="submit" class="submit-button">근태 신청</button>
+          <button type="submit" class="submit-button">신청</button>
+          <button type="button" @click="$emit('close')" class="close-button">닫기</button>
         </div>
       </form>
     </div>
@@ -115,38 +113,25 @@ export default {
       startDate: "",
       endDate: "",
       reason: "",
-      minDate: "",
-      maxDate: "",
+      user: {
+        empId: "EMP00006",
+        empName: "김",
+        deptCode: "12",
+        posCode: "1200",
+      },
     };
   },
   computed: {
-    ...mapGetters(["user"]),
+    // ...mapGetters(["user"]),
   },
   methods: {
     async submitForm() {
       // 오늘 날짜를 YYYYMMDD 형식으로 생성
       const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, "0");
-      const day = String(today.getDate()).padStart(2, "0");
+      const year = today.getUTCFullYear();
+      const month = String(today.getUTCMonth() + 1).padStart(2, "0");
+      const day = String(today.getUTCDate()).padStart(2, "0");
       const creationDate = `${year}${month}${day}`;
-
-      let typeCodeSuffix = "01";
-
-      try {
-        // 데이터베이스에서 현재 날짜에 해당하는 최대 코드 조회
-        const maxCodeResponse = await getMaxAttendanceTypeCode(creationDate);
-        if (maxCodeResponse && maxCodeResponse.maxCode) {
-          const maxCode = maxCodeResponse.maxCode;
-          const currentSuffix = parseInt(maxCode.slice(-2), 10);
-          const newSuffix = (currentSuffix + 1).toString().padStart(2, "0");
-          typeCodeSuffix = newSuffix;
-        }
-      } catch (error) {
-        console.error("Error fetching max attendance type code:", error);
-      }
-
-      const attendanceCode = `${creationDate}${typeCodeSuffix}`;
 
       let managerId = "";
       try {
@@ -162,19 +147,23 @@ export default {
         console.error("Error fetching manager ID:", error);
       }
 
+      // start_date와 end_date를 UTC로 변환
+      const startDateUTC = new Date(this.startDate);
+      const endDateUTC = new Date(this.endDate);
+      endDateUTC.setUTCHours(23, 59, 59, 999); // end_date를 23:59:59로 설정
+
       const attendanceManagement = {
-        attendance_code: attendanceCode,
         emp_id: this.user.empId,
         attendance_type_code: this.type,
-        start_date: this.startDate,
-        end_date: this.endDate,
+        start_date: startDateUTC.toISOString(), // UTC 시간으로 변환된 문자열
+        end_date: endDateUTC.toISOString(), // UTC 시간으로 변환된 문자열
         assign_code: "1000",
-        assign_emp_id: managerId,
+        assign_emp_id: "EMP30004",
         title: this.title,
         reason: this.reason,
         creation_date: creationDate,
       };
-
+      console.log("근태 신청 정보:", attendanceManagement);
       try {
         const response = await insertAttendanceManagement(attendanceManagement);
         console.log("근태 신청 성공:", response);
@@ -184,9 +173,11 @@ export default {
 
       this.$emit("close");
     },
+
   },
 };
 </script>
+
 
 <style scoped>
 .popup-overlay {
@@ -199,6 +190,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 900;
 }
 
 .popup {
@@ -272,11 +264,12 @@ export default {
 }
 
 .button-group {
-  text-align: right;
+  text-align: center;
 }
 
 .submit-button {
   padding: 10px 20px;
+  margin: 0px 2px;
   border: none;
   border-radius: 4px;
   background-color: #007bff;
@@ -287,5 +280,20 @@ export default {
 
 .submit-button:hover {
   background-color: #0056b3;
+}
+
+.close-button {
+  padding: 10px 20px;
+  margin: 0px 2px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ff2e2e;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.close-button:hover {
+  background-color: #d21f1f;
 }
 </style>
