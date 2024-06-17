@@ -56,14 +56,13 @@ const fetchPackages = inject('fetchPackages');
 const packageState = inject('packageState');
 const partnerState = inject('partnerState');
 const resetPackageState = inject('resetPackageState');
+const resetAllState = inject('resetAllState')
+
 
 onMounted(() => {
   fetchPackages();
 });
 
-// unmounted(() => {
-
-// })
 
 const openModal = async (pkgCode = '') => {
   packageState.packageCode = pkgCode;
@@ -108,11 +107,7 @@ const openModalForCreate = async () => {
 };
 
 const closeModal = () => {
-  // resetPackageState()
-  // resetPartnerState()
-  // resetFlightState()
-  // resetHotelState()
-  // resetAgencyState()
+  resetAllState()
 };
 </script>
 
