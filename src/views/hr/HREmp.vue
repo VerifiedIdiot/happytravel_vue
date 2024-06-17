@@ -28,7 +28,7 @@
         신규등록
       </button>
     </div>
-    <div id="emp-table" class="flex w-full h-5/6 mt-1">
+    <div id="emp-table" class="w-full h-5/6 mt-1">
       <table class="text-center shadow-md border-0">
         <colgroup>
           <col class="w-1/4" />
@@ -78,7 +78,12 @@
     </div>
   </div>
   <div id="hr-emp-form" class="flex w-6/12 mx-2 p-px h-full overflow-scroll">
-    <EmpForm v-if="onEmpForm" :employee="employee" @saved="handleEmpSaved" />
+    <EmpForm
+      v-if="onEmpForm"
+      :employee="employee"
+      @saved="handleEmpSaved"
+      :imgSrc="imgSrc"
+    />
   </div>
 </template>
 
@@ -103,6 +108,7 @@ export default {
     const employee = ref([]);
     const searchType = ref("");
     const searchQuery = ref("");
+    const imgSrc = ref(null);
 
     const fetchEmpListHandler = async () => {
       try {
@@ -118,8 +124,10 @@ export default {
 
     const updateEmpInfoHandler = async (empId) => {
       try {
-        const empInfo = await getEmpInfo(empId);
-        employee.value = empInfo;
+        let empInfo = await getEmpInfo(empId);
+        employee.value = empInfo.employee;
+        console.log(employee.value);
+        imgSrc.value = `data:image/jpeg;base64,${empInfo.imageData}`;
         onEmpForm.value = true;
       } catch (error) {
         console.error("Error fetching emp info: ", error);
@@ -237,13 +245,13 @@ select,
 textarea,
 th,
 td {
-  border: 1.5px solid rgb(243, 244, 246);
+  border: 1.5px solid rgb(245, 245, 245);
 }
 tr {
   background-color: #fff;
+  height: 30px;
 }
 tbody tr {
-  height: 30px;
 }
 tbody tr:hover {
   background: rgb(235, 235, 235);
