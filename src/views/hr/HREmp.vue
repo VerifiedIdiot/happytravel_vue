@@ -78,7 +78,12 @@
     </div>
   </div>
   <div id="hr-emp-form" class="flex w-6/12 mx-2 p-px h-full overflow-scroll">
-    <EmpForm v-if="onEmpForm" :employee="employee" @saved="handleEmpSaved" />
+    <EmpForm
+      v-if="onEmpForm"
+      :employee="employee"
+      @saved="handleEmpSaved"
+      :imgSrc="imgSrc"
+    />
   </div>
 </template>
 
@@ -103,6 +108,7 @@ export default {
     const employee = ref([]);
     const searchType = ref("");
     const searchQuery = ref("");
+    const imgSrc = ref(null);
 
     const fetchEmpListHandler = async () => {
       try {
@@ -118,8 +124,10 @@ export default {
 
     const updateEmpInfoHandler = async (empId) => {
       try {
-        const empInfo = await getEmpInfo(empId);
-        employee.value = empInfo;
+        let empInfo = await getEmpInfo(empId);
+        employee.value = empInfo.employee;
+        console.log(employee.value);
+        imgSrc.value = `data:image/jpeg;base64,${empInfo.imageData}`;
         onEmpForm.value = true;
       } catch (error) {
         console.error("Error fetching emp info: ", error);

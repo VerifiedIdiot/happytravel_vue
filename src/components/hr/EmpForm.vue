@@ -10,7 +10,7 @@
             :src="
               photoPreviewUrl
                 ? photoPreviewUrl
-                : thisEmployee.photo_url || '사진 미리보기 영역'
+                : thisImgSrc || '사진 미리보기 영역'
             "
             alt="사진 미리보기"
             class="w-full h-full object-cover"
@@ -457,6 +457,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    imgSrc: {
+      type: String,
+    },
   },
   setup(props, { emit }) {
     // 기본 데이터 초기화
@@ -483,6 +486,7 @@ export default {
     };
 
     const thisEmployee = ref({ ...props.employee });
+    const thisImgSrc = ref(props.imgSrc);
 
     const showModal = ref(false);
     const imagePreviewUrl = ref(null);
@@ -558,6 +562,7 @@ export default {
       const status = empStatusList.value.find(
         (status) => status.stat_code === statusCode
       );
+      console.log("imgSrc", thisImgSrc);
       return status ? status.stat_name : "";
     };
 
@@ -752,6 +757,7 @@ export default {
     const saveEmployee = async () => {
       try {
         const fieldsToCheck = [];
+        console.log(validatePassword(thisEmployee.value.password));
         // 사원 수정시 && 기존 비밀번호와 다를때 비밀번호 유효성 검사
         if (
           buttonText.value === "수정" &&
@@ -865,6 +871,7 @@ export default {
       fetchPositionListHandler();
       fetchempStatusListHandler();
       fetchbankListHandler();
+      console.log("imgSrc", thisImgSrc);
     });
 
     return {
@@ -908,6 +915,7 @@ export default {
       showConfirmModal,
       confirmLeave,
       cancelLeave,
+      thisImgSrc,
     };
   },
 };
