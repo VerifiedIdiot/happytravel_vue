@@ -28,7 +28,7 @@
         신규등록
       </button>
     </div>
-    <div id="emp-table" class="flex w-full mt-1">
+    <div id="emp-table" class="flex w-full h-48 mt-1">
       <table class="text-center shadow-md border-0">
         <colgroup>
           <col class="w-1/4" />
@@ -36,7 +36,7 @@
           <col class="w-1/4" />
           <col class="w-1/4" />
         </colgroup>
-        <thead class="bg-slate-20">
+        <thead class="bg-slate-20 sticky top-[-1px]">
           <tr>
             <th class="text-center font-bold border border-gray-200">
               사원번호
@@ -219,6 +219,16 @@ export default {
 </script>
 
 <style scoped>
+#hr-emp {
+}
+#emp-table {
+  height: 90%;
+  overflow: scroll;
+  -ms-overflow-style: none;
+}
+#emp-table::-webkit-scrollbar {
+  display: none;
+}
 table * {
   background-color: white;
 }
