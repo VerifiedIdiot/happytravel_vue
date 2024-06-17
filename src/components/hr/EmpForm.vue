@@ -690,7 +690,6 @@ export default {
       const file = event.target.files[0];
       if (file) {
         selectedImageFile.value = file;
-        console.log("selectedImageFile.value" + selectedImageFile.value);
         const reader = new FileReader();
         reader.onload = (e) => {
           imagePreviewUrl.value = e.target.result;
@@ -738,7 +737,6 @@ export default {
     };
     const validatePassword = (password) => {
       const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$/;
-      console.log(password);
       return regex.test(password);
     };
 
@@ -747,7 +745,6 @@ export default {
       if (thisEmployee.value.status_code === "3000") {
         showConfirmModal.value = true;
       } else {
-        console.log("재직상태코드" + thisEmployee.value.status_code);
         await saveEmployee();
       }
     };
@@ -755,7 +752,6 @@ export default {
     const saveEmployee = async () => {
       try {
         const fieldsToCheck = [];
-        console.log(validatePassword(thisEmployee.value.password));
         // 사원 수정시 && 기존 비밀번호와 다를때 비밀번호 유효성 검사
         if (
           buttonText.value === "수정" &&
@@ -791,7 +787,6 @@ export default {
             type: "application/json",
           })
         );
-        console.log(thisEmployee.value);
         if (selectedImageFile.value) {
           formData.append("file", selectedImageFile.value);
         }

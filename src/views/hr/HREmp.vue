@@ -28,7 +28,7 @@
         신규등록
       </button>
     </div>
-    <div id="emp-table" class="flex w-full h-5/6 mt-1">
+    <div id="emp-table" class="w-full h-5/6 mt-1">
       <table class="text-center shadow-md border-0">
         <colgroup>
           <col class="w-1/4" />
@@ -237,13 +237,13 @@ select,
 textarea,
 th,
 td {
-  border: 1.5px solid rgb(243, 244, 246);
+  border: 1.5px solid rgb(245, 245, 245);
 }
 tr {
   background-color: #fff;
+  height: 30px;
 }
 tbody tr {
-  height: 30px;
 }
 tbody tr:hover {
   background: rgb(235, 235, 235);
