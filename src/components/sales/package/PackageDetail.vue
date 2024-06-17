@@ -122,7 +122,8 @@
           class="verification-text"
           style="color: blue"
           v-else-if="
-            packageState.isEditing && packageState.packageDetail.flightCode === undefined
+            packageState.isEditing &&
+            packageState.packageDetail.flightCode === undefined
           ">
           항공권을 선택해주세요
         </p>
@@ -142,7 +143,7 @@
               packageState.isEditing &&
               packageState.packageDetail.countryCode !== undefined
             "
-            @click.prevent="handleSearch()">
+            @click.prevent="handleSearch('flight')">
             검색
           </button>
         </div>
@@ -160,7 +161,8 @@
           class="verification-text"
           style="color: blue"
           v-else-if="
-            packageState.isEditing && packageState.packageDetail.hotelCode == undefined
+            packageState.isEditing &&
+            packageState.packageDetail.hotelCode == undefined
           ">
           호텔을 선택해주세요
         </p>
@@ -180,7 +182,7 @@
               packageState.isEditing &&
               packageState.packageDetail.countryCode !== undefined
             "
-            @click.prevent="handleSearch()">
+            @click.prevent="handleSearch('hotel')">
             검색
           </button>
         </div>
@@ -198,7 +200,8 @@
           class="verification-text"
           style="color: blue"
           v-else-if="
-            packageState.isEditing && packageState.packageDetail.agencyCode == undefined
+            packageState.isEditing &&
+            packageState.packageDetail.agencyCode == undefined
           ">
           현지여행사를 선택해주세요
         </p>
@@ -218,7 +221,7 @@
               packageState.isEditing &&
               packageState.packageDetail.countryCode !== undefined
             "
-            @click.prevent="handleSearch()">
+            @click.prevent="handleSearch('agency')">
             검색
           </button>
         </div>
@@ -227,11 +230,11 @@
     <div class="form-under">
       <div :class="[packageState.isEditing ? 'editing' : '']">
         <label for="totalPrice"><legend>총가격</legend></label>
-        <span>{{ packageState.packageDetail.totalPrice }}</span>
+        <span>{{ packageState.packageDetail.totalPrice }}원</span>
       </div>
       <div :class="[packageState.isEditing ? 'editing' : '']">
         <label for="salePrice"><legend>판매가</legend></label>
-        <span>{{ packageState.packageDetail.salePrice }}</span>
+        <span>{{ packageState.packageDetail.salePrice }}원</span>
       </div>
       <div v-if="!packageState.isEditing">
         <label for="saleAmount"><legend>판매량</legend></label>
@@ -252,11 +255,17 @@
 
 <script setup>
 import { inject } from 'vue';
-import PartnerModal from '@/components/sales/partner/PartnerModal.vue';
-import PartnerDashboard from '@/components/sales/partner/PartnerDashboard.vue';
+import PartnerModal from '@/components/sales/package/partner/PartnerModal.vue';
+import PartnerDashboard from '@/components/sales/package/partner/PartnerDashboard.vue';
 
 const packageState = inject('packageState');
 const partnerState = inject('partnerState');
+const fetchFlights = inject('fetchFlights');
+const fetchHotels = inject('fetchHotels');
+const fetchAgencies = inject('fetchAgencies');
+const flightState = inject('flightState');
+const hotelState = inject('hotelState');
+const agencyState = inject('agencyState');
 
 const setCountryCode = () => {
   const selectedCountry = packageState.countries.find(
@@ -264,12 +273,29 @@ const setCountryCode = () => {
   );
   partnerState.selectedCountryCode = selectedCountry
     ? selectedCountry.countryCode
-    : ''
+    : '';
 };
 
-const handleSearch = () => {
-  partnerState.isSmallModalOpen = true;
-  console.log(packageState.packageDetail.countryCode);
+const handleSearch = async (category) => {
+  partnerState.selectedCategory = category;
+  if (partnerState.selectedCategory == 'flight') {
+    await fetchFlights();
+    if (flightState.flights.length > 0) {
+      partnerState.isSmallModalOpen = true;
+    }
+  } else if (partnerState.selectedCategory == 'hotel') {
+    await fetchHotels();
+    if (hotelState.hotels.length > 0) {
+      partnerState.isSmallModalOpen = true;
+    }
+  } else if (partnerState.selectedCategory == 'agency') {
+    await fetchAgencies();
+    if (agencyState.agencies.length > 0) {
+      partnerState.isSmallModalOpen = true;
+    }
+  } else {
+    throw console.error(`${category} 카테고리 입력값을 확인하세요`);
+  }
 };
 </script>
 
