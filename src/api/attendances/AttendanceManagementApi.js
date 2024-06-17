@@ -49,7 +49,7 @@ export const getAttendanceHistory = async () => {
 export const getMaxAttendanceTypeCode = async (creationDate) => {
   try {
     const response = await apiClient.get(
-      `/attendances/maxAttendanceTypeCode?creationDate=${creationDate}`
+      `/attendance/maxAttendanceTypeCode?creationDate=${creationDate}`
     );
     return response.data;
   } catch (error) {
@@ -61,7 +61,7 @@ export const getMaxAttendanceTypeCode = async (creationDate) => {
 export const insertAttendanceManagement = async (attendanceManagement) => {
   try {
     const response = await apiClient.post(
-      "/attendances/attendanceManagement",
+      "/attendance/add",
       attendanceManagement
     );
     return response.data;

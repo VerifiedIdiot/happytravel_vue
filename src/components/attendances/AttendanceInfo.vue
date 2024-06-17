@@ -22,21 +22,13 @@
 </template>
 
 <script>
-import {
-  insertAttendance,
-  updateAttendance,
-} from "../../api/attendances/AttendanceApi";
-import AttendancePopup from "./AttendancePopup.vue";
+import { insertAttendance, updateAttendance } from "../../api/attendances/AttendanceApi";
+import AttendancePopup from "@/components/attendances/AttendancePopup.vue";
 
 export default {
   name: "AttendanceInfo",
   components: {
     AttendancePopup,
-  },
-  computed: {
-    loginInfo() {
-      return this.$store.state.loginInfo;
-    },
   },
   data() {
     return {
@@ -45,26 +37,14 @@ export default {
     };
   },
   methods: {
-    navigate(url) {
-      window.location.href = url;
-    },
     openLeavePopup() {
+      console.log("openLeavePopup");
       this.showLeavePopup = true;
     },
     closeLeavePopup() {
       this.showLeavePopup = false;
     },
-    formatDate(date, format) {
-      const year = date.getFullYear();
-      const month = `0${date.getMonth() + 1}`.slice(-2);
-      const day = `0${date.getDate()}`.slice(-2);
-      if (format === "yyyyMMdd") {
-        return `${year}${month}${day}`;
-      } else if (format === "ISO") {
-        return date.toISOString();
-      }
-    },
-    async toggleClockInOut() {
+    toggleClockInOut() {
       const now = new Date();
       const empId = "EMP00006";
 
@@ -76,13 +56,14 @@ export default {
           in_time: this.formatDate(now, "ISO"),
         };
 
-        try {
-          const response = await insertAttendance(attendance);
-          console.log(response);
-          this.isClockedIn = true;
-        } catch (error) {
-          console.error("Error:", error);
-        }
+        insertAttendance(attendance)
+          .then(response => {
+            console.log(response);
+            this.isClockedIn = true;
+          })
+          .catch(error => {
+            console.error("Error:", error);
+          });
       } else {
         // 퇴근 시간 업데이트
         const attendance = {
@@ -91,13 +72,24 @@ export default {
           out_time: this.formatDate(now, "ISO"),
         };
 
-        try {
-          const response = await updateAttendance(attendance);
-          console.log(response);
-          this.isClockedIn = false;
-        } catch (error) {
-          console.error("Error:", error);
-        }
+        updateAttendance(attendance)
+          .then(response => {
+            console.log(response);
+            this.isClockedIn = false;
+          })
+          .catch(error => {
+            console.error("Error:", error);
+          });
+      }
+    },
+    formatDate(date, format) {
+      const year = date.getFullYear();
+      const month = `0${date.getMonth() + 1}`.slice(-2);
+      const day = `0${date.getDate()}`.slice(-2);
+      if (format === "yyyyMMdd") {
+        return `${year}${month}${day}`;
+      } else if (format === "ISO") {
+        return date.toISOString();
       }
     },
   },
