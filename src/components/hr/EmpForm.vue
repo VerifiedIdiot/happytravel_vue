@@ -8,6 +8,7 @@
         <div class="w-36 h-40 bg-gray-100">
           <img
             :src="photoPreviewUrl || imgSrc || '사진 미리보기 영역'"
+            @error="setDefaultImage"
             alt="사진 미리보기"
             class="w-full h-full object-cover"
           />
@@ -458,6 +459,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const defaultImage = require("@/assets/img/profile.png");
     // 기본 데이터 초기화
     const defaultEmployee = {
       emp_id: "",
@@ -558,7 +560,6 @@ export default {
       const status = empStatusList.value.find(
         (status) => status.stat_code === statusCode
       );
-      console.log("imgSrc", thisImgSrc);
       return status ? status.stat_name : "";
     };
 
@@ -709,7 +710,10 @@ export default {
       }
     };
 
-    /********************* 사원정보 중복 체크 ****************************/
+    const setDefaultImage = (event) => {
+      event.target.src = defaultImage;
+    };
+
     const validateInput = (input, maxLength) => {
       input.value = input.value.replace(/\D/g, "").slice(0, maxLength);
     };
@@ -741,7 +745,6 @@ export default {
       return regex.test(password);
     };
 
-    /********************* 사원정보 중복 체크 ****************************/
     const saveEmpHandler = async () => {
       if (thisEmployee.value.status_code === "3000") {
         showConfirmModal.value = true;
@@ -753,7 +756,6 @@ export default {
     const saveEmployee = async () => {
       try {
         const fieldsToCheck = [];
-        console.log(validatePassword(thisEmployee.value.password));
         // 사원 수정시 && 기존 비밀번호와 다를때 비밀번호 유효성 검사
         if (
           buttonText.value === "수정" &&
@@ -911,6 +913,7 @@ export default {
       confirmLeave,
       cancelLeave,
       thisImgSrc,
+      setDefaultImage,
     };
   },
 };
