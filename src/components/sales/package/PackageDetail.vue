@@ -10,10 +10,12 @@
             packageState.packageDetail.packageName
           }}</span>
           <input
+            class="styled-input"
             v-else
             type="text"
             id="packageName"
             v-model="packageState.packageDetail.packageName"
+            placeholder="입력이 필요합니다."
             autocomplete="off" />
         </div>
         <div class="form-item">
@@ -56,6 +58,7 @@
             packageState.packageDetail.startDate
           }}</span>
           <input
+            class="date-picker"
             v-else
             type="date"
             id="startDate"
@@ -70,6 +73,7 @@
             packageState.packageDetail.endDate
           }}</span>
           <input
+            class="date-picker"
             v-else
             type="date"
             id="endDate"
@@ -86,6 +90,7 @@
             packageState.packageDetail.saleStartDate
           }}</span>
           <input
+            class="date-picker"
             v-else
             type="date"
             id="saleStartDate"
@@ -100,6 +105,7 @@
             packageState.packageDetail.saleEndDate
           }}</span>
           <input
+            class="date-picker"
             v-else
             type="date"
             id="saleEndDate"
@@ -118,29 +124,27 @@
           ">
           국가를 먼저 선택해주세요
         </p>
-        <p
-          class="verification-text"
-          style="color: blue"
-          v-else-if="
-            packageState.isEditing &&
-            packageState.packageDetail.flightCode === undefined
-          ">
-          항공권을 선택해주세요
-        </p>
-        <label for="flightCode"><legend>항공권 정보</legend> </label>
+        <label class="partner-label" for="flightCode"
+          ><legend>항공권 정보</legend>
+        </label>
         <div class="partner-info-box">
           <!-- <img
             src="@/assets/icons/passport.png"
             alt="passport image"
             loading="lazy" /> -->
-          <div class="partner-info-detail" v-if="partnerDisable.flightDisable">
-            <span>항공사 {{ packageState.packageDetail.airline }}</span>
-            <span>국가 {{ packageState.packageDetail.flightCountry }}</span>
-            <span>지역 {{ packageState.packageDetail.destination }}</span>
-            <span>왕복 {{ packageState.packageDetail.flightPrice }}원</span>
+          <div
+            class="partner-info-detail"
+            v-if="
+              partnerDisable.flightDisable &&
+              packageState.packageDetail.flightCode
+            ">
+            <span>항공사: {{ packageState.packageDetail.airline }}</span>
+            <span>국가: {{ packageState.packageDetail.flightCountry }}</span>
+            <span>지역: {{ packageState.packageDetail.destination }}</span>
+            <span>왕복: {{ packageState.packageDetail.flightPrice }}원</span>
           </div>
-          <div v-else>
-            <span>항공권을 검색해 주세요 </span>
+          <div class="partner-info-detail" v-if="!partnerDisable.flightDisable">
+            <span style="color: blue">항공권을 검색해 주세요 </span>
           </div>
           <button
             class="btn-search"
@@ -162,29 +166,27 @@
           ">
           국가를 먼저 선택해 주세요
         </p>
-        <p
-          class="verification-text"
-          style="color: blue"
-          v-else-if="
-            packageState.isEditing &&
-            packageState.packageDetail.hotelCode == undefined
-          ">
-          호텔을 선택해주세요
-        </p>
-        <label for="hotelCode"><legend>호텔 정보</legend> </label>
+        <label class="partner-label" for="hotelCode"
+          ><legend>호텔 정보</legend>
+        </label>
         <div class="partner-info-box">
           <!-- <img
             src="@/assets/icons/hotel2.png"
             alt="hotel image"
             loading="lazy" /> -->
-          <div class="partner-info-detail" v-if="partnerDisable.hotelDisable">
-            <span>호텔명 {{ packageState.packageDetail.hotelName }}</span>
-            <span>국가 {{ packageState.packageDetail.hotelCountry }}</span>
-            <span>지역 {{ packageState.packageDetail.hotelRegion }}</span>
-            <span>1박 {{ packageState.packageDetail.hotelPrice }}원</span>
+          <div
+            class="partner-info-detail"
+            v-if="
+              partnerDisable.hotelDisable &&
+              packageState.packageDetail.hotelCode
+            ">
+            <span>호텔명: {{ packageState.packageDetail.hotelName }}</span>
+            <span>국가: {{ packageState.packageDetail.hotelCountry }}</span>
+            <span>지역: {{ packageState.packageDetail.hotelRegion }}</span>
+            <span>하루: {{ packageState.packageDetail.hotelPrice }}원</span>
           </div>
-          <div v-else>
-            <span>호텔을 검색해 주세요 </span>
+          <div class="partner-info-detail" v-if="!partnerDisable.hotelDisable">
+            <span style="color: blue">호텔을 검색해 주세요 </span>
           </div>
           <button
             class="btn-search"
@@ -206,29 +208,27 @@
           ">
           국가를 먼저 선택해 주세요
         </p>
-        <p
-          class="verification-text"
-          style="color: blue"
-          v-else-if="
-            packageState.isEditing &&
-            packageState.packageDetail.agencyCode == undefined
-          ">
-          현지여행사를 선택해주세요
-        </p>
-        <label for="agencyCode"><legend>현지 여행사 정보</legend> </label>
+        <label class="partner-label" for="agencyCode"
+          ><legend>현지 여행사 정보</legend>
+        </label>
         <div class="partner-info-box">
           <!-- <img
             src="@/assets/icons/agency.png"
             alt="agency image"
             loading="lazy" /> -->
-          <div class="partner-info-detail" v-if="partnerDisable.agencyDisable">
-            <span>여행사 {{ packageState.packageDetail.agencyName }}</span>
-            <span>국가 {{ packageState.packageDetail.agencyCountry }}</span>
-            <span>지역 {{ packageState.packageDetail.agencyRegion }}</span>
-            <span>하루 {{ packageState.packageDetail.agencyPrice }}원</span>
+          <div
+            class="partner-info-detail"
+            v-if="
+              partnerDisable.agencyDisable &&
+              packageState.packageDetail.agencyCode
+            ">
+            <span>여행사: {{ packageState.packageDetail.agencyName }}</span>
+            <span>국가: {{ packageState.packageDetail.agencyCountry }}</span>
+            <span>지역: {{ packageState.packageDetail.agencyRegion }}</span>
+            <span>하루: {{ packageState.packageDetail.agencyPrice }}원</span>
           </div>
-          <div v-else>
-            <span>여행사를 검색해 주세요 </span>
+          <div class="partner-info-detail" v-if="!partnerDisable.agencyDisable">
+            <span style="color: blue">여행사를 검색해 주세요 </span>
           </div>
           <button
             class="btn-search"
@@ -243,23 +243,43 @@
       </div>
     </div>
     <div class="form-under">
-      <div :class="[packageState.isEditing ? 'editing' : '']">
-        <label for="totalPrice"><legend>총가격</legend></label>
-        <span>{{ packageState.packageDetail.totalPrice }}원</span>
+      <div
+        class="form-under-item"
+        :class="[packageState.isEditing ? 'editing' : '']">
+        <div class="form-under-label">
+          <label for="totalPrice"><legend>총금액</legend></label>
+        </div>
+        <div class="form-under-item-value">
+          <span>{{ formattedTotalPrice }}원</span>
+        </div>
       </div>
-      <div :class="[packageState.isEditing ? 'editing' : '']">
-        <label for="salePrice"><legend>판매가</legend></label>
-        <span>{{ packageState.packageDetail.salePrice }}원</span>
+      <div
+        class="form-under-item"
+        :class="[packageState.isEditing ? 'editing' : '']">
+        <div class="form-under-label">
+          <label for="salePrice"><legend>판매가</legend></label>
+        </div>
+        <div class="form-under-item-value">
+          <span>{{ formattedSalePrice }}원</span>
+        </div>
       </div>
-      <div v-if="!packageState.isEditing">
-        <label for="saleAmount"><legend>판매량</legend></label>
-        <span>{{ packageState.packageDetail.saleAmount }}</span>
+      <div class="form-under-item" v-if="!packageState.isEditing">
+        <div class="form-under-label">
+          <label for="saleAmount"><legend>판매량</legend></label>
+        </div>
+        <div class="form-under-item-value">
+          <span>{{ packageState.packageDetail.saleAmount }}</span>
+        </div>
       </div>
-      <div v-if="!packageState.isEditing">
-        <label for="assignCode"><legend>승인상태</legend></label>
-        <span v-if="!packageState.isEditing">{{
-          packageState.packageDetail.assignCode
-        }}</span>
+      <div class="form-under-item" v-if="!packageState.isEditing">
+        <div class="form-under-label">
+          <label for="assignCode"><legend>승인상태</legend></label>
+        </div>
+        <div class="form-under-item-value">
+          <span v-if="!packageState.isEditing">{{
+            packageState.packageDetail.assignCode
+          }}</span>
+        </div>
       </div>
     </div>
   </form>
@@ -284,6 +304,9 @@ const fetchAgencies = inject('fetchAgencies');
 const flightState = inject('flightState');
 const hotelState = inject('hotelState');
 const agencyState = inject('agencyState');
+const useFormattedPrices = inject('useFormattedPrices');
+
+const { formattedTotalPrice, formattedSalePrice } = useFormattedPrices();
 
 const setCountryCode = () => {
   const selectedCountry = packageState.countries.find(
@@ -317,7 +340,8 @@ const handleSearch = async (category) => {
       partnerState.isSmallModalOpen = true;
     } else {
       toast.open({
-        message: '해당 국가의 항공권 정보가 없습니다. 다른 국가를 선택해 주세요',
+        message:
+          '해당 국가의 항공권 정보가 없습니다. 다른 국가를 선택해 주세요',
         type: 'warning',
       });
     }
@@ -337,7 +361,8 @@ const handleSearch = async (category) => {
       partnerState.isSmallModalOpen = true;
     } else {
       toast.open({
-        message: '해당 국가의 여행사 정보가 없습니다. 다른 국가를 선택해 주세요',
+        message:
+          '해당 국가의 여행사 정보가 없습니다. 다른 국가를 선택해 주세요',
         type: 'warning',
       });
     }
@@ -357,9 +382,9 @@ form {
   flex-direction: column;
   justify-content: space-evenly;
   width: 90%;
-  height: 630px;
+  height: 700px;
   border-radius: 4px;
-  @apply bg-white;
+  @apply bg-gray-100;
 }
 legend {
   font-size: 1.5rem;
@@ -377,6 +402,7 @@ legend {
   justify-content: center;
   width: 100%;
   height: 30%;
+  @apply rounded;
   box-shadow: 2px 4px 15px 3px rgba(0, 0, 0, 0.2);
   div {
     display: flex;
@@ -404,20 +430,23 @@ legend {
   justify-content: space-evenly;
   width: 100%;
   height: 50%;
+  @apply rounded;
   .partner-info-container {
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
     box-shadow: 2px 4px 15px 3px rgba(0, 0, 0, 0.2);
     width: 100%;
     height: 25%;
+    @apply rounded;
   }
   .partner-info-box {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 99%;
     height: 70%;
     border-radius: 4px;
     img {
@@ -430,16 +459,30 @@ legend {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 95%;
     height: 70%;
+    span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
+}
+.partner-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  @apply bg-gray-200;
 }
 
 .btn-search {
   @apply bg-blue-700 text-white font-bold rounded;
   transition: background-color 0.3s ease;
-  width: 100px;
-  height: 40px;
+  width: 90px;
+  height: 35px;
+  /* margin-left: 10px; */
   &:hover {
     @apply bg-blue-900 transition ease-out;
   }
@@ -449,15 +492,30 @@ legend {
 
   justify-content: center;
   width: 100%;
-  height: 10%;
+  height: 15%;
   box-shadow: 2px 4px 15px 3px rgba(0, 0, 0, 0.2);
-  div {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    width: 100%;
-    height: 100%;
-  }
+  @apply rounded;
+}
+.form-under-item {
+  display: flex;
+  flex-direction: column;
+
+  width: 50%;
+  height: 100%;
+}
+.form-under-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+  width: 100%;
+  @apply rounded bg-gray-200;
+}
+.form-under-item-value {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
 }
 
 .editing {
@@ -484,6 +542,32 @@ legend {
 }
 
 .custom-select:focus {
+  border-color: #66afe9;
+  outline: none;
+  box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+}
+
+.styled-input {
+  @apply bg-white border border-gray-300 rounded px-3 py-2 w-full;
+  transition: border-color 0.2s ease;
+}
+
+.styled-input:focus {
+  border-color: #66afe9;
+  outline: none;
+  box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+}
+
+.styled-input::placeholder {
+  color: #999;
+}
+
+.date-picker {
+  @apply bg-white border border-gray-300 rounded px-3 py-2 w-full;
+  transition: border-color 0.2s ease;
+}
+
+.date-picker:focus {
   border-color: #66afe9;
   outline: none;
   box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);

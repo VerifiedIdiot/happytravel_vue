@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { provide, ref, reactive } from 'vue';
+import { provide, ref, reactive, computed } from 'vue';
 import {
   getPackageList,
   getPackageCnt,
@@ -16,6 +16,7 @@ import {
   getAgencyList,
   getAgencyCnt,
   updatePackageYN,
+  assignPackage
 } from '@/api/sales/PackageApi';
 
 import cloneDeep from 'lodash/cloneDeep';
@@ -23,7 +24,7 @@ import { useToast } from 'vue-toast-notification';
 
 const toast = useToast();
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
- 
+
 const packages = ref([]);
 
 const CRUDStateEnum = Object.freeze({
@@ -149,7 +150,7 @@ const fetchPackages = async (assignCode ='1000') => {
     offset: paginationState.itemsPerPage * (paginationState.currentPage - 1),
   };
   try {
-    
+
     const [data, cnt] = await Promise.all([
       getPackageList(params),
       getPackageCnt({ empId, assignCode }),
@@ -246,6 +247,24 @@ const selectRow = (row) => {
     });
   }
 };
+
+const formatPrice = (value) => {
+  if (!value) return '0';
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
+const useFormattedPrices = () => {
+  const formattedTotalPrice = computed(() =>
+    formatPrice(packageState.packageDetail.totalPrice)
+  );
+  const formattedSalePrice = computed(() =>
+    formatPrice(packageState.packageDetail.salePrice)
+  );
+
+  return { formattedTotalPrice, formattedSalePrice };
+};
+
+
 
 const calculateDateDifference = (startDate, endDate) => {
   if (!startDate || !endDate) return 0;
@@ -430,6 +449,39 @@ const submitYN = async () => {
 }
 }
 
+const submitAssign = async (assignCode) => {
+  try {
+    if(empId !== undefined) {
+      const params = {
+        empId,
+        packageCode : packageState.packageDetail.packageCode,
+        assignCode : assignCode
+      }
+
+    const response = await assignPackage(params)
+    if (response) {
+      packageState.isEditing = false;
+      resetPackageState();
+      fetchPackages();
+      toast.open({
+        message: '해당 여행상품 결제가 완료되었습니다.',
+        type: 'success'
+      });
+    } else {
+      toast.open({
+        message: '결제에 실패했습니다.',
+        type: 'error'
+      });
+    }
+  }
+} catch (error) {
+  toast.open({
+      message: `에러가 발생했습니다. 관리자에게 문의해주세요: ${error.message}`,
+      type: 'error'
+    });
+}
+}
+
 provide('empId', empId);
 provide('CRUDStateEnum', CRUDStateEnum);
 
@@ -442,6 +494,7 @@ provide('paginationState', paginationState);
 provide('resetAllState', resetAllState);
 provide('assignState', assignState)
 provide('submitYN', submitYN)
+provide('submitAssign', submitAssign)
 provide('submitForm', submitForm);
 
 provide('partnerState', partnerState);
@@ -462,4 +515,5 @@ provide('fetchAgencies', fetchAgencies);
 provide('resetAgencyState', resetAgencyState);
 
 provide('resetAllPartnerState', resetAllPartnerState);
+provide('useFormattedPrices', useFormattedPrices);
 </script>

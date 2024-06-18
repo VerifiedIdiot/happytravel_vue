@@ -20,15 +20,22 @@
           @click="handleYN()">
           삭제
         </button>
-        <!-- <button
+        <button
           type="button"
-          class="btn-assign"
-          v-if="packageState.isEditing && isManager"
-          @click="handleAssign()">
-          삭제
-        </button> -->
+          class="btn-reject"
+          v-if="packageState.isEditing && packageState.packageDetail.assignCode == '1000'"
+          @click="handleAssign(assignState.rejected)">
+          반려
+        </button>
         </div>
         <div class="button-item-right">
+          <button
+          type="button"
+          class="btn-assingn"
+          v-if="packageState.isEditing && packageState.packageDetail.assignCode == '1000'"
+          @click="handleAssign(assignState.assigned)">
+          승인
+        </button>
         <button
           type="button"
           class="btn-update"
@@ -67,7 +74,9 @@ const props = defineProps({
 const packageState = inject('packageState')
 const partnerState = inject('partnerState')
 const resetAllState = inject('resetAllState')
+const assignState = inject('assignState')
 const submitYN = inject('submitYN')
+const submitAssign = inject('submitAssign')
 const submitForm = inject('submitForm')  
 const CRUDStateEnum = inject('CRUDStateEnum')
 
@@ -84,6 +93,10 @@ const handleYN = async () => {
 
 const handleSave = async () => {
   await submitForm()
+}
+
+const handleAssign = async (assignState) => {
+  await submitAssign(assignState)
 }
 
 const handleClose = () => {
@@ -126,7 +139,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  @apply bg-white;
+  @apply bg-gray-100;
   padding: 0px;
   border-radius: 8px;
   border: 0px;
@@ -170,7 +183,7 @@ onUnmounted(() => {
   
   align-items: center;
   width: 90%;
-  height: 100px;
+  height: 50px;
 }
 
 .button-item-left {
@@ -213,6 +226,7 @@ onUnmounted(() => {
   transition: background-color 0.3s ease;
   width: 100px;
   height: 40px;
+  margin-left: 2px;
   &:hover {
     @apply bg-green-700 transition ease-out;
   }
@@ -223,6 +237,7 @@ onUnmounted(() => {
   transition: background-color 0.3s ease;
   width: 100px;
   height: 40px;
+  margin-right: 2px;
   &:hover {
     @apply bg-red-900 transition ease-out;
   }
@@ -233,9 +248,30 @@ onUnmounted(() => {
   transition: background-color 0.3s ease;
   width: 100px;
   height: 40px;
-  margin-left: 5px;
+  margin-left: 2px;
   &:hover {
     @apply bg-gray-600 transition ease-out;
+  }
+}
+
+.btn-reject {
+  @apply bg-red-950 text-white font-bold rounded;
+  transition: background-color 0.3s ease;
+  width: 100px;
+  height: 40px;
+  &:hover {
+    @apply bg-black transition ease-out;
+  }
+}
+
+
+.btn-assingn {
+  @apply bg-cyan-400 text-white font-bold rounded;
+  transition: background-color 0.3s ease;
+  width: 100px;
+  height: 40px;
+  &:hover {
+    @apply bg-cyan-700 transition ease-out;
   }
 }
 </style>
