@@ -126,7 +126,6 @@ export default {
       try {
         let empInfo = await getEmpInfo(empId);
         employee.value = empInfo.employee;
-        console.log(employee.value);
         imgSrc.value = `data:image/jpeg;base64,${empInfo.imageData}`;
         onEmpForm.value = true;
       } catch (error) {
@@ -157,6 +156,7 @@ export default {
         salary: "",
         remarks: "",
       };
+      imgSrc.value = null;
       onEmpForm.value = true;
     };
 
@@ -221,6 +221,7 @@ export default {
       filteredEmpList,
       handleSearch,
       handleEmpSaved,
+      imgSrc,
     };
   },
 };
