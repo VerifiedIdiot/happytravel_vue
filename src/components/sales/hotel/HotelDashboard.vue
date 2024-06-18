@@ -9,7 +9,7 @@
         </div>
       </div>
       <div>
-        <table>
+        <table class="styled-table">
           <thead>
             <tr>
               <th>호텔명</th>
@@ -29,7 +29,7 @@
               <td>{{ htl.phone }}</td>
               <td>{{ htl.country }}</td>
               <td>{{ htl.address }}</td>
-              <td>{{ htl.price }}</td>
+              <td>{{ formatPrice(htl.price) }}</td>
             </tr>
           </tbody>
         </table>
@@ -91,6 +91,10 @@ const openModalForCreate = async () => {
 const closeModal = () => {
   resetHotelState();
   hotelState.isModalOpen = false;
+};
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('ko-KR').format(price) + '원';
 };
 </script>
 

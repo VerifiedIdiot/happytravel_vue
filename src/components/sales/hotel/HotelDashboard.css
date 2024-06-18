@@ -29,33 +29,6 @@
   height: 70px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  height: 1.8rem;
-}
-
-th {
-  background-color: #f2f2f2;
-  text-align: left;
-}
-
-tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-tbody tr:hover {
-  background-color: #f1f1f1;
-}
-
-/* 모달창 */
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -124,6 +97,39 @@ tbody tr:hover {
 .modal-header-title {
   width: auto;
   font-size: x-small;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.2em;
+  min-width: 400px;
+  
+}
+
+.styled-table thead tr {
+  @apply bg-gray-200;
+  color: #000;
+  text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 6px;
+  border: 1px solid #dddddd;
+}
+
+.styled-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:hover {
+  @apply bg-gray-100;
+  cursor: pointer;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+  background-color: transparent;
 }
 
 .form-container {
@@ -215,15 +221,17 @@ tbody tr:hover {
 }
 
 .btn-create {
-  @apply bg-blue-700 text-white font-bold rounded;
-
-  transition: background-color 0.3s ease;
+  background: #1e40af;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
   width: 100px;
   height: 40px;
-
-  &:hover {
-    @apply bg-blue-900 transition ease-out;
-  }
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 .btn-update {

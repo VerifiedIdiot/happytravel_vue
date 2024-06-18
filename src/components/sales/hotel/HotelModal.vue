@@ -73,7 +73,7 @@ export default {
     };
 
     const handleSave = async () => {
-      await submitForm(countryCode);
+      await submitForm();
     };
 
     const handleClose = () => {

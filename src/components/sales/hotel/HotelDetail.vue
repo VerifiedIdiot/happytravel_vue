@@ -71,16 +71,6 @@
             required
           />
         </div>
-        <!-- <div class="form-item">
-          <label for="image">이미지</label>
-          <span v-if="!hotelState.isEditing">
-            <img :src="hotelState.hotelDetail.image_url" alt="Hotel Image" />
-          </span>
-          <div v-if="hotelState.isEditing" class="form-img">
-            <img :src="hotelState.hotelDetail.image_url" alt="Hotel Image" />
-            <input type="file" @change="onFileChange" />
-          </div>
-        </div> -->
         <div class="form-item">
           <label for="image">이미지</label>
           <span v-if="!hotelState.isEditing">
@@ -128,6 +118,8 @@ export default {
   name: "HotelDetail",
   setup() {
     const hotelState = inject("hotelState");
+    const resetHotelState = inject("resetHotelState");
+    const submitForm = inject("submitForm");
 
     // 반응형 상태로 설정
     const state = reactive({
@@ -190,12 +182,18 @@ export default {
       }
     };
 
+    const handleSubmitForm = async () => {
+      await submitForm();
+      resetHotelState();
+    };
+
     return {
       hotelState,
       state,
       setCountryCode,
       onFileChange,
       deleteImageFile,
+      handleSubmitForm
     };
   },
 };
