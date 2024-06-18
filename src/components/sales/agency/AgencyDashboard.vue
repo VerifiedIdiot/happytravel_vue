@@ -3,123 +3,95 @@
     <div class="agency-container">
       <div class="agency-box">
         <div class="agency-item">
-          <button class="btn-create" @click="openModal"><p>신규등록</p></button>
+          <button class="btn-create" @click="openModalForCreate()">
+            <p>신규등록</p>
+          </button>
         </div>
       </div>
       <div>
-      <table>
-      <thead>
-        <tr>
-          <th>여행사 이름</th>
-          <th>전화번호</th>
-          <th>나라</th>
-          <th>지역</th>
-          <th>주소</th>
-          <th>가격</th>
-          <th>
-            <select v-model="filterOption">
-              <option value="all">전체</option>
-              <option value="Y">사용</option>
-              <option value="N">미사용</option>
-            </select>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="agency in filterAgencys"
-          :key="agency.agency_code"
-          @click="openModal(agency)"
-        >
-          <td>{{ agency.agency_name }}</td>
-          <td>{{ agency.phone }}</td>
-          <td>{{ agency.country }}</td>
-          <td>{{ agency.region }}</td>
-          <td>{{ agency.address }}</td>
-          <td>{{ formatPrice(agency.price) }}</td>
-          <td>{{ agency.is_used }}</td>
-        </tr>
-      </tbody>
-    </table>
+        <table>
+          <thead>
+            <tr>
+              <th>여행사 이름</th>
+              <th>전화번호</th>
+              <th>국가</th>
+              <th>주소</th>
+              <th>가격</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="agy in agencies"
+              :key="agy.agency_code"
+              @click="openModal(agy.agency_code)"
+            >
+              <td>{{ agy.agency_name }}</td>
+              <td>{{ agy.phone }}</td>
+              <td>{{ agy.country }}</td>
+              <td>{{ agy.address }}</td>
+              <td>{{ agy.price }}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+      <AgencyModal v-if="agencyState.isModalOpen" @close="closeModal">
+        <AgencyDetail />
+      </AgencyModal>
     </div>
-    </div>
-    
+    <Pagination />
   </div>
-
-  <AgencyDetail
-    v-if="isModalOpen"
-    :agency="currentAgency"
-    @close="closeModal"
-  />
 </template>
 
-<script>
-import { ref, onMounted, computed, provide } from "vue";
-import { getAgencyList } from "@/api/sales/AgencyApi";
+<script setup>
+import { inject, onMounted } from "vue";
+import { getAgency, getCountries } from "@/api/sales/AgencyApi";
 import AgencyDetail from "@/components/sales/agency/AgencyDetail.vue";
+import AgencyModal from "@/components/sales/agency/AgencyModal.vue";
+import Pagination from "@/components/sales/agency/AgencyPagination.vue";
 
-export default {
-  name: "AgencyDashboard",
-  components: {
-    AgencyDetail,
-  },
-  setup() {
-    const agencies = ref([]);
-    const isModalOpen = ref(false);
-    const AgencyCode = ref("");
-    const currentAgency = ref(null);
-    const filterOption = ref("all");
+const agencies = inject("agencies")
+const agencyState = inject("agencyState")
+const resetAgencyState = inject("resetAgencyState");
+const fetchAgencies = inject("fetchAgencies")
+const empId = inject("empId");
 
-    // 건들지말고해
-    const fetchAgencies = async () => {
-      try {
-        agencies.value = await getAgencyList();
-        console.log("Fetched agencies:", agencies.value);
-      } catch (error) {
-        console.error("Error fetching agencies list:", error);
-      }
-    };
+onMounted(fetchAgencies);
 
-    const formatPrice = (price) => {
-      return new Intl.NumberFormat("ko-KR", {
-        style: "currency",
-        currency: "KRW",
-      }).format(price);
-    };
+const openModal = async (agyCode = "") => {
+  agencyState.agenciesCode = agyCode;
+  try {
+    if (agyCode) {
+      const data = await getAgency({
+        agencyCode: agyCode,
+        empId: empId,
+      });
+      agencyState.agencyDetail = data;
+    } else {
+      agencyState.agencyDetail = {};
+    }
 
-    const filterAgencys = computed(() => {
-      if (filterOption.value === "all") {
-        return agencies.value;
-      }
-      return agencies.value.filter(
-        (agency) => agency.is_used === filterOption.value
-      );
-    });
+    if (agencyState.agencyDetail) {
+      agencyState.isModalOpen = true;
+    }
+  } catch (error) {
+    console.error("Failed to load agency details:", error);
+  }
+};
 
-    const openModal = (agency) => {
-      currentAgency.value = agency;
-      isModalOpen.value = true;
-    };
+const openModalForCreate = async () => {
+  resetAgencyState();
+  agencyState.isEditing = true;
+  const countryData = await getCountries();
+  agencyState.countries = countryData;
+  if (agencyState.countries.length > 0 && agencyState.isEditing) {
+    agencyState.isModalOpen = true;
+  }
+};
 
-    const closeModal = () => {
-      isModalOpen.value = false;
-      currentAgency.value = null;
-    };
-
-    // 건들지말고해
-    onMounted(fetchAgencies);
-
-    return {
-      agencies,
-      formatPrice,
-      isModalOpen,
-      openModal,
-      closeModal,
-      currentAgency,
-      filterAgencys,
-      filterOption,
-    };
-  },
+const closeModal = () => {
+  resetAgencyState();
+  agencyState.isModalOpen = false;
 };
 </script>
 

@@ -22,7 +22,7 @@
           <td class="border border-gray-300 px-4 py-2">{{ history.positionName }}</td>
           <td class="border border-gray-300 px-4 py-2">{{ history.attendanceTypeName }}</td>
           <td class="border border-gray-300 px-4 py-2">{{ history.reason }}</td>
-          <td class="border border-gray-300 px-4 py-2">{{ history.startDate }} ~ {{ history.endDate }}</td>
+          <td class="border border-gray-300 px-4 py-2">{{ formatDate(history.startDate) }} ~ {{ formatDate(history.endDate) }}</td>
           <td class="border border-gray-300 px-4 py-2">{{ history.assignEmpName }}</td>
         </tr>
       </tbody>
@@ -41,17 +41,31 @@ export default {
 
     const fetchAttendanceHistory = async () => {
       try {
-        attendanceHistory.value = await getAttendanceHistory();
+        const data = await getAttendanceHistory();
+        attendanceHistory.value = data.map(item => ({
+          ...item,
+          startDate: formatDate(item.startDate),
+          endDate: formatDate(item.endDate)
+        }));
         console.log('Fetched attendance history:', attendanceHistory.value);
       } catch (error) {
         console.error('Error fetching attendance history:', error);
       }
     };
 
+    const formatDate = (dateString) => {
+      const dateObject = new Date(dateString);
+      const year = dateObject.getFullYear();
+      const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObject.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     onMounted(fetchAttendanceHistory);
 
     return {
       attendanceHistory,
+      formatDate,
     };
   },
 };

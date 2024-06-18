@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 // import store from '../store';
 
 // 컴포넌트 임포트
-import LoginMain from "../views/login/LoginMain.vue";
+import Login from "../components/auth/Login.vue"; // 네가 추가한 로그인 컴포넌트
 import Home from "../views/Home.vue";
 import HRMain from "../views/hr/HRMain.vue";
 import HREmp from "../views/hr/HREmp.vue";
@@ -12,6 +12,7 @@ import SalesPackage from "../views/sales/SalesPackage.vue";
 import SalaryData from "@/views/salary/SalaryData.vue";
 import SalaryPayment from "@/views/salary/SalaryPayment.vue";
 import MyPage from "@/views/mypage/MyPage.vue";
+import MainPage from "../components/main/MainPage.vue"; // 네가 추가한 메인 컴포넌트
 
 const routes = [
   {
@@ -30,7 +31,7 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: LoginMain,
+    component: Login,
   },
   {
     path: "/home",
@@ -57,7 +58,6 @@ const routes = [
     name: "SalesMain",
     component: SalesMain,
     // meta: { requiresAuth: true }
-
     children: [
       {
         path: "partner",
@@ -77,11 +77,13 @@ const routes = [
     path: "/salary/data",
     name: "SalaryData",
     component: SalaryData,
+    // meta: { requiresAuth: true }
   },
   {
     path: "/salary/payment",
     name: "SalaryPayment",
     component: SalaryPayment,
+    // meta: { requiresAuth: true }
   },
   {
     path: "/attendance",
@@ -113,6 +115,13 @@ const routes = [
     path: "/mypage",
     name: "MyPage",
     component: MyPage,
+    // meta: { requiresAuth: true }
+  },
+  {
+    path: '/main',
+    name: 'MainPage',
+    component: MainPage,
+    // meta: { requiresAuth: true }
   },
 ];
 
