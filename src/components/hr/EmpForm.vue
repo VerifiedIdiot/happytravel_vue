@@ -684,8 +684,6 @@ export default {
 
     const closeModal = () => {
       showModal.value = false;
-      // imagePreviewUrl.value = null;
-      // selectedImageFile.value = null;
     };
 
     const onFileChange = (event) => {
@@ -697,6 +695,8 @@ export default {
           imagePreviewUrl.value = e.target.result;
         };
         reader.readAsDataURL(file);
+
+        selectedImageFile.value = file;
       }
     };
 
@@ -791,8 +791,17 @@ export default {
             type: "application/json",
           })
         );
+
         if (selectedImageFile.value) {
-          formData.append("file", selectedImageFile.value);
+          // 파일명을 사원번호로 변경하여 새로운 File 객체 생성
+          const renamedFile = new File(
+            [selectedImageFile.value],
+            `${thisEmployee.value.emp_id}.jpg`,
+            {
+              type: selectedImageFile.value.type,
+            }
+          );
+          formData.append("file", renamedFile);
         }
 
         if (buttonText.value === "등록") {
