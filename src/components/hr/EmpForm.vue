@@ -15,6 +15,7 @@
         </div>
         <button
           @click="openModal"
+          :disabled="isDisabled"
           class="w-3/12 h-[25px] ml-1 bg-slate-200 hover:bg-slate-300 rounded text-xs shadow-md outline-none"
         >
           사진 등록
@@ -32,6 +33,7 @@
           id="emp_id"
           v-model="thisEmployee.emp_id"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-slate-200 outline-none"
         />
       </div>
@@ -45,6 +47,7 @@
           type="password"
           id="password"
           v-model="thisEmployee.password"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -59,6 +62,7 @@
           id="emp_name"
           v-model="thisEmployee.emp_name"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -73,6 +77,7 @@
           id="join_date"
           v-model="thisEmployee.join_date"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -87,6 +92,7 @@
           id="ssn_first"
           v-model="ssnFirst"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           @input="validateSSNFirst"
           maxlength="6"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -97,6 +103,7 @@
           id="ssn_last"
           v-model="ssnLast"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           @input="validateSSNLast"
           maxlength="7"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -114,15 +121,23 @@
           id="zip_code"
           v-model="thisEmployee.zip_code"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           class="flex w-2/12 h-8 px-1 border border-gray-200 outline-none"
         />
         <input
           type="text"
           id="address"
           v-model="thisEmployee.address"
+          :disabled="isDisabled"
           class="flex w-7/12 h-8 px-1 border border-gray-200 outline-none"
         />
-        <button @click="searchAddress" class="w-1/12 bg-slate-200">검색</button>
+        <button
+          @click="searchAddress"
+          :disabled="isDisabled"
+          class="w-1/12 bg-slate-200"
+        >
+          검색
+        </button>
       </div>
       <!--주소 검색 영역 시작-->
       <div class="flex gap-1 justify-end">
@@ -153,6 +168,7 @@
           type="text"
           id="address_detail"
           v-model="thisEmployee.address_detail"
+          :disabled="isDisabled"
           class="flex w-10/12 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -164,6 +180,7 @@
         >
         <select
           v-model="phoneFirst"
+          :disabled="isDisabled"
           class="flex w-1/6 h8 px-1 border border-gray-200 ouline-none"
         >
           <option value="">-</option>
@@ -175,6 +192,7 @@
           type="text"
           id="phone_second"
           v-model="phoneSecond"
+          :disabled="isDisabled"
           @input="validatePhoneSecond"
           maxlength="4"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -183,6 +201,7 @@
           type="text"
           id="phone_third"
           v-model="phoneThird"
+          :disabled="isDisabled"
           @input="validatePhoneThird"
           maxlength="4"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -196,6 +215,7 @@
         >
         <select
           v-model="mobileFirst"
+          :disabled="isDisabled"
           class="flex w-1/6 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -207,6 +227,7 @@
           type="text"
           id="moblieSecond"
           v-model="mobileSecond"
+          :disabled="isDisabled"
           @input="validateMobileSecond"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
           maxlength="4"
@@ -215,6 +236,7 @@
           type="text"
           id="mobileThird"
           v-model="mobileThird"
+          :disabled="isDisabled"
           @input="validateMobileThird"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
           maxlength="4"
@@ -230,6 +252,7 @@
           name=""
           id="dept_code"
           v-model="thisEmployee.dept_code"
+          :disabled="isDisabled"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -252,6 +275,7 @@
           name=""
           id="pos_code"
           v-model="thisEmployee.pos_code"
+          :disabled="isDisabled"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -274,6 +298,7 @@
           name=""
           id="status_code"
           v-model="thisEmployee.status_code"
+          :disabled="isDisabled"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -290,6 +315,7 @@
           id="leave_date"
           v-model="thisEmployee.leave_date"
           :readonly="isResignedOrOnLeave"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -303,6 +329,7 @@
           name=""
           id="bank_code"
           v-model="thisEmployee.bank_code"
+          :disabled="isDisabled"
           class="flex w-3/12 h-8 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -319,6 +346,7 @@
           placeholder="계좌번호"
           id="account_no"
           v-model="thisEmployee.account_no"
+          :disabled="isDisabled"
           class="flex w-7/12 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -332,6 +360,7 @@
           type="text"
           id="salary"
           v-model="thisEmployee.salary"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
         <label
@@ -351,12 +380,14 @@
           type="text"
           id="remarks"
           v-model="thisEmployee.remarks"
+          :disabled="isDisabled"
           class="flex w-10/12 h-20 px-1 border border-gray-200 outline-none resize-none"
         ></textarea>
       </div>
       <div class="flex justify-center my-1 gap-1">
         <button
           @click="saveEmpHandler"
+          :disabled="isDisabled"
           class="w-1/6 h-10 bg-blue-600 hover:bg-blue-500 rounded-md text-white font-medium shadow-md outline-none"
         >
           {{ buttonText }}
@@ -568,6 +599,8 @@ export default {
       return statusName === "재직" || statusName === "휴직";
     });
 
+    const isDisabled = ref(false);
+
     watch(
       () => props.employee,
       (newVal) => {
@@ -627,6 +660,9 @@ export default {
             mobileSecond.value = "";
             mobileThird.value = "";
           }
+
+          // 사원정보 조회 후 isDisabled 값을 업데이트
+          isDisabled.value = newVal.status_code === "3000";
         } else {
           thisEmployee.value = { ...defaultEmployee };
         }
@@ -762,9 +798,7 @@ export default {
           props.employee.password !== thisEmployee.value.password &&
           !validatePassword(thisEmployee.value.password)
         ) {
-          alert(
-            "비밀번호는 영문 대문자, 소문자, 숫자, 특수문자 중 최소 3가지 이상을 포함해야 합니다."
-          );
+          alert("비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.");
           return;
         }
 
@@ -813,6 +847,7 @@ export default {
         }
 
         emit("saved");
+        isDisabled.value = thisEmployee.value.status_code === "3000";
       } catch (error) {
         if (buttonText.value === "등록") {
           console.error("Error saving employee: ", error);
@@ -923,6 +958,7 @@ export default {
       cancelLeave,
       thisImgSrc,
       setDefaultImage,
+      isDisabled,
     };
   },
 };
@@ -948,5 +984,14 @@ td {
   text-align: center;
   border: 1px solid rgb(243, 244, 246);
   box-sizing: border-box;
+}
+input:disabled,
+textarea:disabled {
+  color: rgb(170, 170, 170);
+}
+button:disabled,
+button:disabled:hover {
+  background-color: rgb(170, 170, 170);
+  color: #fff;
 }
 </style>
