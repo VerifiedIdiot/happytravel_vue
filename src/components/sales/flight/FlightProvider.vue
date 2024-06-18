@@ -97,7 +97,6 @@ const submitForm = async () => {
 const validateForm = () => {
   const { flight_number, airline, phone, departure, destination, arrival_time,price } = flightState.flightDetail;
   return flight_number && airline && phone && departure && destination && arrival_time,price;
-};
 
 provide('empId', empId);
 provide('flights', flights);

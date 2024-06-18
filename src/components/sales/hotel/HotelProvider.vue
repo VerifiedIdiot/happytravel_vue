@@ -75,6 +75,12 @@ const submitForm = async (countryCode) => {
   }
 
   try {
+
+    if (!validateForm()) {
+    alert('빈 칸을 채워주세요.');
+    resetHotelState();
+    return;
+  }
     const params = {
       empId,
       ...hotelState.hotelDetail, 

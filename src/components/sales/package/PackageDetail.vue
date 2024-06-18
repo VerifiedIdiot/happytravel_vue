@@ -272,6 +272,8 @@
 import { inject } from 'vue';
 import PartnerModal from '@/components/sales/package/partner/PartnerModal.vue';
 import PartnerDashboard from '@/components/sales/package/partner/PartnerDashboard.vue';
+import { useToast } from 'vue-toast-notification';
+const toast = useToast();
 
 const packageState = inject('packageState');
 const partnerDisable = inject('partnerDisable');
@@ -299,11 +301,11 @@ const setCountryCode = () => {
     Object.keys(partnerDisable).forEach((key) => {
       partnerDisable[key] = false;
     });
-    packageState.packageDetail.flightPrice = 0
-    packageState.packageDetail.hotelPrice = 0
-    packageState.packageDetail.agencyPrice = 0
-    packageState.packageDetail.totalPrice = undefined
-    packageState.packageDetail.salePrice = undefined
+    packageState.packageDetail.flightPrice = 0;
+    packageState.packageDetail.hotelPrice = 0;
+    packageState.packageDetail.agencyPrice = 0;
+    packageState.packageDetail.totalPrice = undefined;
+    packageState.packageDetail.salePrice = undefined;
   }
 };
 
@@ -314,24 +316,33 @@ const handleSearch = async (category) => {
     if (flightState.flights.length > 0) {
       partnerState.isSmallModalOpen = true;
     } else {
-      alert('해당 국가의 항공권 정보가 없습니다. 다른 국가를 선택해 주세요');
+      toast.open({
+        message: '해당 국가의 항공권 정보가 없습니다. 다른 국가를 선택해 주세요',
+        type: 'warning',
+      });
     }
   } else if (partnerState.selectedCategory == 'hotel') {
     await fetchHotels();
-    if (hotelState.hotels.length) {
+    if (hotelState.hotels.length > 0) {
       partnerState.isSmallModalOpen = true;
     } else {
-      alert('해당 국가의 호텔 정보가 없습니다. 다른 국가를 선택해 주세요');
+      toast.open({
+        message: '해당 국가의 호텔 정보가 없습니다. 다른 국가를 선택해 주세요',
+        type: 'warning',
+      });
     }
   } else if (partnerState.selectedCategory == 'agency') {
     await fetchAgencies();
     if (agencyState.agencies.length > 0) {
       partnerState.isSmallModalOpen = true;
     } else {
-      alert('해당 국가의 여행사 정보가 없습니다. 다른 국가를 선택해 주세요');
+      toast.open({
+        message: '해당 국가의 여행사 정보가 없습니다. 다른 국가를 선택해 주세요',
+        type: 'warning',
+      });
     }
   } else {
-    throw console.error(`${category} 카테고리 입력값을 확인하세요`);
+    console.error(`${category} 카테고리 입력값을 확인하세요`);
   }
 };
 </script>
