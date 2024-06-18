@@ -7,11 +7,7 @@
       <div class="absolute w-2/5 right-0 top-1 flex justify-end items-end">
         <div class="w-36 h-40 bg-gray-100">
           <img
-            :src="
-              photoPreviewUrl
-                ? photoPreviewUrl
-                : thisImgSrc || '사진 미리보기 영역'
-            "
+            :src="photoPreviewUrl || imgSrc || '사진 미리보기 영역'"
             alt="사진 미리보기"
             class="w-full h-full object-cover"
           />
@@ -871,7 +867,6 @@ export default {
       fetchPositionListHandler();
       fetchempStatusListHandler();
       fetchbankListHandler();
-      console.log("imgSrc", thisImgSrc);
     });
 
     return {
