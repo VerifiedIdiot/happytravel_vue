@@ -64,6 +64,13 @@ const fetchFlights = async () => {
 };
 
 const submitForm = async () => {
+
+  if (!validateForm()) {
+    alert('빈 칸을 채워주세요.');
+    resetFlightState();
+    return;
+  }
+
   try {
     const params = {
       empId,
@@ -84,6 +91,12 @@ const submitForm = async () => {
   } catch (error) {
     console.error('Failed to save flights:', error);
   }
+};
+
+// 폼 유효성 검사 함수
+const validateForm = () => {
+  const { flight_number, airline, phone, departure, departure_time, destination,  arrival_time, price } = flightState.flightDetail;
+  return flight_number && airline && phone && departure && departure_time && destination && arrival_time && price;
 };
 
 provide('empId', empId);
