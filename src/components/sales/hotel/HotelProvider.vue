@@ -67,6 +67,13 @@ const fetchHotels = async () => {
 };
 
 const submitForm = async (countryCode) => {
+
+  if (!validateForm()) {
+    alert('빈 칸을 채워주세요.');
+    resetHotelState();
+    return;
+  }
+
   try {
     const params = {
       empId,
@@ -87,6 +94,12 @@ const submitForm = async (countryCode) => {
   } catch (error) {
     console.error('Failed to save hotels:', error);
   }
+};
+
+// 폼 유효성 검사 함수
+const validateForm = () => {
+  const { hotel_name, phone, country, address, price } = hotelState.hotelDetail;
+  return hotel_name && phone && country && address && price;
 };
 
 provide('empId', empId);
