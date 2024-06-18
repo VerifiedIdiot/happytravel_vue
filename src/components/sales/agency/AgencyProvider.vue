@@ -64,6 +64,13 @@ const fetchAgencies = async () => {
 };
 
 const submitForm = async () => {
+
+  if (!validateForm()) {
+    alert('빈 칸을 채워주세요.');
+    resetAgencyState();
+    return;
+  }
+
   try {
     const params = {
       empId,
@@ -84,6 +91,12 @@ const submitForm = async () => {
   } catch (error) {
     console.error('Failed to save agencies:', error);
   }
+};
+
+// 폼 유효성 검사 함수
+const validateForm = () => {
+  const { agency_name, phone, country, address, price } = agencyState.agencyDetail;
+  return agency_name && phone && country && address && price;
 };
 
 provide('empId', empId);

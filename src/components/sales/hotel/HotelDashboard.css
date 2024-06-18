@@ -162,6 +162,16 @@ tbody tr:hover {
   }
 }
 
+#place-picker-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#place-picker-container {
+  text-align: left;
+}
+
 .form-item {
   display: flex;
   align-items: flex-start;

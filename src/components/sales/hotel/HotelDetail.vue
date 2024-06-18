@@ -52,12 +52,15 @@
           <span v-if="!hotelState.isEditing">{{
             hotelState.hotelDetail.address
           }}</span>
-          <input
-            type="text"
-            v-else
-            v-model="hotelState.hotelDetail.address"
-            required
-          />
+          <div v-else>
+            <input
+              type="text"
+              v-model="hotelState.hotelDetail.address"
+              id="address-input"
+              placeholder="Enter an address"
+              required
+            />
+          </div>
         </div>
         <div class="form-item">
           <label for="price">가격</label>
@@ -71,16 +74,6 @@
             required
           />
         </div>
-        <!-- <div class="form-item">
-          <label for="image">이미지</label>
-          <span v-if="!hotelState.isEditing">
-            <img :src="hotelState.hotelDetail.image_url" alt="Hotel Image" />
-          </span>
-          <div v-if="hotelState.isEditing" class="form-img">
-            <img :src="hotelState.hotelDetail.image_url" alt="Hotel Image" />
-            <input type="file" @change="onFileChange" />
-          </div>
-        </div> -->
         <div class="form-item">
           <label for="image">이미지</label>
           <span v-if="!hotelState.isEditing">
@@ -116,7 +109,7 @@
 </template>
 
 <script>
-import { inject, reactive } from "vue";
+import { inject, ref, reactive, onMounted } from "vue";
 import {
   uploadImage,
   saveHotelImageUrl,
@@ -128,10 +121,39 @@ export default {
   name: "HotelDetail",
   setup() {
     const hotelState = inject("hotelState");
+    const isKorean = ref(false); // 국내 주소 검색 여부 판단
 
     // 반응형 상태로 설정
     const state = reactive({
       previewImageUrl: null,
+    });
+
+    const loadScript = (src, onload) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = onload;
+      script.async = true;
+      document.head.appendChild(script);
+    };
+
+    const initializeAutocomplete = () => {
+      const input = document.getElementById("address-input");
+      const autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ["geocode"],
+      });
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (place && place.formatted_address) {
+          hotelState.hotelDetail.address = place.formatted_address;
+        }
+      });
+    };
+
+    onMounted(() => {
+      loadScript(
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.VUE_APP_GOOGLE_MAPS_API_KEY}&libraries=places`,
+        initializeAutocomplete
+      );
     });
 
     const setCountryCode = () => {
@@ -196,6 +218,9 @@ export default {
       setCountryCode,
       onFileChange,
       deleteImageFile,
+      // openPostcode,
+      // handleCountryChange,
+      // isKorean,
     };
   },
 };
