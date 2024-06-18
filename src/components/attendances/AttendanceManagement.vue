@@ -23,8 +23,8 @@
           <td>{{ request.positionName }}</td>
           <td>{{ request.attendanceTypeName }}</td>
           <td>{{ request.reason }}</td>
-          <td>{{ request.creationDate }}</td>
-          <td>{{ request.startDate}} ~ {{ request.endDate }}</td>
+          <td>{{ formatDate(request.creationDate) }}</td>
+          <td>{{ formatDate(request.startDate) }} ~ {{ formatDate(request.endDate) }}</td>
           <td>
             <button @click="showConfirmModal(request, 'approve')">승인</button>
             <button @click="showConfirmModal(request, 'reject')">반려</button>
@@ -67,6 +67,14 @@ export default {
     const confirmButtonClass = ref('');
     const currentAction = ref(null);
 
+    const formatDate = (dateString) => {
+      const dateObject = new Date(dateString);
+      const year = dateObject.getFullYear();
+      const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObject.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const showConfirmModal = (request, action) => {
       currentRequest.value = request;
       isModalVisible.value = true;
@@ -87,7 +95,13 @@ export default {
 
     const fetchLeaveRequests = async () => {
       try {
-        leaveRequests.value = await getAttendanceManagementList();
+        const data = await getAttendanceManagementList();
+        leaveRequests.value = data.map(item => ({
+          ...item,
+          creationDate: formatDate(item.creationDate),
+          startDate: formatDate(item.startDate),
+          endDate: formatDate(item.endDate)
+        }));
         console.log('Fetched attendanceList :', leaveRequests.value);
       } catch (error) {
         console.error('Error fetching attendanceList list:', error);
@@ -127,6 +141,7 @@ export default {
     return {
       isModalVisible,
       leaveRequests,
+      formatDate,
       showConfirmModal,
       confirmAction,
       approveAttendance,

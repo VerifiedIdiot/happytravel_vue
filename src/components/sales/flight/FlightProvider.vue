@@ -4,11 +4,10 @@
 
 <script setup>
 import { provide, ref, reactive } from 'vue';
-import { getHotelList, getHotelCnt, insertHotel, updateHotel } from '@/api/sales/HotelApi';
+import { getFlightList, getFlightCnt, insertFlight, updateFlight } from '@/api/sales/FlightApi';
 
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
-const hotels = ref([]);
-const countryCode = ref('')
+const flights = ref([]);
 
 const CRUDStateEnum = Object.freeze({
   CREATE: 'create',
@@ -16,21 +15,19 @@ const CRUDStateEnum = Object.freeze({
   DELETE: 'delete',
 });
 
-const initialHotelState = {
+const initialFlightState = {
   isModalOpen: false,
-  hotelCode: '',
+  flightCode: '',
   isEditing: false,
   crudState: CRUDStateEnum.CREATE,
-  hotelDetail: {
-    country_code: '',
-  },
+  flightDetail: {},
   countries: [],
 };
 
-const hotelState = reactive({ ...initialHotelState });
+const flightState = reactive({ ...initialFlightState });
 
 const initialPaginationState = {
-  hotelCnt: 0,
+  flightCnt: 0,
   currentPage: 1,
   itemsPerPage: 5,
   totalPages: 0,
@@ -38,16 +35,16 @@ const initialPaginationState = {
 
 const paginationState = reactive({ ...initialPaginationState });
 
-const resetHotelState = () => {
-  Object.assign(hotelState, initialHotelState);
+const resetFlightState = () => {
+  Object.assign(flightState, initialFlightState);
 };
 
 const setCurrentPage = (page) => {
   paginationState.currentPage = page;
-  fetchHotels();
+  fetchFlights();
 };
 
-const fetchHotels = async () => {
+const fetchFlights = async () => {
   try {
     const params = {
       empId,
@@ -55,67 +52,61 @@ const fetchHotels = async () => {
       offset: paginationState.itemsPerPage * (paginationState.currentPage - 1),
     };
     const [data, cnt] = await Promise.all([
-      getHotelList(params),
-      getHotelCnt({ empId }),
+      getFlightList(params),
+      getFlightCnt({ empId }),
     ]);
-    hotels.value = data;
-    paginationState.hotelCnt = cnt;
+    flights.value = data;
+    paginationState.flightCnt = cnt;
     paginationState.totalPages = Math.ceil(cnt / paginationState.itemsPerPage);
   } catch (error) {
-    console.error('Failed to fetch hotels:', error);
+    console.error('Failed to fetch flight:', error);
   }
 };
 
-const submitForm = async (countryCode) => {
+const submitForm = async () => {
 
   if (!validateForm()) {
     alert('빈 칸을 채워주세요.');
-    resetHotelState();
+    resetFlightState();
     return;
   }
 
   try {
-
-    if (!validateForm()) {
-    alert('빈 칸을 채워주세요.');
-    resetHotelState();
-    return;
-  }
     const params = {
       empId,
-      ...hotelState.hotelDetail, 
+      ...flightState.flightDetail, 
     }
     
-    const response = hotelState.crudState === CRUDStateEnum.CREATE
-      ? await insertHotel(params)
-      : await updateHotel(params);
+    const response = flightState.crudState === CRUDStateEnum.CREATE
+      ? await insertFlight(params)
+      : await updateFlight(params);
       
     if (response === true) {
-      hotelState.isEditing = false;
-      resetHotelState();
-      fetchHotels();
+      flightState.isEditing = false;
+      resetFlightState();
+      fetchFlights();
     } else {
       console.log('save failed');
     }
   } catch (error) {
-    console.error('Failed to save hotels:', error);
+    console.error('Failed to save flights:', error);
   }
 };
 
 // 폼 유효성 검사 함수
 const validateForm = () => {
-  const { hotel_name, phone, country, address, price } = hotelState.hotelDetail;
-  return hotel_name && phone && country && address && price;
+  const { flight_number, airline, phone, departure, departure_time, destination,  arrival_time, price } = flightState.flightDetail;
+  return flight_number && airline && phone && departure && departure_time && destination && arrival_time && price;
 };
 
 provide('empId', empId);
-provide('hotels', hotels);
-provide('hotelState', hotelState);
-provide('resetHotelState', resetHotelState);
+provide('flights', flights);
+provide('flightState', flightState);
+provide('resetFlightState', resetFlightState);
 provide('setCurrentPage', setCurrentPage);
-provide('fetchHotels', fetchHotels);
+provide('fetchFlights', fetchFlights);
 provide('paginationState', paginationState);
 provide('submitForm', submitForm)
 provide('CRUDStateEnum', CRUDStateEnum)
-provide('countryCode', countryCode)
+
 </script>

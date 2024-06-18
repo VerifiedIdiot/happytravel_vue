@@ -3,7 +3,7 @@ import apiClient from "../axios";
 export const getManagerIdByDeptCode = async (deptCode) => {
   try {
     const response = await apiClient.get(
-      `/attendances/managerIdByDeptCode?deptCode=${deptCode}`
+      `/attendance/managerIdByDeptCode?deptCode=${deptCode}`
     );
     return response.data;
   } catch (error) {

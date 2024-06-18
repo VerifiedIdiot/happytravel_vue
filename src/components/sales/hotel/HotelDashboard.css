@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   width: 95%;
-  min-height: 85.5dvh;
+  min-height: 56.5dvh;
 }
 
 .hotel-box {
@@ -160,6 +160,31 @@ tbody tr:hover {
     font-size: 1em;
     color: #333;
   }
+}
+
+.form-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px;
+  width: 100%;
+}
+
+.form-item label {
+  flex: 0 0 30%;
+  padding-right: 10px;
+}
+
+.form-item span,
+.form-item .form-img {
+  
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-item .form-img img {
+  max-width: 100%;
+  height: 150px;
 }
 
 .form-box label {

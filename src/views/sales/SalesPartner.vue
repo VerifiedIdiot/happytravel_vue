@@ -6,21 +6,21 @@
       </div>
     </div>
     <div class="sales-item">
-        <button
-          :class="{ 'active-tab': currentComponent === 'HotelDashboard' }"
-          @click="currentComponent = 'HotelDashboard'"
-        >
-          호텔
-        </button>
+      <button
+        :class="{ 'active-tab': currentComponent === 'HotelDashboard' }"
+        @click="setCurrentComponent('HotelDashboard', 'HotelProvider')"
+      >
+        호텔
+      </button>
       <button
         :class="{ 'active-tab': currentComponent === 'FlightDashboard' }"
-        @click="currentComponent = 'FlightDashboard'"
+        @click="setCurrentComponent('FlightDashboard', 'FlightProvider')"
       >
         항공사
       </button>
       <button
         :class="{ 'active-tab': currentComponent === 'AgencyDashboard' }"
-        @click="currentComponent = 'AgencyDashboard'"
+        @click="setCurrentComponent('AgencyDashboard', 'AgencyProvider')"
       >
         여행사
       </button>
@@ -30,16 +30,16 @@
     <component :is="currentProvider">
       <component :is="currentComponent"></component>
     </component>
-    
   </div>
 </template>
-
 
 <script>
 import HotelDashboard from "@/components/sales/hotel/HotelDashboard.vue";
 import AgencyDashboard from "@/components/sales/agency/AgencyDashboard.vue";
 import FlightDashboard from "@/components/sales/flight/FlightDashboard.vue";
 import HotelProvider from "@/components/sales/hotel/HotelProvider.vue";
+import AgencyProvider from "@/components/sales/agency/AgencyProvider.vue";
+import FlightProvider from "@/components/sales/flight/FlightProvider.vue";
 
 export default {
   name: "SalesPartner",
@@ -48,6 +48,8 @@ export default {
     AgencyDashboard,
     FlightDashboard,
     HotelProvider,
+    AgencyProvider,
+    FlightProvider,
   },
   data() {
     return {
@@ -55,6 +57,12 @@ export default {
       currentProvider: "HotelProvider"
     };
   },
+  methods: {
+    setCurrentComponent(component, provider) {
+      this.currentComponent = component;
+      this.currentProvider = provider;
+    }
+  }
 };
 </script>
 

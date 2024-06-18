@@ -3,25 +3,42 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-header-item">
-          <img
+          <!-- <img
             src="@/assets/icons/flight.png"
             alt="flight image"
-            loading="lazy" />
+            loading="lazy" /> -->
         </div>
         <h1>{{ title }}</h1>
       </div>
       <slot></slot>
       <div class="button-container">
+        <div class="button-item-left">
+          <button
+          type="button"
+          class="btn-delete"
+          v-if="packageState.isEditing"
+          @click="handleYN()">
+          삭제
+        </button>
+        <!-- <button
+          type="button"
+          class="btn-assign"
+          v-if="packageState.isEditing && isManager"
+          @click="handleAssign()">
+          삭제
+        </button> -->
+        </div>
+        <div class="button-item-right">
         <button
           type="button"
           class="btn-update"
           v-if="!packageState.isEditing"
           @click="toggleEditing()">
-          수정하기
+          수정
         </button>
         <button
           type="submit"
-          class="btn-update"
+          class="btn-save"
           v-if="packageState.isEditing"
           @click="handleSave()">
           저장
@@ -29,6 +46,7 @@
         <button type="button" class="btn-close" @click="handleClose()">
           닫기
         </button>
+      </div>
       </div>
     </div>
   </div>
@@ -47,8 +65,9 @@ const props = defineProps({
 })
 
 const packageState = inject('packageState')
-const resetPackageState = inject('resetPackageState')
-const resetPartnerState = inject('resetPartnerState')
+const partnerState = inject('partnerState')
+const resetAllState = inject('resetAllState')
+const submitYN = inject('submitYN')
 const submitForm = inject('submitForm')  
 const CRUDStateEnum = inject('CRUDStateEnum')
 
@@ -59,19 +78,20 @@ const toggleEditing = async () => {
   if (packageState.countries) packageState.isEditing = true
 }
 
+const handleYN = async () => {
+  await submitYN()
+}
+
 const handleSave = async () => {
   await submitForm()
 }
 
 const handleClose = () => {
-  resetPackageState()
-  resetPartnerState()
+  resetAllState()
 }
 
 const handleKeyDown = (event) => {
-  if (event.key === 'Escape') {
-    resetPackageState()
-    resetPartnerState()
+  if (event.key === 'Escape' && partnerState.isSmallModalOpen !== true ) {
     handleClose()
   }
 }
@@ -127,6 +147,7 @@ onUnmounted(() => {
     color: white;
     text-align: center;
     vertical-align: middle;
+    white-space: nowrap;
   }
 }
 
@@ -146,10 +167,25 @@ onUnmounted(() => {
 
 .button-container {
   display: flex;
-  justify-content: center;
+  
   align-items: center;
-  width: 100%;
+  width: 90%;
   height: 100px;
+}
+
+.button-item-left {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+}
+
+.button-item-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 50%;
+  height: 100%;
 }
 
 .btn-create {
@@ -172,6 +208,16 @@ onUnmounted(() => {
   }
 }
 
+.btn-save {
+  @apply bg-green-500 text-white font-bold rounded;
+  transition: background-color 0.3s ease;
+  width: 100px;
+  height: 40px;
+  &:hover {
+    @apply bg-green-700 transition ease-out;
+  }
+}
+
 .btn-delete {
   @apply bg-red-600 text-white font-bold rounded;
   transition: background-color 0.3s ease;
@@ -187,6 +233,7 @@ onUnmounted(() => {
   transition: background-color 0.3s ease;
   width: 100px;
   height: 40px;
+  margin-left: 5px;
   &:hover {
     @apply bg-gray-600 transition ease-out;
   }

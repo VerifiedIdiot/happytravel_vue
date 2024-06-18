@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import flight from "./modules/flight";
+
 import {
   getMyPageUserInfo,
   getNotices,
@@ -35,6 +35,9 @@ export default createStore({
       const pos = state.positions.find((p) => p.posCode === posCode);
       return pos ? pos.posName : "";
     },
+    isAuthenticated(state) { // 추가된 getter
+      return !!state.loginInfo.empId;
+    },
     user(state) {
       return state.user;
     },
@@ -44,9 +47,15 @@ export default createStore({
       state.loginInfo = payload;
       sessionStorage.setItem("loginInfo", JSON.stringify(payload));
     },
+    setUser(state, payload) { // 추가된 mutation
+      state.user = payload;
+      sessionStorage.setItem("user", JSON.stringify(payload));
+    },
     setLogout(state) {
       state.loginInfo = null;
+      state.user = null; // 추가된 코드
       sessionStorage.removeItem("loginInfo");
+      sessionStorage.removeItem("user"); // 추가된 코드
     },
     setUserDetails(state, userDetails) {
       state.userDetails = userDetails;
@@ -108,7 +117,5 @@ export default createStore({
       }
     },
   },
-  modules: {
-    flight,
-  },
+  
 });

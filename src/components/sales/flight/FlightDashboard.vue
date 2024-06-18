@@ -3,10 +3,12 @@
     <div class="flight-container">
       <div class="flight-box">
         <div class="flight-item">
-          <button class="btn-create" @click="openModal">신규등록</button>
+          <button class="btn-create" @click="openModalForCreate()">
+            <p>신규등록</p>
+          </button>
         </div>
       </div>
-      <div class="flight-box">
+      <div>
         <table>
           <thead>
             <tr>
@@ -18,110 +20,78 @@
               <th>도착지</th>
               <th>도착시간</th>
               <th>가격</th>
-              <th>
-                <select v-model="filterOption">
-                  <option value="all">사용유무</option>
-                  <option value="Y">사용</option>
-                  <option value="N">미사용</option>
-                </select>
-              </th>
             </tr>
           </thead>
           <tbody>
             <tr
-              v-for="flight in filterFlights"
-              :key="flight.flight_code"
-              @click="openModal(flight)"
+              v-for="flt in flights"
+              :key="flt.flight_code"
+              @click="openModal(flt.flight_code)"
             >
-              <td>{{ flight.flight_number }}</td>
-              <td>{{ flight.airline }}</td>
-              <td>{{ flight.phone }}</td>
-              <td>{{ flight.departure }}</td>
-              <td>{{ flight.departure_time }}</td>
-              <td>{{ flight.destination }}</td>
-              <td>{{ flight.arrival_time }}</td>
-              <td>{{ formatPrice(flight.price) }}</td>
-              <td>{{ flight.is_used }}</td>
+              <td>{{ flt.flight_number }}</td>
+              <td>{{ flt.airline }}</td>
+              <td>{{ flt.phone }}</td>
+              <td>{{ flt.departure }}</td>
+              <td>{{ flt.departure_time }}</td>
+              <td>{{ flt.destination }}</td>
+              <td>{{ flt.arrival_time }}</td>
+              <td>{{ flt.price }}</td>
             </tr>
           </tbody>
         </table>
       </div>
+      <FlightModal v-if="flightState.isModalOpen" @close="closeModal">
+        <FlightDetail />
+      </FlightModal>
     </div>
-    <FlightDetail
-      v-if="isModalOpen"
-      :flight="currentFlight"
-      @close="closeModal"
-    />
+    <Pagination />
   </div>
 </template>
 
-<script>
-import { ref, onMounted, computed } from 'vue';
-import { useStore } from 'vuex';
-import FlightDetail from '@/components/sales/flight/FlightDetail.vue';
+<script setup>
+import { inject, onMounted } from "vue";
+import { getFlight, getCountries } from "@/api/sales/FlightApi";
 
-export default {
-  name: 'FlightDashboard',
-  components: {
-    FlightDetail
-  },
-  setup() {
-    const store = useStore();
-    const flights = computed(() => store.getters['flight/flights']);
-    const isModalOpen = ref(false);
-    const currentFlight = ref(null);
-    const filterOption = ref('all');
+import FlightDetail from "@/components/sales/flight/FlightDetail.vue";
+import FlightModal from "@/components/sales/flight/FlightModal.vue";
+import Pagination from "@/components/sales/flight/FlightPagination.vue";
 
-    onMounted(() => {
-      store.dispatch('flight/fetchFlights');
-    });
+const flights = inject("flights");
+const flightState = inject("flightState");
+const resetFlightState = inject("resetFlightState");
+const fetchFlights = inject("fetchFlights");
+const empId = inject("empId");
 
-    const formatPrice = price => {
-      return new Intl.NumberFormat('ko-KR', {
-        style: 'currency',
-        currency: 'KRW'
-      }).format(price);
-    };
+onMounted(fetchFlights);
 
-    const openModal = flight => {
-      currentFlight.value = flight
-        ? { ...flight }
-        : {
-            flight_number: '',
-            airline: '',
-            phone: '',
-            departure: '',
-            departure_time: '',
-            destination: '',
-            arrival_time: '',
-            price: '',
-            is_used: ''
-          };
-      isModalOpen.value = true;
-    };
+const openModal = async (fltCode = "") => {
+  flightState.flightCode = fltCode;
+  try {
+    if (fltCode) {
+      const data = await getFlight({
+        flightCode: fltCode,
+        empId: empId,
+      });
+      flightState.flightDetail = data;
+    } else {
+      flightState.flightDetail = {};
+    }
 
-    const closeModal = () => {
-      isModalOpen.value = false;
-      currentFlight.value = null;
-    };
+    if (flightState.flightDetail) {
+      flightState.isModalOpen = true;
+    }
+  } catch (error) {
+    console.error("Failed to load flight details:", error);
+  }
+};
 
-    const filterFlights = computed(() => {
-      if (filterOption.value === 'all') {
-        return flights.value;
-      }
-      return flights.value.filter(flight => flight.is_used === filterOption.value);
-    });
-
-    return {
-      flights,
-      formatPrice,
-      isModalOpen,
-      openModal,
-      closeModal,
-      currentFlight,
-      filterFlights,
-      filterOption
-    };
+const openModalForCreate = async () => {
+  resetFlightState();
+  flightState.isEditing = true;
+  const countryData = await getCountries();
+  flightState.countries = countryData;
+  if (flightState.countries.length > 0 && flightState.isEditing) {
+    flightState.isModalOpen = true;
   }
 };
 </script>

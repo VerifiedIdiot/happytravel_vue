@@ -1,4 +1,5 @@
 <template>
+  <div class="wrapper">
     <div class="hotel-container">
       <div class="hotel-box">
         <div class="hotel-item">
@@ -16,13 +17,6 @@
               <th>국가</th>
               <th>주소</th>
               <th>가격</th>
-              <th>
-                <select>
-                  <option value="all">사용유무</option>
-                  <option value="Y">사용</option>
-                  <option value="N">미사용</option>
-                </select>
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -36,17 +30,16 @@
               <td>{{ htl.country }}</td>
               <td>{{ htl.address }}</td>
               <td>{{ htl.price }}</td>
-              <td>{{ htl.is_used }}</td>
             </tr>
           </tbody>
         </table>
-        <Pagination />
       </div>
       <HotelModal v-if="hotelState.isModalOpen" @close="closeModal">
         <HotelDetail />
       </HotelModal>
     </div>
-  
+    <Pagination />
+  </div>
 </template>
 
 <script setup>
