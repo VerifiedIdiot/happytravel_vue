@@ -15,11 +15,15 @@ import {
   getFlightCnt,
   getAgencyList,
   getAgencyCnt,
+  updatePackageYN,
 } from '@/api/sales/PackageApi';
 
 import cloneDeep from 'lodash/cloneDeep';
+import { useToast } from 'vue-toast-notification';
 
+const toast = useToast();
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
+ 
 const packages = ref([]);
 
 const CRUDStateEnum = Object.freeze({
@@ -84,8 +88,14 @@ const initialAgencyState = {
   TotalPages: 0,
 };
 
+const assignState = {
+  waited : 1000,
+  assigned : 2000,
+  rejected : 3000
+}
+
 const packageState = reactive(cloneDeep(initialPackageState));
-const partnerDisable = reactive({...initialpartnerDisable});
+const partnerDisable = reactive({ ...initialpartnerDisable });
 const paginationState = reactive({ ...initialPaginationState });
 const partnerState = reactive({ ...initialPartnerState });
 const flightState = reactive(cloneDeep(initialFlightState));
@@ -131,16 +141,18 @@ const resetAllPartnerState = () => {
   Object.assign(agencyState, cloneDeep(initialAgencyState));
 };
 
-const fetchPackages = async () => {
+const fetchPackages = async (assignCode ='1000') => {
   const params = {
     empId,
+    assignCode: assignCode,
     limit: paginationState.itemsPerPage,
     offset: paginationState.itemsPerPage * (paginationState.currentPage - 1),
   };
   try {
+    
     const [data, cnt] = await Promise.all([
       getPackageList(params),
-      getPackageCnt({ empId }),
+      getPackageCnt({ empId, assignCode }),
     ]);
     packages.value = data;
     paginationState.packageCnt = cnt;
@@ -228,46 +240,133 @@ const selectRow = (row) => {
     packageState.packageDetail.agencyCode = row.code;
     return true;
   } else {
-    console.error('협력사를 선택하는데 실패했습니다.');
+    toast.open({
+      message: '협력사를 선택하는데 실패했습니다.',
+      type: error,
+    });
   }
 };
 
 const calculateDateDifference = (startDate, endDate) => {
-  if (!startDate || !endDate) return 0; 
+  if (!startDate || !endDate) return 0;
   const start = new Date(startDate);
   const end = new Date(endDate);
   const timeDiff = end - start;
-  const dayDiff = timeDiff / (1000 * 3600 * 24); 
-  return dayDiff 
+  const dayDiff = timeDiff / (1000 * 3600 * 24);
+  return dayDiff;
 };
 
 const updateTotalPrice = () => {
-  let totalPrice = 0; 
-  const days = calculateDateDifference(packageState.packageDetail.startDate, packageState.packageDetail.endDate);
+  let totalPrice = 0;
+  const days = calculateDateDifference(
+    packageState.packageDetail.startDate,
+    packageState.packageDetail.endDate
+  );
 
-  // 항목 별 가격을 계산하여 totalPrice에 누적
   const flightPrice = parseInt(packageState.packageDetail.flightPrice) || 0;
-  const hotelPrice = (parseInt(packageState.packageDetail.hotelPrice) || 0) * days;
-  const agencyPrice = (parseInt(packageState.packageDetail.agencyPrice) || 0) * days;
+  const hotelPrice =
+    (parseInt(packageState.packageDetail.hotelPrice) || 0) * days;
+  const agencyPrice =
+    (parseInt(packageState.packageDetail.agencyPrice) || 0) * days;
 
   totalPrice += flightPrice + hotelPrice + agencyPrice;
 
-  // 총 가격과 판매 가격 업데이트
+  totalPrice = Math.max(totalPrice, 0);
+
   packageState.packageDetail.totalPrice = totalPrice;
   packageState.packageDetail.salePrice = totalPrice * 1.2;
-  // console.log(packageState.packageDetail.flightPrice)
-  // console.log(packageState.packageDetail.hotelPrice)
-  // console.log(packageState.packageDetail.agencyPrice)
-  // console.log(flightPrice)
-  // console.log(totalPrice)
-  // console.log(packageState.packageDetail.totalPrice)
+};
+
+const validateForm = () => {
+  const fieldNames = {
+    agencyCode: '여행사',
+    countryCode: '국가',
+    hotelCode: '호텔',
+    flightCode: '항공사',
+    packageName: '상품 이름',
+    startDate: '여행 시작일',
+    endDate: '여행 종료일',
+    saleStartDate: '판매 시작일',
+    saleEndDate: '판매 종료일',
+  };
+
+  const requiredFields = [
+    'agencyCode',
+    'countryCode',
+    'hotelCode',
+    'flightCode',
+    'packageName',
+    'startDate',
+    'endDate',
+    'saleStartDate',
+    'saleEndDate',
+  ];
+
+  for (const field of requiredFields) {
+    if (!packageState.packageDetail[field]) {
+      toast.open({
+        message: `${fieldNames[field]}이/가 누락되었습니다.`,
+        type: 'warning'
+      });
+      return false;
+    }
+  }
+
+  // 날짜 유효성 검증
+  const startDate = new Date(packageState.packageDetail.startDate);
+  const endDate = new Date(packageState.packageDetail.endDate);
+  const saleStartDate = new Date(packageState.packageDetail.saleStartDate);
+  const saleEndDate = new Date(packageState.packageDetail.saleEndDate);
+
+  if (startDate > endDate) {
+    toast.open({
+      message: '여행 시작일은 여행 종료일보다 늦을 수 없습니다.',
+      type: 'warning'
+    });
+    return false;
+  }
+
+  if (saleStartDate > saleEndDate) {
+    toast.open({
+      message: '판매 시작일은 판매 종료일보다 늦을 수 없습니다.',
+      type: 'warning'
+    });
+    return false;
+  }
+
+  if (startDate < saleEndDate) {
+    toast.open({
+      message: '여행 시작일은 판매 종료일보다 늦어야 합니다.',
+      type: 'warning'
+    });
+    return false;
+  }
+
+  return true;
 };
 
 const submitForm = async () => {
   try {
+    if (!validateForm()) {
+      return;
+    }
+
+    const requestParams = {
+      packageCode: packageState.packageDetail.packageCode || null,
+      agencyCode: packageState.packageDetail.agencyCode,
+      countryCode: packageState.packageDetail.countryCode,
+      hotelCode: packageState.packageDetail.hotelCode,
+      flightCode: packageState.packageDetail.flightCode,
+      packageName: packageState.packageDetail.packageName,
+      startDate: packageState.packageDetail.startDate,
+      endDate: packageState.packageDetail.endDate,
+      saleStartDate: packageState.packageDetail.saleStartDate,
+      saleEndDate: packageState.packageDetail.saleEndDate,
+    };
+
     const params = {
       empId,
-      ...packageState.packageDetail,
+      ...requestParams,
     };
 
     const response =
@@ -280,13 +379,56 @@ const submitForm = async () => {
       resetPackageState();
       resetPartnerState();
       fetchPackages();
+      toast.open({
+        message: '저장에 성공했습니다.',
+        type: 'success'
+      });
     } else {
-      console.log('저장에 실패했습니다.');
+      toast.open({
+        message: '저장에 실패했습니다.',
+        type: 'error'
+      });
     }
   } catch (error) {
-    console.error('패키지 저장에 실패했습니다:', error);
+    toast.open({
+      message: `에러가 발생했습니다. 관리자에게 문의해주세요: ${error.message}`,
+      type: 'error'
+    });
   }
 };
+
+const submitYN = async () => {
+  try {
+  if(empId !== undefined) {
+    const params = {
+      empId,
+      packageCode : packageState.packageDetail.packageCode
+    }
+
+    const response = await updatePackageYN(params)
+    if (response) {
+      packageState.isEditing = false;
+      resetPackageState();
+      resetPartnerState();
+      fetchPackages();
+      toast.open({
+        message: '해당 여행상품이 삭제되었습니다.',
+        type: 'success'
+      });
+    } else {
+      toast.open({
+        message: '삭제에 실패했습니다.',
+        type: 'error'
+      });
+    }
+  }
+} catch (error) {
+  toast.open({
+      message: `에러가 발생했습니다. 관리자에게 문의해주세요: ${error.message}`,
+      type: 'error'
+    });
+}
+}
 
 provide('empId', empId);
 provide('CRUDStateEnum', CRUDStateEnum);
@@ -298,11 +440,13 @@ provide('partnerDisable', partnerDisable);
 provide('resetPackageState', resetPackageState);
 provide('paginationState', paginationState);
 provide('resetAllState', resetAllState);
+provide('assignState', assignState)
+provide('submitYN', submitYN)
 provide('submitForm', submitForm);
 
 provide('partnerState', partnerState);
 provide('selectRow', selectRow);
-provide('updateTotalPrice', updateTotalPrice)
+provide('updateTotalPrice', updateTotalPrice);
 provide('resetPartnerState', resetPartnerState);
 
 provide('flightState', flightState);
