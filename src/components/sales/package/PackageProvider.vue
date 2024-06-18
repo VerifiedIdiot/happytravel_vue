@@ -449,13 +449,13 @@ const submitYN = async () => {
 }
 }
 
-const submitAssign = async () => {
+const submitAssign = async (assignCode) => {
   try {
     if(empId !== undefined) {
       const params = {
         empId,
         packageCode : packageState.packageDetail.packageCode,
-        assignCode : assignState
+        assignCode : assignCode
       }
 
     const response = await assignPackage(params)
