@@ -5,10 +5,12 @@
 <script setup>
 import { provide, ref, reactive } from 'vue';
 import { getHotelList, getHotelCnt, insertHotel, updateHotel } from '@/api/sales/HotelApi';
+import { useToast } from 'vue-toast-notification';
 
+const toast = useToast();
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
 const hotels = ref([]);
-const countryCode = ref('')
+const countryCode = ref('');
 
 const CRUDStateEnum = Object.freeze({
   CREATE: 'create',
@@ -22,6 +24,12 @@ const initialHotelState = {
   isEditing: false,
   crudState: CRUDStateEnum.CREATE,
   hotelDetail: {
+    hotel_name: '',
+    phone: '',
+    country: '',
+    address: '',
+    price: '',
+    image_url: '',
     country_code: '',
   },
   countries: [],
@@ -32,14 +40,27 @@ const hotelState = reactive({ ...initialHotelState });
 const initialPaginationState = {
   hotelCnt: 0,
   currentPage: 1,
-  itemsPerPage: 5,
+  itemsPerPage: 8,
   totalPages: 0,
 };
 
 const paginationState = reactive({ ...initialPaginationState });
 
 const resetHotelState = () => {
-  Object.assign(hotelState, initialHotelState);
+  hotelState.isModalOpen = false;
+  hotelState.hotelCode = '';
+  hotelState.isEditing = false;
+  hotelState.crudState = CRUDStateEnum.CREATE;
+  hotelState.hotelDetail = {
+    hotel_name: '',
+    phone: '',
+    country: '',
+    address: '',
+    price: '',
+    image_url: '',
+    country_code: '',
+  };
+  hotelState.countries = [];
 };
 
 const setCurrentPage = (page) => {
@@ -66,43 +87,48 @@ const fetchHotels = async () => {
   }
 };
 
-const submitForm = async (countryCode) => {
-
-  if (!validateForm()) {
-    alert('빈 칸을 채워주세요.');
-    resetHotelState();
-    return;
-  }
-
+const submitForm = async () => {
   try {
-
     if (!validateForm()) {
-    alert('빈 칸을 채워주세요.');
-    resetHotelState();
-    return;
-  }
-    const params = {
-      empId,
-      ...hotelState.hotelDetail, 
+      toast.open({
+        message: '빈 칸을 채워주세요.',
+        type: 'warning'
+      });
+      return;
     }
-    
+
+    const requestParams = {
+      empId,
+      ...hotelState.hotelDetail,
+    };
+
     const response = hotelState.crudState === CRUDStateEnum.CREATE
-      ? await insertHotel(params)
-      : await updateHotel(params);
-      
+      ? await insertHotel(requestParams)
+      : await updateHotel(requestParams);
+
     if (response === true) {
       hotelState.isEditing = false;
+      
+      toast.open({
+        message: '저장에 성공했습니다.',
+        type: 'success'
+      });
       resetHotelState();
       fetchHotels();
     } else {
-      console.log('save failed');
+      toast.open({
+        message: '저장에 실패했습니다.',
+        type: 'error'
+      });
     }
   } catch (error) {
-    console.error('Failed to save hotels:', error);
+    toast.open({
+      message: `에러가 발생했습니다. 관리자에게 문의해주세요: ${error.message}`,
+      type: 'error'
+    });
   }
 };
 
-// 폼 유효성 검사 함수
 const validateForm = () => {
   const { hotel_name, phone, country, address, price } = hotelState.hotelDetail;
   return hotel_name && phone && country && address && price;
@@ -115,7 +141,7 @@ provide('resetHotelState', resetHotelState);
 provide('setCurrentPage', setCurrentPage);
 provide('fetchHotels', fetchHotels);
 provide('paginationState', paginationState);
-provide('submitForm', submitForm)
-provide('CRUDStateEnum', CRUDStateEnum)
-provide('countryCode', countryCode)
+provide('submitForm', submitForm);
+provide('CRUDStateEnum', CRUDStateEnum);
+provide('countryCode', countryCode);
 </script>
