@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="history in attendanceHistory" :key="history.id">
+        <tr v-for="history in attendanceHistory" :key="history.empId">
           <td class="border border-gray-300 px-4 py-2">{{ history.empId }}</td>
           <td class="border border-gray-300 px-4 py-2">{{ history.empName }}</td>
           <td class="border border-gray-300 px-4 py-2">{{ history.departmentName }}</td>
@@ -27,27 +27,61 @@
         </tr>
       </tbody>
     </table>
+    <div class="pagination mt-5 flex justify-center items-center">
+      <button 
+        @click="prevPage" 
+        :disabled="currentPage === 1"
+        class="px-4 py-2 border border-gray-300 bg-gray-200 text-gray-800"
+      >
+        &lt;
+      </button>
+      <button 
+        v-for="page in totalPages" 
+        :key="page" 
+        @click="goToPage(page)" 
+        :class="{'bg-blue-500 text-white': page === currentPage, 'px-4 py-2 border border-gray-300 bg-gray-200 text-gray-800': true}"
+        class="px-4 py-2 border border-gray-300 bg-gray-200 text-gray-800"
+      >
+        {{ page }}
+      </button>
+      <button 
+        @click="nextPage" 
+        :disabled="currentPage === totalPages"
+        class="px-4 py-2 border border-gray-300 bg-gray-200 text-gray-800"
+      >
+        &gt;
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { getAttendanceHistory } from '@/api/attendances/AttendanceManagementApi.js';
 
 export default {
   name: 'AttendanceDashboard',
   setup() {
     const attendanceHistory = ref([]);
+    const currentPage = ref(1);
+    const itemsPerPage = 5; 
+    const totalItems = ref(0);
 
     const fetchAttendanceHistory = async () => {
       try {
-        const data = await getAttendanceHistory();
-        attendanceHistory.value = data.map(item => ({
-          ...item,
-          startDate: formatDate(item.startDate),
-          endDate: formatDate(item.endDate)
-        }));
-        console.log('Fetched attendance history:', attendanceHistory.value);
+        attendanceHistory.value = [];  // 페이지 전환 시 데이터 초기화
+        const data = await getAttendanceHistory(itemsPerPage, (currentPage.value - 1) * itemsPerPage);
+        if (Array.isArray(data.attendanceConfirmResponseList) && typeof data.total === 'number') {
+          attendanceHistory.value = data.attendanceConfirmResponseList.map(item => ({
+            ...item,
+            startDate: formatDate(item.startDate),
+            endDate: formatDate(item.endDate)
+          }));
+          totalItems.value = data.total;
+          console.log('Fetched attendance history:', attendanceHistory.value);
+        } else {
+          throw new Error('Invalid data format');
+        }
       } catch (error) {
         console.error('Error fetching attendance history:', error);
       }
@@ -61,35 +95,49 @@ export default {
       return `${year}-${month}-${day}`;
     };
 
+    const totalPages = computed(() => {
+      return Math.ceil(totalItems.value / itemsPerPage);
+    });
+
+    const prevPage = () => {
+      if (currentPage.value > 1) {
+        currentPage.value -= 1;
+        fetchAttendanceHistory();
+      }
+    };
+
+    const nextPage = () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value += 1;
+        fetchAttendanceHistory();
+      }
+    };
+
+    const goToPage = (page) => {
+      if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+        fetchAttendanceHistory();
+      }
+    };
+
     onMounted(fetchAttendanceHistory);
 
     return {
       attendanceHistory,
       formatDate,
+      currentPage,
+      totalPages,
+      prevPage,
+      nextPage,
+      goToPage,
     };
   },
 };
 </script>
 
+
 <style scoped>
-.attendance-history {
-  padding: 20px;
-}
-
-.attendance-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.attendance-table th,
-.attendance-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.attendance-table th {
-  background-color: #f2f2f2;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 </style>
