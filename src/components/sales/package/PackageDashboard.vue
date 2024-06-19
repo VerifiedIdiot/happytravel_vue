@@ -6,23 +6,32 @@
           <div class="filters">
             <button
               class="btn-filter"
-              :class="filterState.waited === true ? 'btn-selected-waited' : 'btn-unselected'"
-              @click="selectFilter(assignState.waited)"
-            >
+              :class="
+                filterState.waited === true
+                  ? 'btn-selected-waited'
+                  : 'btn-unselected'
+              "
+              @click="selectFilter(assignState.waited)">
               진행중
             </button>
             <button
               class="btn-filter"
-              :class="filterState.assigned === true ? 'btn-selected-assigned' : 'btn-unselected'"
-              @click="selectFilter(assignState.assigned)"
-            >
+              :class="
+                filterState.assigned === true
+                  ? 'btn-selected-assigned'
+                  : 'btn-unselected'
+              "
+              @click="selectFilter(assignState.assigned)">
               완료
             </button>
             <button
               class="btn-filter"
-              :class="filterState.rejected === true ? 'btn-selected-rejected' : 'btn-unselected'"
-              @click="selectFilter(assignState.rejected)"
-            >
+              :class="
+                filterState.rejected === true
+                  ? 'btn-selected-rejected'
+                  : 'btn-unselected'
+              "
+              @click="selectFilter(assignState.rejected)">
               반려
             </button>
           </div>
@@ -46,7 +55,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="pkg in packages" :key="pkg.packageCode" @click="openModal(pkg.packageCode)">
+          <tr
+            v-for="pkg in packages"
+            :key="pkg.packageCode"
+            @click="openModal(pkg.packageCode)">
             <td class="col-name">{{ pkg.packageName }}</td>
             <td class="col-country">{{ pkg.country }}</td>
             <td class="col-start">{{ pkg.startDate }}</td>
@@ -58,11 +70,11 @@
                 <span
                   class="status"
                   :class="{
-                    'status-waited': pkg.assignCode === '1000' && !packageState.isEditing,
+                    'status-waited':
+                      pkg.assignCode === '1000' && !packageState.isEditing,
                     'status-assigned': pkg.assignCode === '2000',
-                    'status-rejected': pkg.assignCode === '3000'
-                  }"
-                >
+                    'status-rejected': pkg.assignCode === '3000',
+                  }">
                   {{
                     pkg.assignCode === '1000'
                       ? '진행중'
@@ -101,9 +113,8 @@ const packageState = inject('packageState');
 const partnerState = inject('partnerState');
 const resetPackageState = inject('resetPackageState');
 const resetAllState = inject('resetAllState');
-const filterState = inject('filterState')
-const resetFilterState = inject('resetFilterState')
-
+const filterState = inject('filterState');
+const resetFilterState = inject('resetFilterState');
 
 onMounted(() => {
   fetchPackages();
@@ -113,15 +124,14 @@ onMounted(() => {
 const selectFilter = (value) => {
   fetchPackages(value);
   if (value === assignState.waited) {
-    resetFilterState()
-    filterState.waited = true 
+    resetFilterState();
+    filterState.waited = true;
   } else if (value === assignState.assigned) {
-    resetFilterState()
-    filterState.assigned = true
-
+    resetFilterState();
+    filterState.assigned = true;
   } else if (value === assignState.rejected) {
-    resetFilterState()
-    filterState.rejected = true
+    resetFilterState();
+    filterState.rejected = true;
   }
 };
 
@@ -136,7 +146,7 @@ const openModal = async (pkgCode = '') => {
           ...data,
           hotelCountry: data.country,
           flightCountry: data.country,
-          agencyCountry: data.country
+          agencyCountry: data.country,
         };
         partnerState.selectedCountryCode = data.countryCode;
       } else {
@@ -237,8 +247,6 @@ const closeModal = () => {
   @apply bg-red-600 text-white shadow-md;
 }
 
-
-
 .btn-unselected {
   @apply bg-white text-black border shadow-sm;
 }
@@ -300,11 +308,11 @@ tbody tr:nth-child(even) {
 }
 
 tbody tr {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05); 
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 tbody tr td {
-  border-right: 1px solid rgba(0, 0, 0, 0.05); 
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 td {

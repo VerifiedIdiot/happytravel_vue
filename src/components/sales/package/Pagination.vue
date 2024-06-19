@@ -43,17 +43,17 @@ const setCurrentPage = (page) => {
   fetchPackages();
 };
 
-const prevPage = () => {
-  if (paginationState.currentPage > 1) {
-    setCurrentPage(paginationState.currentPage - 1);
-  }
-};
+// const prevPage = () => {
+//   if (paginationState.currentPage > 1) {
+//     setCurrentPage(paginationState.currentPage - 1);
+//   }
+// };
 
-const nextPage = () => {
-  if (paginationState.currentPage < paginationState.totalPages) {
-    setCurrentPage(paginationState.currentPage + 1);
-  }
-};
+// const nextPage = () => {
+//   if (paginationState.currentPage < paginationState.totalPages) {
+//     setCurrentPage(paginationState.currentPage + 1);
+//   }
+// };
 
 const goToPage = (page) => {
   setCurrentPage(page);

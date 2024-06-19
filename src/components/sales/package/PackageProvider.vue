@@ -16,7 +16,7 @@ import {
   getAgencyList,
   getAgencyCnt,
   updatePackageYN,
-  assignPackage
+  assignPackage,
 } from '@/api/sales/PackageApi';
 
 import cloneDeep from 'lodash/cloneDeep';
@@ -90,15 +90,15 @@ const initialAgencyState = {
 };
 
 const assignState = {
-  waited : 1000,
-  assigned : 2000,
-  rejected : 3000
-}
+  waited: 1000,
+  assigned: 2000,
+  rejected: 3000,
+};
 
 const initialFilterState = {
   waited: false,
   assigned: false,
-  rejected: false
+  rejected: false,
 };
 
 const packageState = reactive(cloneDeep(initialPackageState));
@@ -108,7 +108,7 @@ const partnerState = reactive({ ...initialPartnerState });
 const flightState = reactive(cloneDeep(initialFlightState));
 const hotelState = reactive(cloneDeep(initialHotelState));
 const agencyState = reactive(cloneDeep(initialAgencyState));
-const filterState = reactive({...initialFilterState});
+const filterState = reactive({ ...initialFilterState });
 
 const resetPackageState = () => {
   Object.assign(packageState, cloneDeep(initialPackageState));
@@ -150,10 +150,10 @@ const resetAllPartnerState = () => {
 };
 
 const resetFilterState = () => {
-  Object.assign(filterState, initialFilterState)
-}
+  Object.assign(filterState, initialFilterState);
+};
 
-const fetchPackages = async (assignCode ='1000') => {
+const fetchPackages = async (assignCode = '1000') => {
   const params = {
     empId,
     assignCode: assignCode,
@@ -161,7 +161,6 @@ const fetchPackages = async (assignCode ='1000') => {
     offset: paginationState.itemsPerPage * (paginationState.currentPage - 1),
   };
   try {
-
     const [data, cnt] = await Promise.all([
       getPackageList(params),
       getPackageCnt({ empId, assignCode }),
@@ -275,8 +274,6 @@ const useFormattedPrices = () => {
   return { formattedTotalPrice, formattedSalePrice };
 };
 
-
-
 const calculateDateDifference = (startDate, endDate) => {
   if (!startDate || !endDate) return 0;
   const start = new Date(startDate);
@@ -295,9 +292,11 @@ const updateTotalPrice = () => {
 
   const flightPrice = parseInt(packageState.packageDetail.flightPrice) || 0;
   const hotelPrice =
-    (parseInt(packageState.packageDetail.hotelPrice * days) || packageState.packageDetail.hotelPrice) 
+    parseInt(packageState.packageDetail.hotelPrice * days) ||
+    packageState.packageDetail.hotelPrice;
   const agencyPrice =
-    (parseInt(packageState.packageDetail.agencyPrice * days) || packageState.packageDetail.agencyPrice) ;
+    parseInt(packageState.packageDetail.agencyPrice * days) ||
+    packageState.packageDetail.agencyPrice;
 
   totalPrice += flightPrice + hotelPrice + agencyPrice;
 
@@ -335,8 +334,8 @@ const validateForm = () => {
   for (const field of requiredFields) {
     if (!packageState.packageDetail[field]) {
       toast.open({
-        message: `${fieldNames[field]}이/가 누락되었습니다.`,
-        type: 'warning'
+        message: `입력값이 누락되었습니다. 확인해주세요.`,
+        type: 'warning',
       });
       return false;
     }
@@ -351,7 +350,7 @@ const validateForm = () => {
   if (startDate > endDate) {
     toast.open({
       message: '여행 시작일은 여행 종료일보다 늦을 수 없습니다.',
-      type: 'warning'
+      type: 'warning',
     });
     return false;
   }
@@ -359,7 +358,7 @@ const validateForm = () => {
   if (saleStartDate > saleEndDate) {
     toast.open({
       message: '판매 시작일은 판매 종료일보다 늦을 수 없습니다.',
-      type: 'warning'
+      type: 'warning',
     });
     return false;
   }
@@ -367,7 +366,7 @@ const validateForm = () => {
   if (startDate < saleEndDate) {
     toast.open({
       message: '여행 시작일은 판매 종료일보다 늦어야 합니다.',
-      type: 'warning'
+      type: 'warning',
     });
     return false;
   }
@@ -411,91 +410,90 @@ const submitForm = async () => {
       fetchPackages();
       toast.open({
         message: '저장에 성공했습니다.',
-        type: 'success'
+        type: 'success',
       });
     } else {
       toast.open({
         message: '저장에 실패했습니다.',
-        type: 'error'
+        type: 'error',
       });
     }
   } catch (error) {
     toast.open({
       message: `에러가 발생했습니다. 관리자에게 문의해주세요: ${error.message}`,
-      type: 'error'
+      type: 'error',
     });
   }
 };
 
 const submitYN = async () => {
   try {
-  if(empId !== undefined) {
-    const params = {
-      empId,
-      packageCode : packageState.packageDetail.packageCode
-    }
+    if (empId !== undefined) {
+      const params = {
+        empId,
+        packageCode: packageState.packageDetail.packageCode,
+      };
 
-    const response = await updatePackageYN(params)
-    if (response) {
-      packageState.isEditing = false;
-      resetPackageState();
-      resetPartnerState();
-      fetchPackages();
-      toast.open({
-        message: '해당 여행상품이 삭제되었습니다.',
-        type: 'success'
-      });
-    } else {
-      toast.open({
-        message: '삭제에 실패했습니다.',
-        type: 'error'
-      });
+      const response = await updatePackageYN(params);
+      if (response) {
+        packageState.isEditing = false;
+        resetPackageState();
+        resetPartnerState();
+        fetchPackages();
+        toast.open({
+          message: '해당 여행상품이 삭제되었습니다.',
+          type: 'success',
+        });
+      } else {
+        toast.open({
+          message: '삭제에 실패했습니다.',
+          type: 'error',
+        });
+      }
     }
-  }
-} catch (error) {
-  toast.open({
+  } catch (error) {
+    toast.open({
       message: `에러가 발생했습니다. 관리자에게 문의해주세요: ${error.message}`,
-      type: 'error'
+      type: 'error',
     });
-}
-}
+  }
+};
 
 const submitAssign = async (assignCode) => {
   try {
-    if(empId !== undefined) {
+    if (empId !== undefined) {
       const params = {
         empId,
-        packageCode : packageState.packageDetail.packageCode,
-        assignCode : assignCode
-      }
+        packageCode: packageState.packageDetail.packageCode,
+        assignCode: assignCode,
+      };
 
-    const response = await assignPackage(params)
-    if (response) {
-      packageState.isEditing = false;
-      resetPackageState();
-      fetchPackages(assignCode);
-      toast.open({
-        message: '해당 여행상품 결제가 완료되었습니다.',
-        type: 'success'
-      });
-    } else {
-      toast.open({
-        message: '결제에 실패했습니다.',
-        type: 'error'
-      });
+      const response = await assignPackage(params);
+      if (response) {
+        packageState.isEditing = false;
+        resetPackageState();
+        fetchPackages(assignCode);
+        toast.open({
+          message: '해당 여행상품 결제가 완료되었습니다.',
+          type: 'success',
+        });
+      } else {
+        toast.open({
+          message: '결제에 실패했습니다.',
+          type: 'error',
+        });
+      }
     }
-  }
-} catch (error) {
-  toast.open({
+  } catch (error) {
+    toast.open({
       message: `에러가 발생했습니다. 관리자에게 문의해주세요: ${error.message}`,
-      type: 'error'
+      type: 'error',
     });
-}
-}
+  }
+};
 
 provide('empId', empId);
 provide('CRUDStateEnum', CRUDStateEnum);
-
 
 provide('packages', packages);
 provide('fetchPackages', fetchPackages);
@@ -504,12 +502,12 @@ provide('partnerDisable', partnerDisable);
 provide('resetPackageState', resetPackageState);
 provide('paginationState', paginationState);
 provide('resetAllState', resetAllState);
-provide('assignState', assignState)
-provide('submitYN', submitYN)
-provide('submitAssign', submitAssign)
+provide('assignState', assignState);
+provide('submitYN', submitYN);
+provide('submitAssign', submitAssign);
 provide('submitForm', submitForm);
-provide('filterState',filterState);
-provide('resetFilterState', resetFilterState)
+provide('filterState', filterState);
+provide('resetFilterState', resetFilterState);
 
 provide('partnerState', partnerState);
 provide('selectRow', selectRow);

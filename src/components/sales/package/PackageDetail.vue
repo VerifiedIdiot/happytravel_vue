@@ -305,41 +305,53 @@ const flightState = inject('flightState');
 const hotelState = inject('hotelState');
 const agencyState = inject('agencyState');
 const useFormattedPrices = inject('useFormattedPrices');
-const updateTotalPrice = inject('updateTotalPrice')
+const updateTotalPrice = inject('updateTotalPrice');
 
 const { formattedTotalPrice, formattedSalePrice } = useFormattedPrices();
 // 여행종료일이 여행시작일보다 앞서는지 확인
-watch(() => packageState.packageDetail.saleEndDate, (newVal, oldVal) => {
-  if (newVal && packageState.packageDetail.saleStartDate && new Date(newVal) < new Date(packageState.packageDetail.saleStartDate)) {
-    toast.open({
-      message: '판매 종료일은 판매 시작일보다 빠를 수 없습니다.',
-      type: 'warining',
-      
-    });
-    // Reset to old value or a valid default
-    packageState.packageDetail.saleEndDate = oldVal;
+watch(
+  () => packageState.packageDetail.saleEndDate,
+  (newVal, oldVal) => {
+    if (
+      newVal &&
+      packageState.packageDetail.saleStartDate &&
+      new Date(newVal) < new Date(packageState.packageDetail.saleStartDate)
+    ) {
+      toast.open({
+        message: '판매 종료일은 판매 시작일보다 빠를 수 없습니다.',
+        type: 'warining',
+      });
+      // Reset to old value or a valid default
+      packageState.packageDetail.saleEndDate = oldVal;
+    }
   }
-});
+);
 // 판매종료일이 판매시작일보다 앞서는지 확인
-watch(() => packageState.packageDetail.endDate, (newVal, oldVal) => {
-  if (newVal && packageState.packageDetail.startDate && new Date(newVal) < new Date(packageState.packageDetail.startDate)) {
-    toast.open({
-      message: '여행 종료일은 여행 시작일보다 빠를 수 없습니다.',
-      type: 'warning',
-    });
-    // Reset to old value or a valid default
-    packageState.packageDetail.endDate = oldVal;
+watch(
+  () => packageState.packageDetail.endDate,
+  (newVal, oldVal) => {
+    if (
+      newVal &&
+      packageState.packageDetail.startDate &&
+      new Date(newVal) < new Date(packageState.packageDetail.startDate)
+    ) {
+      toast.open({
+        message: '여행 종료일은 여행 시작일보다 빠를 수 없습니다.',
+        type: 'warning',
+      });
+      // Reset to old value or a valid default
+      packageState.packageDetail.endDate = oldVal;
+    }
   }
-});
+);
 // 협력사를 먼저 선택한뒤 날짜를 선택한경우 다시 총 금액을 계산
 watch(
   () => [
     packageState.packageDetail.startDate,
-    packageState.packageDetail.endDate
+    packageState.packageDetail.endDate,
   ],
   updateTotalPrice
 );
-
 
 const setCountryCode = () => {
   const selectedCountry = packageState.countries.find(

@@ -51,6 +51,7 @@ const currentState = computed(() => {
 const currentPage = computed(() => currentState.value.currentPage);
 const totalPages = computed(() => currentState.value.totalPages);
 
+// 카테고리값에 따라 서로다른 게시판에 적용되는 페이지네이션을 위한 ListCall 함수
 const fetchPartners = () => {
   if (partnerState.selectedCategory === 'flight') {
     fetchFlights();

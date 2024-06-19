@@ -33,29 +33,29 @@
 import { inject, onMounted, onUnmounted } from 'vue';
 
 const partnerState = inject('partnerState');
-const resetAllPartnerState = inject('resetAllPartnerState')
+const resetAllPartnerState = inject('resetAllPartnerState');
 const props = defineProps({
   title: {
     type: String,
   },
 });
-
+// 모달 비활성화
 const handleClose = () => {
-  resetAllPartnerState()
+  resetAllPartnerState();
   partnerState.isSmallModalOpen = false;
 };
-
+// 모달 활성화 될때 esc 클릭시 모달 비활성화
 const handleKeyDown = (event) => {
   if (event.key === 'Escape') {
     event.stopPropagation();
     handleClose();
   }
 };
-
+// 모달 활성화 될때 esc 이벤트 감지하는 lister 등록
 onMounted(() => {
   document.addEventListener('keydown', handleKeyDown);
 });
-
+// 모달 활성화 될때 esc 이벤트 감지하는 lister 해제
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeyDown);
 });
@@ -80,8 +80,9 @@ onUnmounted(() => {
 .small-modal-content {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  @apply bg-white;
+  @apply bg-gray-200;
   border-radius: 8px;
   border: 0px;
   padding: 0px;
@@ -125,7 +126,7 @@ onUnmounted(() => {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100px;
+  height: 50px;
 }
 
 .btn-close {
