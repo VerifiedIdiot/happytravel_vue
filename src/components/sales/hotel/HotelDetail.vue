@@ -121,7 +121,6 @@ export default {
   name: "HotelDetail",
   setup() {
     const hotelState = inject("hotelState");
-    const isKorean = ref(false); // 국내 주소 검색 여부 판단
 
     // 반응형 상태로 설정
     const state = reactive({
@@ -197,19 +196,22 @@ export default {
 
       if (imageUrl && hotelCode) {
         try {
-          // 이미지 숨기기
           hotelState.hotelDetail.image_url = "";
           state.previewImageUrl = null;
-
-          // Firebase에서 이미지 삭제
           await deleteImage(imageUrl);
           await removeImageUrl(hotelCode);
+          await submitForm();
         } catch (error) {
           console.error("Error deleting image:", error);
         }
       } else {
-        console.warn("No image URL or agency code found");
+        console.warn("No image URL or hotel code found");
       }
+    };
+
+    const handleSubmitForm = async () => {
+      await submitForm();
+      resetHotelState();
     };
 
     return {
@@ -218,9 +220,6 @@ export default {
       setCountryCode,
       onFileChange,
       deleteImageFile,
-      // openPostcode,
-      // handleCountryChange,
-      // isKorean,
     };
   },
 };

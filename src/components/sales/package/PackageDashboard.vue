@@ -6,22 +6,22 @@
           <div class="filters">
             <button
               class="btn-filter"
-              :class="selectedFilter === 'waited' ? 'btn-selected' : 'btn-unselected'"
-              @click="selectFilter('waited')"
+              :class="filterState.waited === true ? 'btn-selected-waited' : 'btn-unselected'"
+              @click="selectFilter(assignState.waited)"
             >
               진행중
             </button>
             <button
               class="btn-filter"
-              :class="selectedFilter === 'assigned' ? 'btn-selected' : 'btn-unselected'"
-              @click="selectFilter('assigned')"
+              :class="filterState.assigned === true ? 'btn-selected-assigned' : 'btn-unselected'"
+              @click="selectFilter(assignState.assigned)"
             >
               완료
             </button>
             <button
               class="btn-filter"
-              :class="selectedFilter === 'rejected' ? 'btn-selected' : 'btn-unselected'"
-              @click="selectFilter('rejected')"
+              :class="filterState.rejected === true ? 'btn-selected-rejected' : 'btn-unselected'"
+              @click="selectFilter(assignState.rejected)"
             >
               반려
             </button>
@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref } from 'vue';
+import { inject, onMounted } from 'vue';
 import { getPackage, getCountries } from '@/api/sales/PackageApi';
 import PackageDetail from '@/components/sales/package/PackageDetail.vue';
 import PackageModal from '@/components/sales/package/PackageModal.vue';
@@ -101,16 +101,28 @@ const packageState = inject('packageState');
 const partnerState = inject('partnerState');
 const resetPackageState = inject('resetPackageState');
 const resetAllState = inject('resetAllState');
+const filterState = inject('filterState')
+const resetFilterState = inject('resetFilterState')
 
-const selectedFilter = ref('waited');
 
 onMounted(() => {
   fetchPackages();
+  filterState.waited = true;
 });
 
-const selectFilter = (filter) => {
-  selectedFilter.value = filter;
-  fetchPackages(assignState[filter]);
+const selectFilter = (value) => {
+  fetchPackages(value);
+  if (value === assignState.waited) {
+    resetFilterState()
+    filterState.waited = true 
+  } else if (value === assignState.assigned) {
+    resetFilterState()
+    filterState.assigned = true
+
+  } else if (value === assignState.rejected) {
+    resetFilterState()
+    filterState.rejected = true
+  }
 };
 
 const openModal = async (pkgCode = '') => {
@@ -212,6 +224,20 @@ const closeModal = () => {
 .btn-selected {
   @apply bg-blue-700 text-white shadow-md;
 }
+
+.btn-selected-waited {
+  @apply bg-orange-400 text-white shadow-md;
+}
+
+.btn-selected-assigned {
+  @apply bg-green-500 text-white shadow-md;
+}
+
+.btn-selected-rejected {
+  @apply bg-red-600 text-white shadow-md;
+}
+
+
 
 .btn-unselected {
   @apply bg-white text-black border shadow-sm;

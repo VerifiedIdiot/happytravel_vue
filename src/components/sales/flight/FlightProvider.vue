@@ -4,10 +4,13 @@
 
 <script setup>
 import { provide, ref, reactive } from 'vue';
-import { getFlightList, getFlightCnt, insertFlight, updateFlight } from '@/api/sales/FlightApi';
+import { getFlightList, getFlightCnt, insertFlight, updateFlight, updateFlightYN } from '@/api/sales/FlightApi';
+import { useToast } from 'vue-toast-notification';
 
+const toast = useToast();
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
 const flights = ref([]);
+const countryCode = ref('');
 
 const CRUDStateEnum = Object.freeze({
   CREATE: 'create',
@@ -20,16 +23,24 @@ const initialFlightState = {
   flightCode: '',
   isEditing: false,
   crudState: CRUDStateEnum.CREATE,
-  flightDetail: {},
+  flightDetail: {
+    flight_number: '',
+    airline: '',
+    phone: '',
+    departure: '',
+    departure_time: '',
+    destination: '',
+    arrival_time: '',
+    price: '',
+  },
   countries: [],
 };
-
 const flightState = reactive({ ...initialFlightState });
 
 const initialPaginationState = {
   flightCnt: 0,
   currentPage: 1,
-  itemsPerPage: 5,
+  itemsPerPage: 8,
   totalPages: 0,
 };
 
@@ -63,33 +74,98 @@ const fetchFlights = async () => {
   }
 };
 
-const submitForm = async () => {
+// 폼 유효성 검사 함수
+const validateForm = () => {
+  const fieldNames = {
+    flight_number: '항공번호',
+    airline: '항공편',
+    phone: '전화번호',
+    departure: '출발지',
+    departure_time: '출발시간',
+    destination: '도착지',
+    arrival_time: '도착시간',
+    price: '가격',
+  };
 
-  if (!validateForm()) {
-    alert('빈 칸을 채워주세요.');
-    resetFlightState();
-    return;
+  const requiredFields = [
+    'flight_number',
+    'airline',
+    'phone',
+    'departure',
+    'departure_time',
+    'destination',
+    'arrival_time',
+    'price',
+  ];
+
+  for (const field of requiredFields) {
+    if (!flightState.flightDetail[field]) {
+      toast.open({
+        message: `${fieldNames[field]} 이/가 누락되었습니다.`,
+        type: 'warning'
+      });
+      return false;
+    }
+
+    // 가격 필드에 대한 추가 유효성 검사
+    if (field === 'price' && isNaN(flightState.flightDetail[field])) {
+      toast.open({
+        message: '가격은 숫자로 입력해주세요.',
+        type: 'warning'
+      });
+      return false;
+    }
   }
 
+  // 날짜 유효성 검증
+  const startDate = new Date(flightState.flightDetail.departure_time);
+  const endDate = new Date(flightState.flightDetail.arrival_time);
+
+  if (startDate > endDate) {
+    toast.open({
+      message: '출발일은 도착일보다 늦을 수 없습니다.',
+      type: 'warning'
+    });
+    return false;
+  }
+  return true;
+};
+
+const submitForm = async () => {
   try {
+    if (!validateForm()) {
+      return;
+    }
+
     const params = {
       empId,
-      ...flightState.flightDetail, 
+      ...flightState.flightDetail,
     }
-    
+
     const response = flightState.crudState === CRUDStateEnum.CREATE
       ? await insertFlight(params)
       : await updateFlight(params);
-      
+
     if (response === true) {
       flightState.isEditing = false;
+
+      toast.open({
+        message: '저장에 성공했습니다.',
+        type: 'success'
+      });
       resetFlightState();
       fetchFlights();
     } else {
-      console.log('save failed');
+      toast.open({
+        message: '저장에 실패했습니다.',
+        type: 'error'
+      });
     }
   } catch (error) {
-    console.error('Failed to save flights:', error);
+    toast.open({
+      message: `에러가 발생했습니다. 관리자에게 문의해주세요: ${error.message}`,
+      type: 'error'
+    });
   }
 };
 
@@ -106,6 +182,7 @@ provide('setCurrentPage', setCurrentPage);
 provide('fetchFlights', fetchFlights);
 provide('paginationState', paginationState);
 provide('submitForm', submitForm)
+provide('submitYN', submitYN)
 provide('CRUDStateEnum', CRUDStateEnum)
 
 </script>
