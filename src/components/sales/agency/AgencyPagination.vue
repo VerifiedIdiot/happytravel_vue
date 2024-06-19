@@ -139,6 +139,6 @@ export default {
 }
 
 .pagination button:disabled {
-  opacity: 0.5;
+  opacity: 1.5;
 }
 </style>
