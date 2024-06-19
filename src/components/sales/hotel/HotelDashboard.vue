@@ -20,11 +20,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="htl in hotels"
-              :key="htl.hotel_code"
-              @click="openModal(htl.hotel_code)"
-            >
+            <tr v-for="htl in hotels" :key="htl.hotel_code" @click="openModal(htl.hotel_code)">
               <td>{{ htl.hotel_name }}</td>
               <td>{{ htl.phone }}</td>
               <td>{{ htl.country }}</td>

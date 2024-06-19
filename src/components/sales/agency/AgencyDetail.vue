@@ -7,42 +7,23 @@
           <span v-if="!agencyState.isEditing">{{
             agencyState.agencyDetail.agency_name
           }}</span>
-          <input
-            type="text"
-            v-else
-            v-model="agencyState.agencyDetail.agency_name"
-            required
-          />
+          <input type="text" v-else v-model="agencyState.agencyDetail.agency_name" required />
         </div>
         <div class="form-item">
           <label for="phone">전화번호</label>
           <span v-if="!agencyState.isEditing">{{
             agencyState.agencyDetail.phone
           }}</span>
-          <input
-            type="text"
-            v-else
-            v-model="agencyState.agencyDetail.phone"
-            required
-          />
+          <input type="text" v-else v-model="agencyState.agencyDetail.phone" required />
         </div>
         <div class="form-item">
           <label for="country">국가</label>
           <span v-if="!agencyState.isEditing">{{
             agencyState.agencyDetail.country
           }}</span>
-          <select
-            class="select-country"
-            v-else
-            id="country"
-            v-model="agencyState.agencyDetail.country"
-            @change="setCountryCode"
-          >
-            <option
-              v-for="country in agencyState.countries"
-              :key="country.country_code"
-              :value="country.korean_name"
-            >
+          <select class="select-country" v-else id="country" v-model="agencyState.agencyDetail.country"
+            @change="setCountryCode">
+            <option v-for="country in agencyState.countries" :key="country.country_code" :value="country.korean_name">
               {{ country.korean_name }}
             </option>
           </select>
@@ -52,53 +33,33 @@
           <span v-if="!agencyState.isEditing">{{
             agencyState.agencyDetail.address
           }}</span>
-          <input
-            type="text"
-            v-else
-            v-model="agencyState.agencyDetail.address"
-            required
-          />
+          <input type="text" v-else v-model="agencyState.agencyDetail.address" required />
         </div>
         <div class="form-item">
           <label for="price">가격</label>
           <span v-if="!agencyState.isEditing">{{
             agencyState.agencyDetail.price
           }}</span>
-          <input
-            type="text"
-            v-else
-            v-model="agencyState.agencyDetail.price"
-            required
-          />
+          <input type="text" v-else v-model="agencyState.agencyDetail.price" required />
         </div>
         <div class="form-item">
           <label for="image">이미지</label>
           <span v-if="!agencyState.isEditing">
-            <img
-              v-if="agencyState.agencyDetail.image_url"
-              :src="agencyState.agencyDetail.image_url"
-              alt="Agency Image"
-            />
+            <img v-if="agencyState.agencyDetail.image_url" :src="agencyState.agencyDetail.image_url"
+              alt="Agency Image" />
             <span v-else>이미지가 없습니다</span>
           </span>
           <div v-if="agencyState.isEditing" class="form-img">
             <div class="form-img-pos">
-              <img
-                v-if="state.previewImageUrl || agencyState.agencyDetail.image_url"
-                :src="state.previewImageUrl || agencyState.agencyDetail.image_url"
-                alt="Agency Image"
-              />
+              <img v-if="state.previewImageUrl || agencyState.agencyDetail.image_url"
+                :src="state.previewImageUrl || agencyState.agencyDetail.image_url" alt="Agency Image" />
               <span v-else>이미지가 없습니다</span>
-              <button
-                v-if="agencyState.agencyDetail.image_url"
-                @click="deleteImageFile"
-                class="delete-btn"
-              >
+              <button v-if="agencyState.agencyDetail.image_url" @click="deleteImageFile" class="delete-btn">
                 X
               </button>
             </div>
-            <input type="file" @change="onFileChange" />
           </div>
+          <input type="file" @change="onFileChange" />
         </div>
       </div>
     </div>

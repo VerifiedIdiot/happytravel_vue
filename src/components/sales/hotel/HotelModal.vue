@@ -1,15 +1,9 @@
 <template>
-  <div class="modal-overlay" @keydown.esc="handleClose">
+  <div class="modal-overlay" @keydown.esc="handleClose()">
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-header-item">
-          <img
-            src="@/assets/icons/hotel2.png"
-            alt="hotel image"
-            width="100"
-            height="100"
-            loading="lazy"
-          />
+          <img src="@/assets/icons/hotel2.png" alt="hotel image" width="100" height="100" loading="lazy" />
         </div>
         <div class="modal-header-title">
           <h1>{{ title }}</h1>
@@ -17,23 +11,16 @@
       </div>
       <slot></slot>
       <div class="button-container">
-        <button
-          type="button"
-          class="btn-update"
-          v-if="!hotelState.isEditing"
-          @click="toggleEditing"
-        >
+        <button type="button" class="btn-delete" v-if="hotelState.isEditing" @click="handleYN()">
+          삭제
+        </button>
+        <button type="button" class="btn-update" v-if="!hotelState.isEditing" @click="toggleEditing()">
           수정하기
         </button>
-        <button
-          type="submit"
-          class="btn-update"
-          v-if="hotelState.isEditing"
-          @click="handleSave"
-        >
+        <button type="submit" class="btn-save" v-if="hotelState.isEditing" @click="handleSave()">
           저장
         </button>
-        <button type="button" class="btn-close" @click="handleClose">
+        <button type="button" class="btn-close" @click="handleClose()">
           닫기
         </button>
       </div>
@@ -63,7 +50,7 @@ export default {
     const resetHotelState = inject("resetHotelState");
     const submitForm = inject("submitForm");
     const CRUDStateEnum = inject("CRUDStateEnum");
-    const countryCode = inject('countryCode')
+    const submitYN = inject('submitYN')
 
     const toggleEditing = async () => {
       const countryData = await getCountries();
@@ -71,6 +58,10 @@ export default {
       hotelState.countries = countryData;
       if (hotelState.countries) hotelState.isEditing = true;
     };
+
+    const handleYN = async () => {
+      await submitYN()
+    }
 
     const handleSave = async () => {
       await submitForm();
@@ -98,6 +89,7 @@ export default {
 
     return {
       hotelState,
+      handleYN,
       handleClose,
       handleSave,
       toggleEditing,
