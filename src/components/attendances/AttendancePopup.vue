@@ -57,10 +57,12 @@
             <option value="5100">병가</option>
             <option value="5500">경조사</option>
           </select>
+          <div v-if="errors.type" class="error">{{ errors.type }}</div>
         </div>
         <div class="form-group full-width">
           <label for="title">제목</label>
           <input type="text" id="title" v-model="title" />
+          <div v-if="errors.title" class="error">{{ errors.title }}</div>
         </div>
         <div class="form-group full-width">
           <label for="period">기간</label>
@@ -70,9 +72,8 @@
                 type="date"
                 id="startDate"
                 v-model="startDate"
-                :min="minDate"
-                :max="maxDate"
               />
+              <div v-if="errors.startDate" class="error">{{ errors.startDate }}</div>
             </div>
             <div class="tilde">~</div>
             <div class="form-group">
@@ -80,18 +81,19 @@
                 type="date"
                 id="endDate"
                 v-model="endDate"
-                :min="minDate"
-                :max="maxDate"
               />
+              <div v-if="errors.endDate" class="error">{{ errors.endDate }}</div>
             </div>
           </div>
         </div>
         <div class="form-group full-width">
           <label for="reason">내용</label>
           <textarea id="reason" v-model="reason"></textarea>
+          <div v-if="errors.reason" class="error">{{ errors.reason }}</div>
         </div>
         <div class="button-group">
-          <button type="submit" class="submit-button">근태 신청</button>
+          <button type="submit" class="submit-button">신청</button>
+          <button type="button" @click="$emit('close')" class="close-button">닫기</button>
         </div>
       </form>
     </div>
@@ -99,7 +101,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { ref } from 'vue';
 import {
   insertAttendanceManagement,
   getMaxAttendanceTypeCode,
@@ -115,38 +117,52 @@ export default {
       startDate: "",
       endDate: "",
       reason: "",
-      minDate: "",
-      maxDate: "",
+      errors: {}, // 오류 메시지 상태 추가
+      user: {
+        empId: "EMP00006",
+        empName: "김",
+        deptCode: "12",
+        posCode: "1200",
+      },
     };
   },
-  computed: {
-    ...mapGetters(["user"]),
-  },
   methods: {
-    async submitForm() {
-      // 오늘 날짜를 YYYYMMDD 형식으로 생성
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, "0");
-      const day = String(today.getDate()).padStart(2, "0");
-      const creationDate = `${year}${month}${day}`;
+    validateForm() {
+      this.errors = {};
 
-      let typeCodeSuffix = "01";
-
-      try {
-        // 데이터베이스에서 현재 날짜에 해당하는 최대 코드 조회
-        const maxCodeResponse = await getMaxAttendanceTypeCode(creationDate);
-        if (maxCodeResponse && maxCodeResponse.maxCode) {
-          const maxCode = maxCodeResponse.maxCode;
-          const currentSuffix = parseInt(maxCode.slice(-2), 10);
-          const newSuffix = (currentSuffix + 1).toString().padStart(2, "0");
-          typeCodeSuffix = newSuffix;
-        }
-      } catch (error) {
-        console.error("Error fetching max attendance type code:", error);
+      if (!this.type) {
+        this.errors.type = "종류를 선택하세요.";
+      }
+      if (!this.title) {
+        this.errors.title = "제목을 입력하세요.";
+      }
+      if (!this.startDate) {
+        this.errors.startDate = "시작 날짜를 선택하세요.";
+      }
+      if (!this.endDate) {
+        this.errors.endDate = "종료 날짜를 선택하세요.";
+      }
+      if (this.startDate && this.endDate && this.startDate > this.endDate) {
+        this.errors.startDate = "시작 날짜는 종료 날짜보다 이후일 수 없습니다.";
+        this.errors.endDate = "종료 날짜는 시작 날짜보다 이전일 수 없습니다.";
+      }
+      if (!this.reason) {
+        this.errors.reason = "내용을 입력하세요.";
       }
 
-      const attendanceCode = `${creationDate}${typeCodeSuffix}`;
+      return Object.keys(this.errors).length === 0;
+    },
+    async submitForm() {
+      if (!this.validateForm()) {
+        return;
+      }
+
+      // 오늘 날짜를 YYYYMMDD 형식으로 생성
+      const today = new Date();
+      const year = today.getUTCFullYear();
+      const month = String(today.getUTCMonth() + 1).padStart(2, "0");
+      const day = String(today.getUTCDate()).padStart(2, "0");
+      const creationDate = `${year}${month}${day}`;
 
       let managerId = "";
       try {
@@ -162,19 +178,23 @@ export default {
         console.error("Error fetching manager ID:", error);
       }
 
+      // start_date와 end_date를 UTC로 변환
+      const startDateUTC = new Date(this.startDate);
+      const endDateUTC = new Date(this.endDate);
+      endDateUTC.setUTCHours(23, 59, 59, 999); // end_date를 23:59:59로 설정
+
       const attendanceManagement = {
-        attendance_code: attendanceCode,
         emp_id: this.user.empId,
         attendance_type_code: this.type,
-        start_date: this.startDate,
-        end_date: this.endDate,
+        start_date: startDateUTC.toISOString(), // UTC 시간으로 변환된 문자열
+        end_date: endDateUTC.toISOString(), // UTC 시간으로 변환된 문자열
         assign_code: "1000",
-        assign_emp_id: managerId,
+        assign_emp_id: "EMP30004",
         title: this.title,
         reason: this.reason,
         creation_date: creationDate,
       };
-
+      console.log("근태 신청 정보:", attendanceManagement);
       try {
         const response = await insertAttendanceManagement(attendanceManagement);
         console.log("근태 신청 성공:", response);
@@ -199,6 +219,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 900;
 }
 
 .popup {
@@ -272,11 +293,12 @@ export default {
 }
 
 .button-group {
-  text-align: right;
+  text-align: center;
 }
 
 .submit-button {
   padding: 10px 20px;
+  margin: 0px 2px;
   border: none;
   border-radius: 4px;
   background-color: #007bff;
@@ -287,5 +309,26 @@ export default {
 
 .submit-button:hover {
   background-color: #0056b3;
+}
+
+.close-button {
+  padding: 10px 20px;
+  margin: 0px 2px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ff2e2e;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.close-button:hover {
+  background-color: #d21f1f;
+}
+
+.error {
+  color: red;
+  font-size: 0.875em;
+  margin-top: 5px;
 }
 </style>

@@ -36,14 +36,14 @@
 import { inject, computed } from 'vue';
 
 export default {
-  name: 'HotelPagination',
+  name: 'AgencyPagination',
   setup() {
     const paginationState = inject('paginationState');
-    const fetchHotels = inject('fetchHotels');
+    const fetchAgencies = inject('fetchAgencies');
 
     const setCurrentPage = (page) => {
       paginationState.currentPage = page;
-      fetchHotels();
+      fetchAgencies();
     };
 
     const prevPage = () => {
@@ -141,5 +141,4 @@ export default {
 .pagination button:disabled {
   opacity: 1.5;
 }
-
 </style>

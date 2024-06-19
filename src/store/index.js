@@ -1,7 +1,9 @@
 // src/store/index.js
 import { createStore } from "vuex";
+
 import flight from "./modules/flight";
 import AuthApi from "@/api/auth/AuthApi";
+
 import {
   getMyPageUserInfo,
   getNotices,
@@ -130,7 +132,5 @@ export default createStore({
       }
     },
   },
-  modules: {
-    flight,
-  },
+  
 });

@@ -1,4 +1,5 @@
 <template>
+  <div class="wrapper">
     <div class="hotel-container">
       <div class="hotel-box">
         <div class="hotel-item">
@@ -8,7 +9,7 @@
         </div>
       </div>
       <div>
-        <table>
+        <table class="styled-table">
           <thead>
             <tr>
               <th>호텔명</th>
@@ -16,37 +17,25 @@
               <th>국가</th>
               <th>주소</th>
               <th>가격</th>
-              <th>
-                <select>
-                  <option value="all">사용유무</option>
-                  <option value="Y">사용</option>
-                  <option value="N">미사용</option>
-                </select>
-              </th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="htl in hotels"
-              :key="htl.hotel_code"
-              @click="openModal(htl.hotel_code)"
-            >
+            <tr v-for="htl in hotels" :key="htl.hotel_code" @click="openModal(htl.hotel_code)">
               <td>{{ htl.hotel_name }}</td>
               <td>{{ htl.phone }}</td>
               <td>{{ htl.country }}</td>
               <td>{{ htl.address }}</td>
-              <td>{{ htl.price }}</td>
-              <td>{{ htl.is_used }}</td>
+              <td>{{ formatPrice(htl.price) }}</td>
             </tr>
           </tbody>
         </table>
-        <Pagination />
       </div>
       <HotelModal v-if="hotelState.isModalOpen" @close="closeModal">
         <HotelDetail />
       </HotelModal>
     </div>
-  
+    <Pagination />
+  </div>
 </template>
 
 <script setup>
@@ -98,6 +87,10 @@ const openModalForCreate = async () => {
 const closeModal = () => {
   resetHotelState();
   hotelState.isModalOpen = false;
+};
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('ko-KR').format(price) + '원';
 };
 </script>
 

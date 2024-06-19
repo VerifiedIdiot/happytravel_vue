@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-header-item">
-          <img src="@/assets/icons/hotel2.png" alt="hotel image" width="100" height="100" loading="lazy" />
+          <img src="@/assets/icons/flight.png" alt="flight image" width="100" height="100" loading="lazy" />
         </div>
         <div class="modal-header-title">
           <h1>{{ title }}</h1>
@@ -11,13 +11,13 @@
       </div>
       <slot></slot>
       <div class="button-container">
-        <button type="button" class="btn-delete" v-if="hotelState.isEditing" @click="handleYN()">
+        <button type="button" class="btn-delete" v-if="flightState.isEditing" @click="handleYN()">
           삭제
         </button>
-        <button type="button" class="btn-update" v-if="!hotelState.isEditing" @click="toggleEditing()">
+        <button type="button" class="btn-update" v-if="!flightState.isEditing" @click="toggleEditing()">
           수정하기
         </button>
-        <button type="submit" class="btn-save" v-if="hotelState.isEditing" @click="handleSave()">
+        <button type="submit" class="btn-save" v-if="flightState.isEditing" @click="handleSave()">
           저장
         </button>
         <button type="button" class="btn-close" @click="handleClose()">
@@ -30,35 +30,34 @@
 
 <script>
 import { inject, onMounted, onUnmounted } from "vue";
-import { getCountries } from "@/api/sales/HotelApi";
+import { getCountries } from "@/api/sales/FlightApi";
 
 export default {
-  name: "HotelModal",
+  name: "FlightModal",
   props: {
     title: {
       type: String,
-      default: "호텔상품 상세",
+      default: "항공상품 상세",
     },
     headerIcon: {
       type: String,
-      default: "@/assets/icons/hotel2.png",
+      default: "@/assets/icons/flight.png",
     },
   },
   emits: ["close", "update:isEditing"],
   setup(_, { emit }) {
-    const hotelState = inject("hotelState");
-    const resetHotelState = inject("resetHotelState");
+    const flightState = inject("flightState");
+    const resetFlightState = inject("resetFlightState");
     const submitForm = inject("submitForm");
     const CRUDStateEnum = inject("CRUDStateEnum");
     const submitYN = inject('submitYN')
 
     const toggleEditing = async () => {
       const countryData = await getCountries();
-      hotelState.crudState = CRUDStateEnum.UPDATE;
-      hotelState.countries = countryData;
-      if (hotelState.countries) hotelState.isEditing = true;
+      flightState.crudState = CRUDStateEnum.UPDATE;
+      flightState.countries = countryData;
+      if (flightState.countries) flightState.isEditing = true;
     };
-
     const handleYN = async () => {
       await submitYN()
     }
@@ -68,13 +67,13 @@ export default {
     };
 
     const handleClose = () => {
-      resetHotelState();
+      resetFlightState();
       emit("close");
     };
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        resetHotelState();
+        resetFlightState();
         handleClose();
       }
     };
@@ -88,16 +87,16 @@ export default {
     });
 
     return {
-      hotelState,
-      handleYN,
+      flightState,
       handleClose,
       handleSave,
       toggleEditing,
       submitForm,
       CRUDStateEnum,
+      handleYN
     };
   },
 };
 </script>
 
-<style src="./HotelDashboard.css"></style>
+<style src="./FlightDashboard.css"></style>

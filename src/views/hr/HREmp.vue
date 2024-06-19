@@ -28,7 +28,7 @@
         신규등록
       </button>
     </div>
-    <div id="emp-table" class="flex w-full mt-1">
+    <div id="emp-table" class="w-full h-5/6 mt-1">
       <table class="text-center shadow-md border-0">
         <colgroup>
           <col class="w-1/4" />
@@ -36,7 +36,7 @@
           <col class="w-1/4" />
           <col class="w-1/4" />
         </colgroup>
-        <thead class="bg-slate-20">
+        <thead class="bg-slate-20 sticky top-[-1px]">
           <tr>
             <th class="text-center font-bold border border-gray-200">
               사원번호
@@ -51,7 +51,7 @@
             <template v-for="emp in filteredEmpList" :key="emp.emp_id">
               <tr
                 @click="updateEmpInfoHandler(emp.emp_id)"
-                class="bg-white hover:bg-slate-50 test"
+                class="bg-white hover:bg-slate-50"
               >
                 <td class="border border-gray-200">
                   {{ emp.emp_id }}
@@ -77,8 +77,13 @@
       </table>
     </div>
   </div>
-  <div id="hr-emp-form" class="flex w-6/12 mx-2 p-px">
-    <EmpForm v-if="onEmpForm" :employee="employee" @saved="handleEmpSaved" />
+  <div id="hr-emp-form" class="flex w-6/12 mx-2 p-px h-full overflow-scroll">
+    <EmpForm
+      v-if="onEmpForm"
+      :employee="employee"
+      @saved="handleEmpSaved"
+      :imgSrc="imgSrc"
+    />
   </div>
 </template>
 
@@ -89,7 +94,7 @@ import {
   getEmpInfo,
   searchEmpList,
   generateLastEmpId,
-} from "@/api/hr/EmpApi";
+} from "@/api/hr/HREmpApi";
 import EmpForm from "@/components/hr/EmpForm.vue";
 
 export default {
@@ -98,12 +103,16 @@ export default {
     EmpForm,
   },
   setup() {
-    const empList = ref([]);
     const onEmpForm = ref(false);
+
+    const empList = ref([]);
     const employee = ref([]);
+    const imgSrc = ref(null);
+
     const searchType = ref("");
     const searchQuery = ref("");
 
+    // 사원 리스트 불러오기
     const fetchEmpListHandler = async () => {
       try {
         empList.value = await getEmpList();
@@ -118,8 +127,9 @@ export default {
 
     const updateEmpInfoHandler = async (empId) => {
       try {
-        const empInfo = await getEmpInfo(empId);
-        employee.value = empInfo;
+        let empInfo = await getEmpInfo(empId);
+        employee.value = empInfo.employee;
+        imgSrc.value = `data:image/jpeg;base64,${empInfo.imageData}`;
         onEmpForm.value = true;
       } catch (error) {
         console.error("Error fetching emp info: ", error);
@@ -149,6 +159,7 @@ export default {
         salary: "",
         remarks: "",
       };
+      imgSrc.value = null;
       onEmpForm.value = true;
     };
 
@@ -182,21 +193,6 @@ export default {
       });
     });
 
-    const handleSearch = async () => {
-      if (!searchType.value || !searchQuery.value) {
-        alert("검색 조건을 입력하세요.");
-        return;
-      }
-      try {
-        empList.value = await searchEmpList(
-          searchType.value,
-          searchQuery.value
-        );
-      } catch (error) {
-        console.error("Error searching empList:", error);
-      }
-    };
-
     onMounted(() => {
       fetchEmpListHandler();
     });
@@ -211,14 +207,24 @@ export default {
       searchType,
       searchQuery,
       filteredEmpList,
-      handleSearch,
       handleEmpSaved,
+      imgSrc,
     };
   },
 };
 </script>
 
 <style scoped>
+#hr-emp-form::-webkit-scrollbar {
+  display: none;
+}
+#emp-table {
+  overflow: scroll;
+  -ms-overflow-style: none;
+}
+#emp-table::-webkit-scrollbar {
+  display: none;
+}
 table * {
   background-color: white;
 }
@@ -227,10 +233,13 @@ select,
 textarea,
 th,
 td {
-  border: 1.5px solid rgb(243, 244, 246);
+  border: 1.5px solid rgb(245, 245, 245);
 }
 tr {
   background-color: #fff;
+  height: 30px;
+}
+tbody tr {
 }
 tbody tr:hover {
   background: rgb(235, 235, 235);
