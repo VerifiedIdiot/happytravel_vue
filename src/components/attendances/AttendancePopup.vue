@@ -1,4 +1,3 @@
-
 <template>
   <div class="popup-overlay">
     <div class="popup">
@@ -58,10 +57,12 @@
             <option value="5100">병가</option>
             <option value="5500">경조사</option>
           </select>
+          <div v-if="errors.type" class="error">{{ errors.type }}</div>
         </div>
         <div class="form-group full-width">
           <label for="title">제목</label>
           <input type="text" id="title" v-model="title" />
+          <div v-if="errors.title" class="error">{{ errors.title }}</div>
         </div>
         <div class="form-group full-width">
           <label for="period">기간</label>
@@ -72,6 +73,7 @@
                 id="startDate"
                 v-model="startDate"
               />
+              <div v-if="errors.startDate" class="error">{{ errors.startDate }}</div>
             </div>
             <div class="tilde">~</div>
             <div class="form-group">
@@ -80,12 +82,14 @@
                 id="endDate"
                 v-model="endDate"
               />
+              <div v-if="errors.endDate" class="error">{{ errors.endDate }}</div>
             </div>
           </div>
         </div>
         <div class="form-group full-width">
           <label for="reason">내용</label>
           <textarea id="reason" v-model="reason"></textarea>
+          <div v-if="errors.reason" class="error">{{ errors.reason }}</div>
         </div>
         <div class="button-group">
           <button type="submit" class="submit-button">신청</button>
@@ -97,7 +101,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { ref } from 'vue';
 import {
   insertAttendanceManagement,
   getMaxAttendanceTypeCode,
@@ -113,6 +117,7 @@ export default {
       startDate: "",
       endDate: "",
       reason: "",
+      errors: {}, // 오류 메시지 상태 추가
       user: {
         empId: "EMP00006",
         empName: "김",
@@ -121,11 +126,37 @@ export default {
       },
     };
   },
-  computed: {
-    // ...mapGetters(["user"]),
-  },
   methods: {
+    validateForm() {
+      this.errors = {};
+
+      if (!this.type) {
+        this.errors.type = "종류를 선택하세요.";
+      }
+      if (!this.title) {
+        this.errors.title = "제목을 입력하세요.";
+      }
+      if (!this.startDate) {
+        this.errors.startDate = "시작 날짜를 선택하세요.";
+      }
+      if (!this.endDate) {
+        this.errors.endDate = "종료 날짜를 선택하세요.";
+      }
+      if (this.startDate && this.endDate && this.startDate > this.endDate) {
+        this.errors.startDate = "시작 날짜는 종료 날짜보다 이후일 수 없습니다.";
+        this.errors.endDate = "종료 날짜는 시작 날짜보다 이전일 수 없습니다.";
+      }
+      if (!this.reason) {
+        this.errors.reason = "내용을 입력하세요.";
+      }
+
+      return Object.keys(this.errors).length === 0;
+    },
     async submitForm() {
+      if (!this.validateForm()) {
+        return;
+      }
+
       // 오늘 날짜를 YYYYMMDD 형식으로 생성
       const today = new Date();
       const year = today.getUTCFullYear();
@@ -173,11 +204,9 @@ export default {
 
       this.$emit("close");
     },
-
   },
 };
 </script>
-
 
 <style scoped>
 .popup-overlay {
@@ -295,5 +324,11 @@ export default {
 
 .close-button:hover {
   background-color: #d21f1f;
+}
+
+.error {
+  color: red;
+  font-size: 0.875em;
+  margin-top: 5px;
 }
 </style>
