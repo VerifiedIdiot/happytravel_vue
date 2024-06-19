@@ -40,4 +40,5 @@ module.exports = defineConfig({
       },
     },
   },
+  outputDir: '../happytravel_spring/src/main/webapp'
 });

@@ -169,10 +169,41 @@ const submitForm = async () => {
   }
 };
 
-// 폼 유효성 검사 함수
-const validateForm = () => {
-  const { flight_number, airline, phone, departure, destination, arrival_time,price } = flightState.flightDetail;
-  return flight_number && airline && phone && departure && destination && arrival_time,price;
+const submitYN = async () => {
+  try {
+  if(empId !== undefined) {
+    const params = {
+      empId,
+      flightCode : flightState.flightDetail.flight_code
+    }
+    const response = await updateFlightYN(params);
+    console.log(params);
+    console.log(response);
+
+    if (response) {
+      flightState.isEditing = false;
+      
+      toast.open({
+        message: '해당 항공상품이 삭제되었습니다.',
+        type: 'success'
+      });
+      resetFlightState();
+      fetchFlights();
+    } else {
+      toast.open({
+        message: '삭제에 실패했습니다.',
+        type: 'error'
+      });
+    }
+  }
+} catch (error) {
+  toast.open({
+      message: `에러가 발생했습니다. 관리자에게 문의해주세요: ${error.message}`,
+      type: 'error'
+    });
+}
+}
+
 
 provide('empId', empId);
 provide('flights', flights);

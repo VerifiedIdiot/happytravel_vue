@@ -1,115 +1,77 @@
 <template>
-  <form @submit.prevent="submitForm">
-    <div class="form-container">
-      <div class="form-box">
-        <div class="form-item">
-          <label for="hotel_name">호텔명</label>
-          <span v-if="!hotelState.isEditing">{{
-            hotelState.hotelDetail.hotel_name
-          }}</span>
-          <input
-            type="text"
-            v-else
-            v-model="hotelState.hotelDetail.hotel_name"
-            required
-          />
-        </div>
-        <div class="form-item">
-          <label for="phone">전화번호</label>
-          <span v-if="!hotelState.isEditing">{{
-            hotelState.hotelDetail.phone
-          }}</span>
-          <input
-            type="text"
-            v-else
-            v-model="hotelState.hotelDetail.phone"
-            required
-          />
-        </div>
-        <div class="form-item">
-          <label for="country">국가</label>
-          <span v-if="!hotelState.isEditing">{{
-            hotelState.hotelDetail.country
-          }}</span>
-          <select
-            class="select-country"
-            v-else
-            id="country"
-            v-model="hotelState.hotelDetail.country"
-            @change="setCountryCode"
-          >
-            <option
-              v-for="country in hotelState.countries"
-              :key="country.country_code"
-              :value="country.korean_name"
-            >
-              {{ country.korean_name }}
-            </option>
-          </select>
-        </div>
-        <div class="form-item">
-          <label for="address">주소</label>
-          <span v-if="!hotelState.isEditing">{{
-            hotelState.hotelDetail.address
-          }}</span>
-          <div v-else>
-            <input
-              type="text"
-              v-model="hotelState.hotelDetail.address"
-              id="address-input"
-              placeholder="Enter an address"
-              required
-            />
+  <div class="modal-center">
+    <form @submit.prevent="submitForm">
+      <div class="form-container">
+        <div class="form-box">
+          <div class="form-item">
+            <label for="hotel_name">호텔명</label>
+            <span v-if="!hotelState.isEditing">{{
+              hotelState.hotelDetail.hotel_name
+            }}</span>
+            <input type="text" v-else v-model="hotelState.hotelDetail.hotel_name" required />
           </div>
-        </div>
-        <div class="form-item">
-          <label for="price">가격</label>
-          <span v-if="!hotelState.isEditing">{{
-            hotelState.hotelDetail.price
-          }}</span>
-          <input
-            v-else
-            type="text"
-            v-model="hotelState.hotelDetail.price"
-            required
-          />
-        </div>
-        <div class="form-item">
-          <label for="image">이미지</label>
-          <span v-if="!hotelState.isEditing">
-            <img
-              v-if="hotelState.hotelDetail.image_url"
-              :src="hotelState.hotelDetail.image_url"
-              alt="Agency Image"
-            />
-            <span v-else>이미지가 없습니다</span>
-          </span>
-          <div v-if="hotelState.isEditing" class="form-img">
-            <div class="form-img-pos">
-              <img
-                v-if="state.previewImageUrl || hotelState.hotelDetail.image_url"
-                :src="state.previewImageUrl || hotelState.hotelDetail.image_url"
-                alt="Agency Image"
-              />
-              <span v-else>이미지가 없습니다</span>
-              <button
-                v-if="hotelState.hotelDetail.image_url"
-                @click="deleteImageFile"
-                class="delete-btn"
-              >
-                X
-              </button>
+          <div class="form-item">
+            <label for="phone">전화번호</label>
+            <span v-if="!hotelState.isEditing">{{
+              hotelState.hotelDetail.phone
+            }}</span>
+            <input type="text" v-else v-model="hotelState.hotelDetail.phone" required />
+          </div>
+          <div class="form-item">
+            <label for="country">국가</label>
+            <span v-if="!hotelState.isEditing">{{
+              hotelState.hotelDetail.country
+            }}</span>
+            <select class="select-country" v-else id="country" v-model="hotelState.hotelDetail.country"
+              @change="setCountryCode">
+              <option v-for="country in hotelState.countries" :key="country.country_code" :value="country.korean_name">
+                {{ country.korean_name }}
+              </option>
+            </select>
+          </div>
+          <div class="form-item">
+            <label for="address">주소</label>
+            <span v-if="!hotelState.isEditing">{{
+              hotelState.hotelDetail.address
+            }}</span>
+            <input type="text" v-else v-model="hotelState.hotelDetail.address" required />
+          </div>
+          <div class="form-item">
+            <label for="price">가격</label>
+            <span v-if="!hotelState.isEditing">{{
+              hotelState.hotelDetail.price
+            }}</span>
+            <input v-else type="text" v-model="hotelState.hotelDetail.price" required />
+          </div>
+          <div class="form-item">
+            <label for="image">이미지</label>
+            <div>
+              <span v-if="!hotelState.isEditing">
+                <img v-if="hotelState.hotelDetail.image_url" :src="hotelState.hotelDetail.image_url"
+                  alt="Agency Image" />
+                <span v-else>이미지가 없습니다</span>
+              </span>
+              <div v-if="hotelState.isEditing" class="form-img">
+                <div class="form-img-pos">
+                  <img v-if="state.previewImageUrl || hotelState.hotelDetail.image_url"
+                    :src="state.previewImageUrl || hotelState.hotelDetail.image_url" alt="Agency Image" />
+                  <span v-else>이미지가 없습니다</span>
+                  <button v-if="hotelState.hotelDetail.image_url" @click="deleteImageFile" class="delete-btn">
+                    X
+                  </button>
+                </div>
+                <input type="file" @change="onFileChange" />
+              </div>
             </div>
-            <input type="file" @change="onFileChange" />
           </div>
         </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </template>
 
 <script>
-import { inject, ref, reactive, onMounted } from "vue";
+import { inject, reactive } from "vue";
 import {
   uploadImage,
   saveHotelImageUrl,
@@ -121,38 +83,12 @@ export default {
   name: "HotelDetail",
   setup() {
     const hotelState = inject("hotelState");
+    const resetHotelState = inject("resetHotelState");
+    const submitForm = inject("submitForm");
 
     // 반응형 상태로 설정
     const state = reactive({
       previewImageUrl: null,
-    });
-
-    const loadScript = (src, onload) => {
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = onload;
-      script.async = true;
-      document.head.appendChild(script);
-    };
-
-    const initializeAutocomplete = () => {
-      const input = document.getElementById("address-input");
-      const autocomplete = new google.maps.places.Autocomplete(input, {
-        types: ["geocode"],
-      });
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        if (place && place.formatted_address) {
-          hotelState.hotelDetail.address = place.formatted_address;
-        }
-      });
-    };
-
-    onMounted(() => {
-      loadScript(
-        `https://maps.googleapis.com/maps/api/js?key=${process.env.VUE_APP_GOOGLE_MAPS_API_KEY}&libraries=places`,
-        initializeAutocomplete
-      );
     });
 
     const setCountryCode = () => {
@@ -220,10 +156,10 @@ export default {
       setCountryCode,
       onFileChange,
       deleteImageFile,
+      handleSubmitForm
     };
   },
 };
 </script>
 
-<style src="./HotelDashboard.css">
-</style>
+<style src="./HotelDashboard.css"></style>
