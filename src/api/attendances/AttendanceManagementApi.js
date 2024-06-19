@@ -45,6 +45,18 @@ export const getAttendanceHistory = async (limit, offset) => {
   }
 };
 
+export const getAttendanceCount = async (empId) => {
+  try {
+    const response = await apiClient.get("/attendance/countAttendanceThisMonth", {
+      params: { empId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching attendanceCount:", error);
+    throw error;
+  }
+};
+
 // GET 작성 날짜 조회 API
 
 // 최대 attendance type code 조회
