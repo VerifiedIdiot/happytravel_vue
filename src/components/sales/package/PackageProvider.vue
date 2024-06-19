@@ -95,6 +95,12 @@ const assignState = {
   rejected : 3000
 }
 
+const initialFilterState = {
+  waited: false,
+  assigned: false,
+  rejected: false
+};
+
 const packageState = reactive(cloneDeep(initialPackageState));
 const partnerDisable = reactive({ ...initialpartnerDisable });
 const paginationState = reactive({ ...initialPaginationState });
@@ -102,6 +108,7 @@ const partnerState = reactive({ ...initialPartnerState });
 const flightState = reactive(cloneDeep(initialFlightState));
 const hotelState = reactive(cloneDeep(initialHotelState));
 const agencyState = reactive(cloneDeep(initialAgencyState));
+const filterState = reactive({...initialFilterState});
 
 const resetPackageState = () => {
   Object.assign(packageState, cloneDeep(initialPackageState));
@@ -141,6 +148,10 @@ const resetAllPartnerState = () => {
   Object.assign(hotelState, cloneDeep(initialHotelState));
   Object.assign(agencyState, cloneDeep(initialAgencyState));
 };
+
+const resetFilterState = () => {
+  Object.assign(filterState, initialFilterState)
+}
 
 const fetchPackages = async (assignCode ='1000') => {
   const params = {
@@ -462,7 +473,7 @@ const submitAssign = async (assignCode) => {
     if (response) {
       packageState.isEditing = false;
       resetPackageState();
-      fetchPackages();
+      fetchPackages(assignCode);
       toast.open({
         message: '해당 여행상품 결제가 완료되었습니다.',
         type: 'success'
@@ -485,6 +496,7 @@ const submitAssign = async (assignCode) => {
 provide('empId', empId);
 provide('CRUDStateEnum', CRUDStateEnum);
 
+
 provide('packages', packages);
 provide('fetchPackages', fetchPackages);
 provide('packageState', packageState);
@@ -496,6 +508,8 @@ provide('assignState', assignState)
 provide('submitYN', submitYN)
 provide('submitAssign', submitAssign)
 provide('submitForm', submitForm);
+provide('filterState',filterState);
+provide('resetFilterState', resetFilterState)
 
 provide('partnerState', partnerState);
 provide('selectRow', selectRow);

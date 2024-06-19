@@ -47,7 +47,7 @@
           type="submit"
           class="btn-save"
           v-if="packageState.isEditing"
-          @click="handleSave()">
+          @click="handleSave(assignState.waited)">
           저장
         </button>
         <button type="button" class="btn-close" @click="handleClose()">
@@ -71,6 +71,8 @@ const props = defineProps({
   },
 })
 
+
+
 const packageState = inject('packageState')
 const partnerState = inject('partnerState')
 const resetAllState = inject('resetAllState')
@@ -79,6 +81,8 @@ const submitYN = inject('submitYN')
 const submitAssign = inject('submitAssign')
 const submitForm = inject('submitForm')  
 const CRUDStateEnum = inject('CRUDStateEnum')
+const filterState = inject('filterState')
+const resetFilterState = inject('resetFilterState')
 
 const toggleEditing = async () => {
   const countryData = await getCountries()
@@ -88,15 +92,32 @@ const toggleEditing = async () => {
 }
 
 const handleYN = async () => {
-  await submitYN()
+await submitYN()
 }
 
-const handleSave = async () => {
-  await submitForm()
+const handleSave = async (value) => {
+await submitForm()
+if (value === assignState.waited) {
+resetFilterState()
+filterState.waited = true 
+}
 }
 
-const handleAssign = async (assignState) => {
-  await submitAssign(assignState)
+const handleAssign = async (value) => {
+  if (value)
+  console.log(value)
+  await submitAssign(value)
+  
+  if (value === assignState.assigned) {
+    console.log('뭐',assignState.assigned)
+    resetFilterState()
+  filterState.assigned = true
+  }
+  else if(value === assignState.rejected) {
+    console.log('왜',value)
+    resetFilterState()
+    filterState.rejected = true
+  }
 }
 
 const handleClose = () => {
