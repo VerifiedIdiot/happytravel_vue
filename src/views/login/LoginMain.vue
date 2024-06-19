@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import AuthApi from '@/api/auth/AuthApi';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'LoginMain',
@@ -34,13 +34,12 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['login']),
     async login() {
-      try {
-        const response = await AuthApi.login(this.username, this.password);
-        if (response.data) {
-          this.$router.push('/main');
-        }
-      } catch (error) {
+      const success = await this.login({ username: this.username, password: this.password });
+      if (success) {
+        this.$router.push('/main');
+      } else {
         this.error = true;
       }
     }
