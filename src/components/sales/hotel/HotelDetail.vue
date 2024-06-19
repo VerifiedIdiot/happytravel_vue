@@ -54,7 +54,7 @@
               <div v-if="hotelState.isEditing" class="form-img">
                 <div class="form-img-pos">
                   <img v-if="state.previewImageUrl || hotelState.hotelDetail.image_url"
-                    :src="state.previewImageUrl || hotelState.hotelDetail.image_url" alt="Agency Image" />
+                    :src="state.previewImageUrl || hotelState.hotelDetail.image_url" alt="Hotel Image" />
                   <span v-else>이미지가 없습니다</span>
                   <button v-if="hotelState.hotelDetail.image_url" @click="deleteImageFile" class="delete-btn">
                     X
