@@ -20,11 +20,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="agy in agencies"
-              :key="agy.agency_code"
-              @click="openModal(agy.agency_code)"
-            >
+            <tr v-for="agy in agencies" :key="agy.agency_code" @click="openModal(agy.agency_code)">
               <td>{{ agy.agency_name }}</td>
               <td>{{ agy.phone }}</td>
               <td>{{ agy.country }}</td>
@@ -33,7 +29,7 @@
             </tr>
           </tbody>
         </table>
-        
+
       </div>
       <AgencyModal v-if="agencyState.isModalOpen" @close="closeModal">
         <AgencyDetail />
