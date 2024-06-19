@@ -295,9 +295,9 @@ const updateTotalPrice = () => {
 
   const flightPrice = parseInt(packageState.packageDetail.flightPrice) || 0;
   const hotelPrice =
-    (parseInt(packageState.packageDetail.hotelPrice) || 0) * days;
+    (parseInt(packageState.packageDetail.hotelPrice * days) || packageState.packageDetail.hotelPrice) 
   const agencyPrice =
-    (parseInt(packageState.packageDetail.agencyPrice) || 0) * days;
+    (parseInt(packageState.packageDetail.agencyPrice * days) || packageState.packageDetail.agencyPrice) ;
 
   totalPrice += flightPrice + hotelPrice + agencyPrice;
 
