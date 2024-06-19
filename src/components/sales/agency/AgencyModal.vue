@@ -3,13 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-header-item">
-          <img
-            src="@/assets/icons/agency.png"
-            alt="agency image"
-            width="100"
-            height="100"
-            loading="lazy"
-          />
+          <img src="@/assets/icons/agency.png" alt="agency image" width="100" height="100" loading="lazy" />
         </div>
         <div class="modal-header-title">
           <h1>{{ title }}</h1>
@@ -17,20 +11,13 @@
       </div>
       <slot></slot>
       <div class="button-container">
-        <button
-          type="button"
-          class="btn-update"
-          v-if="!agencyState.isEditing"
-          @click="toggleEditing()"
-        >
+        <button type="button" class="btn-delete" v-if="agencyState.isEditing" @click="handleYN()">
+          삭제
+        </button>
+        <button type="button" class="btn-update" v-if="!agencyState.isEditing" @click="toggleEditing()">
           수정하기
         </button>
-        <button
-          type="submit"
-          class="btn-update"
-          v-if="agencyState.isEditing"
-          @click="handleSave()"
-        >
+        <button type="submit" class="btn-update" v-if="agencyState.isEditing" @click="handleSave()">
           저장
         </button>
         <button type="button" class="btn-close" @click="handleClose()">
@@ -63,7 +50,7 @@ export default {
     const resetAgencyState = inject("resetAgencyState");
     const submitForm = inject("submitForm");
     const CRUDStateEnum = inject("CRUDStateEnum");
-    
+    const submitYN = inject('submitYN')
 
     const toggleEditing = async () => {
       const countryData = await getCountries();
@@ -71,6 +58,10 @@ export default {
       agencyState.countries = countryData;
       if (agencyState.countries) agencyState.isEditing = true;
     };
+
+    const handleYN = async () => {
+      await submitYN()
+    }
 
     const handleSave = async () => {
       await submitForm();
@@ -103,6 +94,7 @@ export default {
       toggleEditing,
       submitForm,
       CRUDStateEnum,
+      handleYN
     };
   },
 };

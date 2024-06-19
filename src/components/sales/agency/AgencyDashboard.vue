@@ -9,7 +9,7 @@
         </div>
       </div>
       <div>
-        <table>
+        <table class="styled-table">
           <thead>
             <tr>
               <th>여행사 이름</th>
@@ -29,7 +29,7 @@
               <td>{{ agy.phone }}</td>
               <td>{{ agy.country }}</td>
               <td>{{ agy.address }}</td>
-              <td>{{ agy.price }}</td>
+              <td>{{ formatPrice(agy.price) }}</td>
             </tr>
           </tbody>
         </table>
@@ -93,6 +93,11 @@ const closeModal = () => {
   resetAgencyState();
   agencyState.isModalOpen = false;
 };
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('ko-KR').format(price) + '원';
+};
+
 </script>
 
 <style src="./AgencyDashboard.css"></style>
