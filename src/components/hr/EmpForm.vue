@@ -665,6 +665,7 @@ export default {
           isDisabled.value = newVal.status_code === "3000";
         } else {
           thisEmployee.value = { ...defaultEmployee };
+          thisImgSrc.value = null; // 신규 등록 시 이미지 초기화
         }
       },
       { deep: true, immediate: true }
