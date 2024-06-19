@@ -33,9 +33,11 @@ export const rejectRequest = async (attendanceCode, status) => {
   }
 };
 
-export const getAttendanceHistory = async () => {
+export const getAttendanceHistory = async (limit, offset) => {
   try {
-    const response = await apiClient.get("/attendance/attendanceConfirm");
+    const response = await apiClient.get("/attendance/attendanceConfirm", {
+      params: { limit, offset },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching attendanceHistory list:", error);
