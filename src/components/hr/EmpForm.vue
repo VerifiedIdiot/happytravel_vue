@@ -16,7 +16,7 @@
         <button
           @click="openModal"
           :disabled="isDisabled"
-          class="w-3/12 h-[25px] ml-1 bg-slate-200 hover:bg-slate-300 rounded text-xs shadow-md outline-none"
+          class="px-[6px] h-[25px] ml-1 bg-gray-200 hover:bg-gray-400 text-xs hover:text-white outline-none"
         >
           사진 등록
         </button>
@@ -120,7 +120,7 @@
           placeholder="우편번호"
           id="zip_code"
           v-model="thisEmployee.zip_code"
-          :readonly="isReadOnly"
+          readonly
           :disabled="isDisabled"
           class="flex w-2/12 h-8 px-1 border border-gray-200 outline-none"
         />
@@ -134,7 +134,7 @@
         <button
           @click="searchAddress"
           :disabled="isDisabled"
-          class="w-1/12 bg-slate-200"
+          class="w-1/12 bg-gray-200 hover:bg-gray-400 hover:text-white"
         >
           검색
         </button>
@@ -411,7 +411,7 @@
           <img
             :src="imagePreviewUrl"
             alt="미리보기 이미지"
-            class="block w-1/2 object-cover"
+            class="block w-1/2 object-cover max-w-48"
           />
         </div>
         <input type="file" @change="onFileChange" />
@@ -475,7 +475,7 @@ import {
   getbankList,
   insertEmployee,
   updateEmployee,
-} from "@/api/hr/EmpApi";
+} from "@/api/hr/EmpFormApi";
 
 export default {
   name: "EmpForm",
@@ -514,13 +514,41 @@ export default {
       remarks: "",
     };
 
+    const buttonText = computed(() => {
+      return Object.keys(props.employee.emp_name || {}).length === 0
+        ? "등록"
+        : "수정";
+    });
+
+    const isReadOnly = computed(() => {
+      return Object.keys(props.employee.emp_name || {}).length > 0;
+    });
+    const isDisabled = ref(false);
+
     const thisEmployee = ref({ ...props.employee });
     const thisImgSrc = ref(props.imgSrc);
 
     const showModal = ref(false);
+    const openModal = () => {
+      showModal.value = true;
+    };
+
+    const closeModal = () => {
+      showModal.value = false;
+    };
+
     const imagePreviewUrl = ref(null);
     const photoPreviewUrl = ref(null);
     const selectedImageFile = ref(null);
+    const confirmPhoto = () => {
+      if (selectedImageFile.value) {
+        photoPreviewUrl.value = imagePreviewUrl.value;
+        closeModal();
+        alert("사진 미리보기가 업데이트되었습니다.");
+      } else {
+        alert("사진을 선택해주세요.");
+      }
+    };
 
     const ssnFirst = ref("");
     const ssnLast = ref("");
@@ -530,6 +558,20 @@ export default {
     const mobileFirst = ref("");
     const mobileSecond = ref("");
     const mobileThird = ref("");
+
+    const departmentList = ref([]);
+    const positionList = ref([]);
+    const empStatusList = ref([]);
+    const bankList = ref([]);
+
+    const formList = ref({
+      dept_code: "",
+      dept_name: "",
+      pos_code: "",
+      pos_name: "",
+      status_code: "",
+      bank_code: "",
+    });
 
     const showConfirmModal = ref(false);
 
@@ -563,10 +605,10 @@ export default {
     ];
     const mobileOptions = ["010", "011", "016", "017", "018", "019"];
 
-    const departmentList = ref([]);
-    const positionList = ref([]);
-    const empStatusList = ref([]);
-    const bankList = ref([]);
+    const isResignedOrOnLeave = computed(() => {
+      const statusName = getStatusName(thisEmployee.value.status_code);
+      return statusName === "재직" || statusName === "휴직";
+    });
 
     const formatDate = (dateString) => {
       if (!dateString) return "";
@@ -577,29 +619,12 @@ export default {
       return `${year}-${month}-${day}`;
     };
 
-    const isReadOnly = computed(() => {
-      return Object.keys(props.employee.emp_name || {}).length > 0;
-    });
-
-    const buttonText = computed(() => {
-      return Object.keys(props.employee.emp_name || {}).length === 0
-        ? "등록"
-        : "수정";
-    });
-
     const getStatusName = (statusCode) => {
       const status = empStatusList.value.find(
         (status) => status.stat_code === statusCode
       );
       return status ? status.stat_name : "";
     };
-
-    const isResignedOrOnLeave = computed(() => {
-      const statusName = getStatusName(thisEmployee.value.status_code);
-      return statusName === "재직" || statusName === "휴직";
-    });
-
-    const isDisabled = ref(false);
 
     watch(
       () => props.employee,
@@ -665,20 +690,12 @@ export default {
           isDisabled.value = newVal.status_code === "3000";
         } else {
           thisEmployee.value = { ...defaultEmployee };
+          thisImgSrc.value = null; // 신규 등록 시 이미지 초기화
         }
       },
       { deep: true, immediate: true }
     );
     // watch End
-
-    const formList = ref({
-      dept_code: "",
-      dept_name: "",
-      pos_code: "",
-      pos_name: "",
-      status_code: "",
-      bank_code: "",
-    });
 
     // START 사원 정보 폼 select option 리스트 가져오기
     const fetchDepartmentListHandler = async () => {
@@ -714,14 +731,6 @@ export default {
     };
     // END 사원 정보 폼 select option 리스트 가져오기
 
-    const openModal = () => {
-      showModal.value = true;
-    };
-
-    const closeModal = () => {
-      showModal.value = false;
-    };
-
     const onFileChange = (event) => {
       const file = event.target.files[0];
       if (file) {
@@ -733,16 +742,6 @@ export default {
         reader.readAsDataURL(file);
 
         selectedImageFile.value = file;
-      }
-    };
-
-    const confirmPhoto = () => {
-      if (selectedImageFile.value) {
-        photoPreviewUrl.value = imagePreviewUrl.value;
-        closeModal();
-        alert("사진 미리보기가 업데이트되었습니다.");
-      } else {
-        alert("사진을 선택해주세요.");
       }
     };
 
@@ -916,23 +915,18 @@ export default {
     });
 
     return {
-      formList,
-      positionList,
-      departmentList,
-      empStatusList,
-      bankList,
-      thisEmployee,
-      formatDate,
       buttonText,
       isReadOnly,
-      searchAddress,
-      saveEmpHandler,
-      validateSSNFirst,
-      validateSSNLast,
-      validatePhoneSecond,
-      validatePhoneThird,
-      validateMobileSecond,
-      validateMobileThird,
+      isDisabled,
+      showModal,
+      openModal,
+      closeModal,
+      thisEmployee,
+      thisImgSrc,
+      imagePreviewUrl,
+      photoPreviewUrl,
+      selectedImageFile,
+      confirmPhoto,
       ssnFirst,
       ssnLast,
       phoneFirst,
@@ -941,24 +935,29 @@ export default {
       mobileFirst,
       mobileSecond,
       mobileThird,
-      phoneOptions,
-      mobileOptions,
-      showModal,
-      openModal,
-      closeModal,
-      isResignedOrOnLeave,
-      imagePreviewUrl,
-      photoPreviewUrl,
-      onFileChange,
-      confirmPhoto,
-      selectedImageFile,
-      foldDaumPostcode,
+      departmentList,
+      positionList,
+      empStatusList,
+      bankList,
+      formList,
       showConfirmModal,
       confirmLeave,
       cancelLeave,
-      thisImgSrc,
+      phoneOptions,
+      mobileOptions,
+      isResignedOrOnLeave,
+      formatDate,
+      searchAddress,
+      saveEmpHandler,
+      validateSSNFirst,
+      validateSSNLast,
+      validatePhoneSecond,
+      validatePhoneThird,
+      validateMobileSecond,
+      validateMobileThird,
+      onFileChange,
+      foldDaumPostcode,
       setDefaultImage,
-      isDisabled,
     };
   },
 };
