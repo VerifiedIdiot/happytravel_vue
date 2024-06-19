@@ -6,21 +6,21 @@
           <div class="filters">
             <button
               class="btn-filter"
-              :class="selectedFilter === 'waited' ? 'btn-selected' : 'btn-unselected'"
+              :class="selectedFilter === 'waited' ? 'btn-selected-waited' : 'btn-unselected'"
               @click="selectFilter('waited')"
             >
               진행중
             </button>
             <button
               class="btn-filter"
-              :class="selectedFilter === 'assigned' ? 'btn-selected' : 'btn-unselected'"
+              :class="selectedFilter === 'assigned' ? 'btn-selected-assigned' : 'btn-unselected'"
               @click="selectFilter('assigned')"
             >
               완료
             </button>
             <button
               class="btn-filter"
-              :class="selectedFilter === 'rejected' ? 'btn-selected' : 'btn-unselected'"
+              :class="selectedFilter === 'rejected' ? 'btn-selected-rejected' : 'btn-unselected'"
               @click="selectFilter('rejected')"
             >
               반려
@@ -212,6 +212,20 @@ const closeModal = () => {
 .btn-selected {
   @apply bg-blue-700 text-white shadow-md;
 }
+
+.btn-selected-waited {
+  @apply bg-orange-400 text-white shadow-md;
+}
+
+.btn-selected-assigned {
+  @apply bg-green-500 text-white shadow-md;
+}
+
+.btn-selected-rejected {
+  @apply bg-red-600 text-white shadow-md;
+}
+
+
 
 .btn-unselected {
   @apply bg-white text-black border shadow-sm;
