@@ -7,18 +7,16 @@
       <div class="absolute w-2/5 right-0 top-1 flex justify-end items-end">
         <div class="w-36 h-40 bg-gray-100">
           <img
-            :src="
-              photoPreviewUrl
-                ? photoPreviewUrl
-                : thisEmployee.photo_url || '사진 미리보기 영역'
-            "
+            :src="photoPreviewUrl || imgSrc || '사진 미리보기 영역'"
+            @error="setDefaultImage"
             alt="사진 미리보기"
             class="w-full h-full object-cover"
           />
         </div>
         <button
           @click="openModal"
-          class="w-3/12 h-[25px] ml-1 bg-slate-200 hover:bg-slate-300 rounded text-xs shadow-md outline-none"
+          :disabled="isDisabled"
+          class="px-[6px] h-[25px] ml-1 bg-gray-200 hover:bg-gray-400 text-xs hover:text-white outline-none"
         >
           사진 등록
         </button>
@@ -35,6 +33,7 @@
           id="emp_id"
           v-model="thisEmployee.emp_id"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-slate-200 outline-none"
         />
       </div>
@@ -48,6 +47,7 @@
           type="password"
           id="password"
           v-model="thisEmployee.password"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -62,6 +62,7 @@
           id="emp_name"
           v-model="thisEmployee.emp_name"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -76,6 +77,7 @@
           id="join_date"
           v-model="thisEmployee.join_date"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -90,6 +92,7 @@
           id="ssn_first"
           v-model="ssnFirst"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           @input="validateSSNFirst"
           maxlength="6"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -100,6 +103,7 @@
           id="ssn_last"
           v-model="ssnLast"
           :readonly="isReadOnly"
+          :disabled="isDisabled"
           @input="validateSSNLast"
           maxlength="7"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -116,16 +120,24 @@
           placeholder="우편번호"
           id="zip_code"
           v-model="thisEmployee.zip_code"
-          :readonly="isReadOnly"
+          readonly
+          :disabled="isDisabled"
           class="flex w-2/12 h-8 px-1 border border-gray-200 outline-none"
         />
         <input
           type="text"
           id="address"
           v-model="thisEmployee.address"
+          :disabled="isDisabled"
           class="flex w-7/12 h-8 px-1 border border-gray-200 outline-none"
         />
-        <button @click="searchAddress" class="w-1/12 bg-slate-200">검색</button>
+        <button
+          @click="searchAddress"
+          :disabled="isDisabled"
+          class="w-1/12 bg-gray-200 hover:bg-gray-400 hover:text-white"
+        >
+          검색
+        </button>
       </div>
       <!--주소 검색 영역 시작-->
       <div class="flex gap-1 justify-end">
@@ -156,6 +168,7 @@
           type="text"
           id="address_detail"
           v-model="thisEmployee.address_detail"
+          :disabled="isDisabled"
           class="flex w-10/12 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -167,6 +180,7 @@
         >
         <select
           v-model="phoneFirst"
+          :disabled="isDisabled"
           class="flex w-1/6 h8 px-1 border border-gray-200 ouline-none"
         >
           <option value="">-</option>
@@ -178,6 +192,7 @@
           type="text"
           id="phone_second"
           v-model="phoneSecond"
+          :disabled="isDisabled"
           @input="validatePhoneSecond"
           maxlength="4"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -186,6 +201,7 @@
           type="text"
           id="phone_third"
           v-model="phoneThird"
+          :disabled="isDisabled"
           @input="validatePhoneThird"
           maxlength="4"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
@@ -199,6 +215,7 @@
         >
         <select
           v-model="mobileFirst"
+          :disabled="isDisabled"
           class="flex w-1/6 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -210,6 +227,7 @@
           type="text"
           id="moblieSecond"
           v-model="mobileSecond"
+          :disabled="isDisabled"
           @input="validateMobileSecond"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
           maxlength="4"
@@ -218,6 +236,7 @@
           type="text"
           id="mobileThird"
           v-model="mobileThird"
+          :disabled="isDisabled"
           @input="validateMobileThird"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
           maxlength="4"
@@ -233,6 +252,7 @@
           name=""
           id="dept_code"
           v-model="thisEmployee.dept_code"
+          :disabled="isDisabled"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -255,6 +275,7 @@
           name=""
           id="pos_code"
           v-model="thisEmployee.pos_code"
+          :disabled="isDisabled"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -277,6 +298,7 @@
           name=""
           id="status_code"
           v-model="thisEmployee.status_code"
+          :disabled="isDisabled"
           class="flex w-1/6 h-8 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -293,6 +315,7 @@
           id="leave_date"
           v-model="thisEmployee.leave_date"
           :readonly="isResignedOrOnLeave"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -306,6 +329,7 @@
           name=""
           id="bank_code"
           v-model="thisEmployee.bank_code"
+          :disabled="isDisabled"
           class="flex w-3/12 h-8 px-1 border border-gray-200 outline-none"
         >
           <option value="">-</option>
@@ -322,6 +346,7 @@
           placeholder="계좌번호"
           id="account_no"
           v-model="thisEmployee.account_no"
+          :disabled="isDisabled"
           class="flex w-7/12 h-8 px-1 border border-gray-200 outline-none"
         />
       </div>
@@ -335,6 +360,7 @@
           type="text"
           id="salary"
           v-model="thisEmployee.salary"
+          :disabled="isDisabled"
           class="flex w-2/6 h-8 px-1 border border-gray-200 outline-none"
         />
         <label
@@ -354,12 +380,14 @@
           type="text"
           id="remarks"
           v-model="thisEmployee.remarks"
+          :disabled="isDisabled"
           class="flex w-10/12 h-20 px-1 border border-gray-200 outline-none resize-none"
         ></textarea>
       </div>
       <div class="flex justify-center my-1 gap-1">
         <button
           @click="saveEmpHandler"
+          :disabled="isDisabled"
           class="w-1/6 h-10 bg-blue-600 hover:bg-blue-500 rounded-md text-white font-medium shadow-md outline-none"
         >
           {{ buttonText }}
@@ -383,7 +411,7 @@
           <img
             :src="imagePreviewUrl"
             alt="미리보기 이미지"
-            class="block w-1/2 object-cover"
+            class="block w-1/2 object-cover max-w-48"
           />
         </div>
         <input type="file" @change="onFileChange" />
@@ -411,51 +439,30 @@
     v-if="showConfirmModal"
   -->
   <div
+    v-if="showConfirmModal"
     id="confirmModal"
-    class="hidden fixed inset-0 flex items-center justify-center z-50 bg-gray-500 bg-opacity-75"
+    class="fixed inset-0 flex items-center justify-center z-50 bg-gray-500 bg-opacity-75"
   >
-    <div class="bg-white p-5 rounded-md w-3/12">
-      <div id="leaveEmpInfo" class="w-full my-5 border border-red-200">
-        <div class="w-full flex justify-evenly bg-slate-200">
-          <p>사원번호</p>
-          <p>사원명</p>
-        </div>
-        <div class="w-full flex justify-evenly">
-          <p>20240001</p>
-          <p>천우희</p>
-        </div>
-        <div class="w-full flex justify-evenly bg-slate-200">
-          <p>부서</p>
-          <p>직급</p>
-        </div>
-        <div class="w-full flex justify-evenly">
-          <p>회계</p>
-          <p>과장</p>
-        </div>
-        <div class="w-full flex justify-evenly bg-slate-200">
-          <p>근속년월</p>
-        </div>
-        <div class="w-full flex justify-evenly">
-          <p>2024-02-05 ~ 2024-06-12</p>
-        </div>
-        <div class="w-full flex justify-evenly bg-slate-200"><p>퇴직일</p></div>
-        <div class="w-full flex justify-evenly"><p>2024-06-13</p></div>
-      </div>
-      <p class="w-full text-center">재직상태를 '퇴직'으로 변경하시겠습니까?</p>
+    <div class="bg-white p-5 rounded-md px-10">
+      <p class="w-full text-center mb-5 text-xl">
+        재직상태를 '퇴사'로 변경하시겠습니까?
+      </p>
       <div class="w-full flex justify-center">
         <button
-          class="px-3 py-1 mx-1 bg-red-400 hover:bg-red-200 rounded text-white"
+          class="w-3/12 h-10 mx-1 bg-red-600 hover:bg-red-500 rounded-md text-white font-medium shadow-md outline-none"
+          @click="confirmLeave"
         >
           확인
         </button>
-        <button class="px-3 py-1 mx-1 bg-slate-200 hover:bg-slate-400 rounded">
+        <button
+          class="w-3/12 h-10 mx-1 bg-slate-500 hover:bg-slate-600 rounded-md text-white font-medium shadow-md outline-none"
+          @click="cancelLeave"
+        >
           취소
         </button>
       </div>
     </div>
   </div>
-  <!--퇴사 확인 모달 시작-->
-
   <!--퇴사 확인 모달 끝-->
 </template>
 
@@ -468,9 +475,7 @@ import {
   getbankList,
   insertEmployee,
   updateEmployee,
-  checkDuplicate,
-  uploadPhotoFile,
-} from "@/api/hr/EmpApi";
+} from "@/api/hr/EmpFormApi";
 
 export default {
   name: "EmpForm",
@@ -480,8 +485,12 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    imgSrc: {
+      type: String,
+    },
   },
   setup(props, { emit }) {
+    const defaultImage = require("@/assets/img/profile.png");
     // 기본 데이터 초기화
     const defaultEmployee = {
       emp_id: "",
@@ -505,12 +514,41 @@ export default {
       remarks: "",
     };
 
+    const buttonText = computed(() => {
+      return Object.keys(props.employee.emp_name || {}).length === 0
+        ? "등록"
+        : "수정";
+    });
+
+    const isReadOnly = computed(() => {
+      return Object.keys(props.employee.emp_name || {}).length > 0;
+    });
+    const isDisabled = ref(false);
+
     const thisEmployee = ref({ ...props.employee });
+    const thisImgSrc = ref(props.imgSrc);
 
     const showModal = ref(false);
+    const openModal = () => {
+      showModal.value = true;
+    };
+
+    const closeModal = () => {
+      showModal.value = false;
+    };
+
     const imagePreviewUrl = ref(null);
     const photoPreviewUrl = ref(null);
     const selectedImageFile = ref(null);
+    const confirmPhoto = () => {
+      if (selectedImageFile.value) {
+        photoPreviewUrl.value = imagePreviewUrl.value;
+        closeModal();
+        alert("사진 미리보기가 업데이트되었습니다.");
+      } else {
+        alert("사진을 선택해주세요.");
+      }
+    };
 
     const ssnFirst = ref("");
     const ssnLast = ref("");
@@ -521,25 +559,29 @@ export default {
     const mobileSecond = ref("");
     const mobileThird = ref("");
 
-    const showConfirmModal = ref(true);
-    const pendingStatusChange = ref(null);
+    const departmentList = ref([]);
+    const positionList = ref([]);
+    const empStatusList = ref([]);
+    const bankList = ref([]);
 
-    const openConfirmModal = (status) => {
-      pendingStatusChange.value = status;
-      showConfirmModal.value = true;
-    };
+    const formList = ref({
+      dept_code: "",
+      dept_name: "",
+      pos_code: "",
+      pos_name: "",
+      status_code: "",
+      bank_code: "",
+    });
 
-    const closeConfirmModal = () => {
+    const showConfirmModal = ref(false);
+
+    const confirmLeave = async () => {
       showConfirmModal.value = false;
-      pendingStatusChange.value = null;
+      await saveEmployee();
     };
 
-    const confirmLeave = () => {
-      if (pendingStatusChange.value === "퇴직") {
-        thisEmployee.value.leave_date = new Date().toISOString().split("T")[0]; // 퇴사일자 저장
-      }
-      thisEmployee.value.status_code = pendingStatusChange.value;
-      closeConfirmModal();
+    const cancelLeave = () => {
+      showConfirmModal.value = false;
     };
 
     const phoneOptions = [
@@ -563,10 +605,10 @@ export default {
     ];
     const mobileOptions = ["010", "011", "016", "017", "018", "019"];
 
-    const departmentList = ref([]);
-    const positionList = ref([]);
-    const empStatusList = ref([]);
-    const bankList = ref([]);
+    const isResignedOrOnLeave = computed(() => {
+      const statusName = getStatusName(thisEmployee.value.status_code);
+      return statusName === "재직" || statusName === "휴직";
+    });
 
     const formatDate = (dateString) => {
       if (!dateString) return "";
@@ -577,27 +619,12 @@ export default {
       return `${year}-${month}-${day}`;
     };
 
-    const isReadOnly = computed(() => {
-      return Object.keys(props.employee.emp_name || {}).length > 0;
-    });
-
-    const buttonText = computed(() => {
-      return Object.keys(props.employee.emp_name || {}).length === 0
-        ? "등록"
-        : "수정";
-    });
-
     const getStatusName = (statusCode) => {
       const status = empStatusList.value.find(
         (status) => status.stat_code === statusCode
       );
       return status ? status.stat_name : "";
     };
-
-    const isResignedOrOnLeave = computed(() => {
-      const statusName = getStatusName(thisEmployee.value.status_code);
-      return statusName === "재직" || statusName === "휴직";
-    });
 
     watch(
       () => props.employee,
@@ -635,6 +662,10 @@ export default {
                 newVal.phone.lastIndexOf("-") + 1
               );
             }
+          } else {
+            phoneFirst.value = "";
+            phoneSecond.value = "";
+            phoneThird.value = "";
           }
 
           if (newVal.mobile) {
@@ -649,23 +680,22 @@ export default {
             mobileThird.value = newVal.mobile.slice(
               newVal.mobile.lastIndexOf("-") + 1
             );
+          } else {
+            mobileFirst.value = "";
+            mobileSecond.value = "";
+            mobileThird.value = "";
           }
+
+          // 사원정보 조회 후 isDisabled 값을 업데이트
+          isDisabled.value = newVal.status_code === "3000";
         } else {
           thisEmployee.value = { ...defaultEmployee };
+          thisImgSrc.value = null; // 신규 등록 시 이미지 초기화
         }
       },
       { deep: true, immediate: true }
     );
     // watch End
-
-    const formList = ref({
-      dept_code: "",
-      dept_name: "",
-      pos_code: "",
-      pos_name: "",
-      status_code: "",
-      bank_code: "",
-    });
 
     // START 사원 정보 폼 select option 리스트 가져오기
     const fetchDepartmentListHandler = async () => {
@@ -701,40 +731,24 @@ export default {
     };
     // END 사원 정보 폼 select option 리스트 가져오기
 
-    const openModal = () => {
-      showModal.value = true;
-    };
-
-    const closeModal = () => {
-      showModal.value = false;
-      imagePreviewUrl.value = null;
-      selectedImageFile.value = null;
-    };
-
     const onFileChange = (event) => {
       const file = event.target.files[0];
       if (file) {
         selectedImageFile.value = file;
-        console.log("selectedImageFile.value" + selectedImageFile.value);
         const reader = new FileReader();
         reader.onload = (e) => {
           imagePreviewUrl.value = e.target.result;
         };
         reader.readAsDataURL(file);
+
+        selectedImageFile.value = file;
       }
     };
 
-    const confirmPhoto = () => {
-      if (selectedImageFile.value) {
-        photoPreviewUrl.value = imagePreviewUrl.value;
-        closeModal();
-        alert("사진 미리보기가 업데이트되었습니다.");
-      } else {
-        alert("사진을 선택해주세요.");
-      }
+    const setDefaultImage = (event) => {
+      event.target.src = defaultImage;
     };
 
-    /********************* 사원정보 중복 체크 ****************************/
     const validateInput = (input, maxLength) => {
       input.value = input.value.replace(/\D/g, "").slice(0, maxLength);
     };
@@ -762,31 +776,19 @@ export default {
       validateInput(mobileThird, 4);
     };
     const validatePassword = (password) => {
-      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d\s]).{8,}$/;
+      const regex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,}$/;
       return regex.test(password);
     };
 
-    const checkDuplicates = async (fieldsToCheck) => {
-      for (const { field, value } of fieldsToCheck) {
-        const isDuplicate = await checkDuplicate(field, value);
-        if (isDuplicate) {
-          alert(
-            `중복된 ${
-              field === "ssn"
-                ? "주민등록번호"
-                : field === "mobile"
-                ? "휴대전화"
-                : "은행 계좌"
-            }입니다.`
-          );
-          return true;
-        }
-      }
-      return false;
-    };
-    /********************* 사원정보 중복 체크 ****************************/
-
     const saveEmpHandler = async () => {
+      if (thisEmployee.value.status_code === "3000") {
+        showConfirmModal.value = true;
+      } else {
+        await saveEmployee();
+      }
+    };
+
+    const saveEmployee = async () => {
       try {
         const fieldsToCheck = [];
         // 사원 수정시 && 기존 비밀번호와 다를때 비밀번호 유효성 검사
@@ -795,30 +797,13 @@ export default {
           props.employee.password !== thisEmployee.value.password &&
           !validatePassword(thisEmployee.value.password)
         ) {
-          alert(
-            "비밀번호는 영문 대문자, 소문자, 숫자, 특수문자 중 최소 3가지 이상을 포함해야 합니다."
-          );
+          alert("비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.");
           return;
         }
 
         //주민번호 13자리 유효성 검사
         if (ssnFirst.value.length !== 6 || ssnLast.value.length !== 7) {
           alert("주민등록번호를 확인해주세요.");
-          return;
-        }
-
-        // 계좌번호 유효성 검사, 기존 계좌번호와 다를 때만 검사
-        if (
-          `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}` !==
-          `${props.employee.bank_code}-${props.employee.account_no}`
-        ) {
-          fieldsToCheck.push({
-            field: "bank",
-            value: `${thisEmployee.value.bank_code}-${thisEmployee.value.account_no}`,
-          });
-        }
-
-        if (await checkDuplicates(fieldsToCheck)) {
           return;
         }
 
@@ -830,12 +815,6 @@ export default {
         thisEmployee.value.phone = `${phoneFirst.value}-${phoneSecond.value}-${phoneThird.value}`;
         thisEmployee.value.mobile = `${mobileFirst.value}-${mobileSecond.value}-${mobileThird.value}`;
 
-        // 파일이 선택된 경우에만 업로드
-        if (selectedImageFile.value) {
-          const fileName = await uploadPhotoFile(selectedImageFile.value);
-          thisEmployee.value.photo_url = fileName; // 파일 업로드 후 파일 이름 설정
-        }
-
         const data = thisEmployee.value;
 
         const formData = new FormData();
@@ -845,7 +824,18 @@ export default {
             type: "application/json",
           })
         );
-        formData.append("file", selectedImageFile.value);
+
+        if (selectedImageFile.value) {
+          // 파일명을 사원번호로 변경하여 새로운 File 객체 생성
+          const renamedFile = new File(
+            [selectedImageFile.value],
+            `${thisEmployee.value.emp_id}.jpg`,
+            {
+              type: selectedImageFile.value.type,
+            }
+          );
+          formData.append("file", renamedFile);
+        }
 
         if (buttonText.value === "등록") {
           await insertEmployee(formData);
@@ -856,6 +846,7 @@ export default {
         }
 
         emit("saved");
+        isDisabled.value = thisEmployee.value.status_code === "3000";
       } catch (error) {
         if (buttonText.value === "등록") {
           console.error("Error saving employee: ", error);
@@ -924,23 +915,18 @@ export default {
     });
 
     return {
-      formList,
-      positionList,
-      departmentList,
-      empStatusList,
-      bankList,
-      thisEmployee,
-      formatDate,
       buttonText,
       isReadOnly,
-      searchAddress,
-      saveEmpHandler,
-      validateSSNFirst,
-      validateSSNLast,
-      validatePhoneSecond,
-      validatePhoneThird,
-      validateMobileSecond,
-      validateMobileThird,
+      isDisabled,
+      showModal,
+      openModal,
+      closeModal,
+      thisEmployee,
+      thisImgSrc,
+      imagePreviewUrl,
+      photoPreviewUrl,
+      selectedImageFile,
+      confirmPhoto,
       ssnFirst,
       ssnLast,
       phoneFirst,
@@ -949,19 +935,29 @@ export default {
       mobileFirst,
       mobileSecond,
       mobileThird,
+      departmentList,
+      positionList,
+      empStatusList,
+      bankList,
+      formList,
+      showConfirmModal,
+      confirmLeave,
+      cancelLeave,
       phoneOptions,
       mobileOptions,
-      showModal,
-      openModal,
-      closeModal,
       isResignedOrOnLeave,
-      checkDuplicates,
-      imagePreviewUrl,
-      photoPreviewUrl,
+      formatDate,
+      searchAddress,
+      saveEmpHandler,
+      validateSSNFirst,
+      validateSSNLast,
+      validatePhoneSecond,
+      validatePhoneThird,
+      validateMobileSecond,
+      validateMobileThird,
       onFileChange,
-      confirmPhoto,
-      selectedImageFile,
       foldDaumPostcode,
+      setDefaultImage,
     };
   },
 };
@@ -987,5 +983,14 @@ td {
   text-align: center;
   border: 1px solid rgb(243, 244, 246);
   box-sizing: border-box;
+}
+input:disabled,
+textarea:disabled {
+  color: rgb(170, 170, 170);
+}
+button:disabled,
+button:disabled:hover {
+  background-color: rgb(170, 170, 170);
+  color: #fff;
 }
 </style>

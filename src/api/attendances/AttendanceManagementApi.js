@@ -33,12 +33,26 @@ export const rejectRequest = async (attendanceCode, status) => {
   }
 };
 
-export const getAttendanceHistory = async () => {
+export const getAttendanceHistory = async (limit, offset) => {
   try {
-    const response = await apiClient.get("/attendance/attendanceConfirm");
+    const response = await apiClient.get("/attendance/attendanceConfirm", {
+      params: { limit, offset },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching attendanceHistory list:", error);
+    throw error;
+  }
+};
+
+export const getAttendanceCount = async (empId) => {
+  try {
+    const response = await apiClient.get("/attendance/countAttendanceThisMonth", {
+      params: { empId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching attendanceCount:", error);
     throw error;
   }
 };
@@ -49,7 +63,7 @@ export const getAttendanceHistory = async () => {
 export const getMaxAttendanceTypeCode = async (creationDate) => {
   try {
     const response = await apiClient.get(
-      `/attendances/maxAttendanceTypeCode?creationDate=${creationDate}`
+      `/attendance/maxAttendanceTypeCode?creationDate=${creationDate}`
     );
     return response.data;
   } catch (error) {
@@ -61,7 +75,7 @@ export const getMaxAttendanceTypeCode = async (creationDate) => {
 export const insertAttendanceManagement = async (attendanceManagement) => {
   try {
     const response = await apiClient.post(
-      "/attendances/attendanceManagement",
+      "/attendance/add",
       attendanceManagement
     );
     return response.data;

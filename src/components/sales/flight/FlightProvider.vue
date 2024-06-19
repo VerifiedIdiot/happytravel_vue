@@ -4,13 +4,12 @@
 
 <script setup>
 import { provide, ref, reactive } from 'vue';
-import { getHotelList, getHotelCnt, insertHotel, updateHotel, updateHotelYN } from '@/api/sales/HotelApi';
+import { getFlightList, getFlightCnt, insertFlight, updateFlight, updateFlightYN } from '@/api/sales/FlightApi';
 import { useToast } from 'vue-toast-notification';
 
 const toast = useToast();
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
-const hotels = ref([]);
-const countryCode = ref('');
+const flights = ref([]);
 
 const CRUDStateEnum = Object.freeze({
   CREATE: 'create',
@@ -18,27 +17,28 @@ const CRUDStateEnum = Object.freeze({
   DELETE: 'delete',
 });
 
-const initialHotelState = {
+const initialFlightState = {
   isModalOpen: false,
-  hotelCode: '',
+  flightCode: '',
   isEditing: false,
   crudState: CRUDStateEnum.CREATE,
-  hotelDetail: {
-    hotel_name: '',
+  flightDetail: {
+    flight_number: '',
+    airline: '',
     phone: '',
-    country: '',
-    address: '',
+    departure: '',
+    departure_time: '',
+    destination: '',
+    arrival_time: '',
     price: '',
-    image_url: '',
-    country_code: '',
   },
   countries: [],
 };
 
-const hotelState = reactive({ ...initialHotelState });
+const flightState = reactive({ ...initialFlightState });
 
 const initialPaginationState = {
-  hotelCnt: 0,
+  flightCnt: 0,
   currentPage: 1,
   itemsPerPage: 8,
   totalPages: 0,
@@ -46,29 +46,29 @@ const initialPaginationState = {
 
 const paginationState = reactive({ ...initialPaginationState });
 
-const resetHotelState = () => {
-  hotelState.isModalOpen = false;
-  hotelState.hotelCode = '';
-  hotelState.isEditing = false;
-  hotelState.crudState = CRUDStateEnum.CREATE;
-  hotelState.hotelDetail = {
-    hotel_name: '',
+const resetFlightState = () => {
+  flightState.isModalOpen = false;
+  flightState.flightCode = '';
+  flightState.isEditing = false;
+  flightState.crudState = CRUDStateEnum.CREATE;
+  flightState.flightDetail = {
+    flight_number: '',
+    airline: '',
     phone: '',
-    country: '',
-    address: '',
+    departure: '',
+    departure_time: '',
+    destination: '',
+    arrival_time: '',
     price: '',
-    image_url: '',
-    country_code: '',
   };
-  hotelState.countries = [];
 };
 
 const setCurrentPage = (page) => {
   paginationState.currentPage = page;
-  fetchHotels();
+  fetchFlights();
 };
 
-const fetchHotels = async () => {
+const fetchFlights = async () => {
   try {
     const params = {
       empId,
@@ -76,36 +76,43 @@ const fetchHotels = async () => {
       offset: paginationState.itemsPerPage * (paginationState.currentPage - 1),
     };
     const [data, cnt] = await Promise.all([
-      getHotelList(params),
-      getHotelCnt({ empId }),
+      getFlightList(params),
+      getFlightCnt({ empId }),
     ]);
-    hotels.value = data;
-    paginationState.hotelCnt = cnt;
+    flights.value = data;
+    paginationState.flightCnt = cnt;
     paginationState.totalPages = Math.ceil(cnt / paginationState.itemsPerPage);
   } catch (error) {
-    console.error('Failed to fetch hotels:', error);
+    console.error('Failed to fetch flight:', error);
   }
 };
 
+// 폼 유효성 검사 함수
 const validateForm = () => {
   const fieldNames = {
-    hotel_name: '호텔명',
+    flight_number: '항공번호',
+    airline: '항공편',
     phone: '전화번호',
-    country: '국가',
-    address: '주소',
+    departure: '출발지',
+    departure_time: '출발시간',
+    destination: '도착지',
+    arrival_time: '도착시간',
     price: '가격',
   };
 
   const requiredFields = [
-    'hotel_name',
+    'flight_number',
+    'airline',
     'phone',
-    'country',
-    'address',
+    'departure',
+    'departure_time',
+    'destination',
+    'arrival_time',
     'price',
   ];
 
   for (const field of requiredFields) {
-    if (!hotelState.hotelDetail[field]) {
+    if (!flightState.flightDetail[field]) {
       toast.open({
         message: `${fieldNames[field]} 이/가 누락되었습니다.`,
         type: 'warning'
@@ -114,13 +121,25 @@ const validateForm = () => {
     }
 
     // 가격 필드에 대한 추가 유효성 검사
-    if (field === 'price' && isNaN(hotelState.hotelDetail[field])) {
+    if (field === 'price' && isNaN(flightState.flightDetail[field])) {
       toast.open({
         message: '가격은 숫자로 입력해주세요.',
         type: 'warning'
       });
       return false;
     }
+  }
+
+  // 날짜 유효성 검증
+  const startDate = new Date(flightState.flightDetail.departure_time);
+  const endDate = new Date(flightState.flightDetail.arrival_time);
+
+  if (startDate > endDate) {
+    toast.open({
+      message: '출발일은 도착일보다 늦을 수 없습니다.',
+      type: 'warning'
+    });
+    return false;
   }
   return true;
 };
@@ -131,24 +150,24 @@ const submitForm = async () => {
       return;
     }
 
-    const requestParams = {
+    const params = {
       empId,
-      ...hotelState.hotelDetail,
-    };
+      ...flightState.flightDetail,
+    }
 
-    const response = hotelState.crudState === CRUDStateEnum.CREATE
-      ? await insertHotel(requestParams)
-      : await updateHotel(requestParams);
+    const response = flightState.crudState === CRUDStateEnum.CREATE
+      ? await insertFlight(params)
+      : await updateFlight(params);
 
     if (response === true) {
-      hotelState.isEditing = false;
-      
+      flightState.isEditing = false;
+
       toast.open({
         message: '저장에 성공했습니다.',
         type: 'success'
       });
-      resetHotelState();
-      fetchHotels();
+      resetFlightState();
+      fetchFlights();
     } else {
       toast.open({
         message: '저장에 실패했습니다.',
@@ -168,19 +187,21 @@ const submitYN = async () => {
   if(empId !== undefined) {
     const params = {
       empId,
-      hotelCode : hotelState.hotelDetail.hotel_code
+      flightCode : flightState.flightDetail.flight_code
     }
+    const response = await updateFlightYN(params);
+    console.log(params);
+    console.log(response);
 
-    const response = await updateHotelYN(params);
     if (response) {
-      hotelState.isEditing = false;
+      flightState.isEditing = false;
       
       toast.open({
-        message: '해당 호텔상품이 삭제되었습니다.',
+        message: '해당 항공상품이 삭제되었습니다.',
         type: 'success'
       });
-      resetHotelState();
-      fetchHotels();
+      resetFlightState();
+      fetchFlights();
     } else {
       toast.open({
         message: '삭제에 실패했습니다.',
@@ -198,14 +219,14 @@ const submitYN = async () => {
 
 
 provide('empId', empId);
-provide('hotels', hotels);
-provide('hotelState', hotelState);
-provide('resetHotelState', resetHotelState);
+provide('flights', flights);
+provide('flightState', flightState);
+provide('resetFlightState', resetFlightState);
 provide('setCurrentPage', setCurrentPage);
-provide('fetchHotels', fetchHotels);
+provide('fetchFlights', fetchFlights);
 provide('paginationState', paginationState);
-provide('submitForm', submitForm);
+provide('submitForm', submitForm)
 provide('submitYN', submitYN)
-provide('CRUDStateEnum', CRUDStateEnum);
-provide('countryCode', countryCode);
+provide('CRUDStateEnum', CRUDStateEnum)
+
 </script>

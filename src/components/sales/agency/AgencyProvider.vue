@@ -4,12 +4,12 @@
 
 <script setup>
 import { provide, ref, reactive } from 'vue';
-import { getHotelList, getHotelCnt, insertHotel, updateHotel, updateHotelYN } from '@/api/sales/HotelApi';
+import { getAgencyList, getAgencyCnt, insertAgency, updateAgency, updateAgencyYN } from '@/api/sales/AgencyApi';
 import { useToast } from 'vue-toast-notification';
 
 const toast = useToast();
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
-const hotels = ref([]);
+const agencies = ref([]);
 const countryCode = ref('');
 
 const CRUDStateEnum = Object.freeze({
@@ -18,27 +18,19 @@ const CRUDStateEnum = Object.freeze({
   DELETE: 'delete',
 });
 
-const initialHotelState = {
+const initialAgencyState = {
   isModalOpen: false,
-  hotelCode: '',
+  agencyCode: '',
   isEditing: false,
   crudState: CRUDStateEnum.CREATE,
-  hotelDetail: {
-    hotel_name: '',
-    phone: '',
-    country: '',
-    address: '',
-    price: '',
-    image_url: '',
-    country_code: '',
-  },
+  agencyDetail: {},
   countries: [],
 };
 
-const hotelState = reactive({ ...initialHotelState });
+const agencyState = reactive({ ...initialAgencyState });
 
 const initialPaginationState = {
-  hotelCnt: 0,
+  agencyCnt: 0,
   currentPage: 1,
   itemsPerPage: 8,
   totalPages: 0,
@@ -46,29 +38,27 @@ const initialPaginationState = {
 
 const paginationState = reactive({ ...initialPaginationState });
 
-const resetHotelState = () => {
-  hotelState.isModalOpen = false;
-  hotelState.hotelCode = '';
-  hotelState.isEditing = false;
-  hotelState.crudState = CRUDStateEnum.CREATE;
-  hotelState.hotelDetail = {
-    hotel_name: '',
+const resetAgencyState = () => {
+  agencyState.isModalOpen = false;
+  agencyState.hotelCode = '';
+  agencyState.isEditing = false;
+  agencyState.crudState = CRUDStateEnum.CREATE;
+  agencyState.hotelDetail = {
+    agency_name: '',
     phone: '',
     country: '',
     address: '',
     price: '',
-    image_url: '',
-    country_code: '',
   };
-  hotelState.countries = [];
+  agencyState.countries = [];
 };
 
 const setCurrentPage = (page) => {
   paginationState.currentPage = page;
-  fetchHotels();
+  fetchAgencies();
 };
 
-const fetchHotels = async () => {
+const fetchAgencies = async () => {
   try {
     const params = {
       empId,
@@ -76,20 +66,21 @@ const fetchHotels = async () => {
       offset: paginationState.itemsPerPage * (paginationState.currentPage - 1),
     };
     const [data, cnt] = await Promise.all([
-      getHotelList(params),
-      getHotelCnt({ empId }),
+      getAgencyList(params),
+      getAgencyCnt({ empId }),
     ]);
-    hotels.value = data;
-    paginationState.hotelCnt = cnt;
+    agencies.value = data;
+    paginationState.agencyCnt = cnt;
     paginationState.totalPages = Math.ceil(cnt / paginationState.itemsPerPage);
   } catch (error) {
-    console.error('Failed to fetch hotels:', error);
+    console.error('Failed to fetch agency:', error);
   }
 };
 
+// 폼 유효성 검사 함수
 const validateForm = () => {
   const fieldNames = {
-    hotel_name: '호텔명',
+    agency_name: '에이전시명',
     phone: '전화번호',
     country: '국가',
     address: '주소',
@@ -97,7 +88,7 @@ const validateForm = () => {
   };
 
   const requiredFields = [
-    'hotel_name',
+    'agency_name',
     'phone',
     'country',
     'address',
@@ -105,7 +96,7 @@ const validateForm = () => {
   ];
 
   for (const field of requiredFields) {
-    if (!hotelState.hotelDetail[field]) {
+    if (!agencyState.agencyDetail[field]) {
       toast.open({
         message: `${fieldNames[field]} 이/가 누락되었습니다.`,
         type: 'warning'
@@ -114,7 +105,7 @@ const validateForm = () => {
     }
 
     // 가격 필드에 대한 추가 유효성 검사
-    if (field === 'price' && isNaN(hotelState.hotelDetail[field])) {
+    if (field === 'price' && isNaN(agencyState.agencyDetail[field])) {
       toast.open({
         message: '가격은 숫자로 입력해주세요.',
         type: 'warning'
@@ -126,29 +117,30 @@ const validateForm = () => {
 };
 
 const submitForm = async () => {
+
+  if (!validateForm()) {
+    return;
+  }
+
   try {
-    if (!validateForm()) {
-      return;
+    const params = {
+      empId,
+      ...agencyState.agencyDetail,
     }
 
-    const requestParams = {
-      empId,
-      ...hotelState.hotelDetail,
-    };
-
-    const response = hotelState.crudState === CRUDStateEnum.CREATE
-      ? await insertHotel(requestParams)
-      : await updateHotel(requestParams);
+    const response = agencyState.crudState === CRUDStateEnum.CREATE
+      ? await insertAgency(params)
+      : await updateAgency(params);
 
     if (response === true) {
-      hotelState.isEditing = false;
-      
+      agencyState.isEditing = false;
+
       toast.open({
         message: '저장에 성공했습니다.',
         type: 'success'
       });
-      resetHotelState();
-      fetchHotels();
+      resetAgencyState();
+      fetchAgencies();
     } else {
       toast.open({
         message: '저장에 실패했습니다.',
@@ -168,19 +160,19 @@ const submitYN = async () => {
   if(empId !== undefined) {
     const params = {
       empId,
-      hotelCode : hotelState.hotelDetail.hotel_code
+      agencyCode : agencyState.agencyDetail.agency_code
     }
 
-    const response = await updateHotelYN(params);
+    const response = await updateAgencyYN(params);
     if (response) {
-      hotelState.isEditing = false;
+      agencyState.isEditing = false;
       
       toast.open({
-        message: '해당 호텔상품이 삭제되었습니다.',
+        message: '해당 에이전시상품이 삭제되었습니다.',
         type: 'success'
       });
-      resetHotelState();
-      fetchHotels();
+      resetAgencyState();
+      fetchAgencies();
     } else {
       toast.open({
         message: '삭제에 실패했습니다.',
@@ -196,16 +188,15 @@ const submitYN = async () => {
 }
 }
 
-
 provide('empId', empId);
-provide('hotels', hotels);
-provide('hotelState', hotelState);
-provide('resetHotelState', resetHotelState);
+provide('agencies', agencies);
+provide('agencyState', agencyState);
+provide('resetAgencyState', resetAgencyState);
 provide('setCurrentPage', setCurrentPage);
-provide('fetchHotels', fetchHotels);
+provide('fetchAgencies', fetchAgencies);
 provide('paginationState', paginationState);
-provide('submitForm', submitForm);
+provide('submitForm', submitForm)
+provide('CRUDStateEnum', CRUDStateEnum)
 provide('submitYN', submitYN)
-provide('CRUDStateEnum', CRUDStateEnum);
-provide('countryCode', countryCode);
+
 </script>
