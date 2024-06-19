@@ -94,7 +94,7 @@ import {
   getEmpInfo,
   searchEmpList,
   generateLastEmpId,
-} from "@/api/hr/EmpApi";
+} from "@/api/hr/HREmpApi";
 import EmpForm from "@/components/hr/EmpForm.vue";
 
 export default {
@@ -103,13 +103,16 @@ export default {
     EmpForm,
   },
   setup() {
-    const empList = ref([]);
     const onEmpForm = ref(false);
+
+    const empList = ref([]);
     const employee = ref([]);
-    const searchType = ref("");
-    const searchQuery = ref("");
     const imgSrc = ref(null);
 
+    const searchType = ref("");
+    const searchQuery = ref("");
+
+    // 사원 리스트 불러오기
     const fetchEmpListHandler = async () => {
       try {
         empList.value = await getEmpList();
@@ -190,21 +193,6 @@ export default {
       });
     });
 
-    const handleSearch = async () => {
-      if (!searchType.value || !searchQuery.value) {
-        alert("검색 조건을 입력하세요.");
-        return;
-      }
-      try {
-        empList.value = await searchEmpList(
-          searchType.value,
-          searchQuery.value
-        );
-      } catch (error) {
-        console.error("Error searching empList:", error);
-      }
-    };
-
     onMounted(() => {
       fetchEmpListHandler();
     });
@@ -219,7 +207,6 @@ export default {
       searchType,
       searchQuery,
       filteredEmpList,
-      handleSearch,
       handleEmpSaved,
       imgSrc,
     };

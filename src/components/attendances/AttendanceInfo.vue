@@ -1,7 +1,6 @@
 <template>
   <div class="info-panel">
     <div class="left-section">
-      <img src="#" alt="Logo" height="40" />
       <div>근태신청</div>
     </div>
     <div class="middle-section">
@@ -12,9 +11,9 @@
       <div>휴가시간 00시간 00분</div>
     </div>
     <div class="right-section">
-      <button @click="toggleClockInOut">
+      <!-- <button @click="toggleClockInOut">
         {{ isClockedIn ? "퇴근" : "출근" }}
-      </button>
+      </button> -->
       <button @click="openLeavePopup">근태 신청</button>
       <AttendancePopup v-if="showLeavePopup" @close="closeLeavePopup" />
     </div>
