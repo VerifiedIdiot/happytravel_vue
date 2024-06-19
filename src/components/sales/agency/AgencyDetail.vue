@@ -58,8 +58,9 @@
                 X
               </button>
             </div>
+            <input type="file" @change="onFileChange" />
           </div>
-          <input type="file" @change="onFileChange" />
+          
         </div>
       </div>
     </div>
