@@ -14,129 +14,128 @@
       <div class="button-container">
         <div class="button-item-left">
           <button
-          type="button"
-          class="btn-delete"
-          v-if="packageState.isEditing"
-          @click="handleYN()">
-          삭제
-        </button>
-        <button
-          type="button"
-          class="btn-reject"
-          v-if="packageState.isEditing && packageState.packageDetail.assignCode == '1000'"
-          @click="handleAssign(assignState.rejected)">
-          반려
-        </button>
+            type="button"
+            class="btn-delete"
+            v-if="packageState.isEditing"
+            @click="handleYN()">
+            삭제
+          </button>
+          <button
+            type="button"
+            class="btn-reject"
+            v-if="
+              packageState.isEditing &&
+              packageState.packageDetail.assignCode == '1000'
+            "
+            @click="handleAssign(assignState.rejected)">
+            반려
+          </button>
         </div>
         <div class="button-item-right">
           <button
-          type="button"
-          class="btn-assingn"
-          v-if="packageState.isEditing && packageState.packageDetail.assignCode == '1000'"
-          @click="handleAssign(assignState.assigned)">
-          승인
-        </button>
-        <button
-          type="button"
-          class="btn-update"
-          v-if="!packageState.isEditing"
-          @click="toggleEditing()">
-          수정
-        </button>
-        <button
-          type="submit"
-          class="btn-save"
-          v-if="packageState.isEditing"
-          @click="handleSave(assignState.waited)">
-          저장
-        </button>
-        <button type="button" class="btn-close" @click="handleClose()">
-          닫기
-        </button>
-      </div>
+            type="button"
+            class="btn-assingn"
+            v-if="
+              packageState.isEditing &&
+              packageState.packageDetail.assignCode == '1000'
+            "
+            @click="handleAssign(assignState.assigned)">
+            승인
+          </button>
+          <button
+            type="button"
+            class="btn-update"
+            v-if="!packageState.isEditing"
+            @click="toggleEditing()">
+            수정
+          </button>
+          <button
+            type="submit"
+            class="btn-save"
+            v-if="packageState.isEditing"
+            @click="handleSave(assignState.waited)">
+            저장
+          </button>
+          <button type="button" class="btn-close" @click="handleClose()">
+            닫기
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { inject, onMounted, onUnmounted } from 'vue'
-import { getCountries } from '@/api/sales/PackageApi'
-
+import { inject, onMounted, onUnmounted } from 'vue';
+import { getCountries } from '@/api/sales/PackageApi';
 
 const props = defineProps({
   title: {
     type: String,
     default: '여행상품 상세',
   },
-})
+});
 
-
-
-const packageState = inject('packageState')
-const partnerState = inject('partnerState')
-const resetAllState = inject('resetAllState')
-const assignState = inject('assignState')
-const submitYN = inject('submitYN')
-const submitAssign = inject('submitAssign')
-const submitForm = inject('submitForm')  
-const CRUDStateEnum = inject('CRUDStateEnum')
-const filterState = inject('filterState')
-const resetFilterState = inject('resetFilterState')
+const packageState = inject('packageState');
+const partnerState = inject('partnerState');
+const resetAllState = inject('resetAllState');
+const assignState = inject('assignState');
+const submitYN = inject('submitYN');
+const submitAssign = inject('submitAssign');
+const submitForm = inject('submitForm');
+const CRUDStateEnum = inject('CRUDStateEnum');
+const filterState = inject('filterState');
+const resetFilterState = inject('resetFilterState');
 
 const toggleEditing = async () => {
-  const countryData = await getCountries()
-  packageState.crudState = CRUDStateEnum.UPDATE
-  packageState.countries = countryData
-  if (packageState.countries) packageState.isEditing = true
-}
+  const countryData = await getCountries();
+  packageState.crudState = CRUDStateEnum.UPDATE;
+  packageState.countries = countryData;
+  if (packageState.countries) packageState.isEditing = true;
+};
 
 const handleYN = async () => {
-await submitYN()
-}
+  await submitYN();
+};
 
 const handleSave = async (value) => {
-await submitForm()
-if (value === assignState.waited) {
-resetFilterState()
-filterState.waited = true 
-}
-}
+  await submitForm();
+  if (value === assignState.waited) {
+    resetFilterState();
+    filterState.waited = true;
+  }
+};
 
 const handleAssign = async (value) => {
-  if (value)
-  console.log(value)
-  await submitAssign(value)
-  
+  if (value) console.log(value);
+  await submitAssign(value);
+
   if (value === assignState.assigned) {
-    console.log('뭐',assignState.assigned)
-    resetFilterState()
-  filterState.assigned = true
+    resetFilterState();
+    filterState.assigned = true;
+  } else if (value === assignState.rejected) {
+    resetFilterState();
+    filterState.rejected = true;
   }
-  else if(value === assignState.rejected) {
-    console.log('왜',value)
-    resetFilterState()
-    filterState.rejected = true
-  }
-}
+};
 
 const handleClose = () => {
-  resetAllState()
-}
+  resetAllState();
+};
 
 const handleKeyDown = (event) => {
-  if (event.key === 'Escape' && partnerState.isSmallModalOpen !== true ) {
-    handleClose()
+  if (event.key === 'Escape' && partnerState.isSmallModalOpen !== true) {
+    handleClose();
   }
-}
+};
 
 onMounted(() => {
-  document.addEventListener('keydown', handleKeyDown)
-})
+  document.addEventListener('keydown', handleKeyDown);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeyDown)
-})
+  document.removeEventListener('keydown', handleKeyDown);
+});
 </script>
 
 <style scoped lang="scss">
@@ -201,7 +200,7 @@ onUnmounted(() => {
 
 .button-container {
   display: flex;
-  
+
   align-items: center;
   width: 90%;
   height: 50px;
@@ -284,7 +283,6 @@ onUnmounted(() => {
     @apply bg-black transition ease-out;
   }
 }
-
 
 .btn-assingn {
   @apply bg-cyan-400 text-white font-bold rounded;
