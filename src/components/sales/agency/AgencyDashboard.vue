@@ -9,7 +9,7 @@
         </div>
       </div>
       <div>
-        <table>
+        <table class="styled-table">
           <thead>
             <tr>
               <th>여행사 이름</th>
@@ -20,20 +20,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="agy in agencies"
-              :key="agy.agency_code"
-              @click="openModal(agy.agency_code)"
-            >
+            <tr v-for="agy in agencies" :key="agy.agency_code" @click="openModal(agy.agency_code)">
               <td>{{ agy.agency_name }}</td>
               <td>{{ agy.phone }}</td>
               <td>{{ agy.country }}</td>
               <td>{{ agy.address }}</td>
-              <td>{{ agy.price }}</td>
+              <td>{{ formatPrice(agy.price) }}</td>
             </tr>
           </tbody>
         </table>
-        
+
       </div>
       <AgencyModal v-if="agencyState.isModalOpen" @close="closeModal">
         <AgencyDetail />
@@ -93,6 +89,11 @@ const closeModal = () => {
   resetAgencyState();
   agencyState.isModalOpen = false;
 };
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('ko-KR').format(price) + '원';
+};
+
 </script>
 
 <style src="./AgencyDashboard.css"></style>

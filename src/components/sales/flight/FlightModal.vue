@@ -3,13 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-header-item">
-          <img
-            src="@/assets/icons/flight.png"
-            alt="flight image"
-            width="100"
-            height="100"
-            loading="lazy"
-          />
+          <img src="@/assets/icons/flight.png" alt="flight image" width="100" height="100" loading="lazy" />
         </div>
         <div class="modal-header-title">
           <h1>{{ title }}</h1>
@@ -17,20 +11,13 @@
       </div>
       <slot></slot>
       <div class="button-container">
-        <button
-          type="button"
-          class="btn-update"
-          v-if="!flightState.isEditing"
-          @click="toggleEditing()"
-        >
+        <button type="button" class="btn-delete" v-if="flightState.isEditing" @click="handleYN()">
+          삭제
+        </button>
+        <button type="button" class="btn-update" v-if="!flightState.isEditing" @click="toggleEditing()">
           수정하기
         </button>
-        <button
-          type="submit"
-          class="btn-update"
-          v-if="flightState.isEditing"
-          @click="handleSave()"
-        >
+        <button type="submit" class="btn-save" v-if="flightState.isEditing" @click="handleSave()">
           저장
         </button>
         <button type="button" class="btn-close" @click="handleClose()">
@@ -63,7 +50,7 @@ export default {
     const resetFlightState = inject("resetFlightState");
     const submitForm = inject("submitForm");
     const CRUDStateEnum = inject("CRUDStateEnum");
-    
+    const submitYN = inject('submitYN')
 
     const toggleEditing = async () => {
       const countryData = await getCountries();
@@ -71,6 +58,9 @@ export default {
       flightState.countries = countryData;
       if (flightState.countries) flightState.isEditing = true;
     };
+    const handleYN = async () => {
+      await submitYN()
+    }
 
     const handleSave = async () => {
       await submitForm();
@@ -103,6 +93,7 @@ export default {
       toggleEditing,
       submitForm,
       CRUDStateEnum,
+      handleYN
     };
   },
 };

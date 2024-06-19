@@ -9,7 +9,7 @@
         </div>
       </div>
       <div>
-        <table>
+        <table class="styled-table">
           <thead>
             <tr>
               <th>항공번호</th>
@@ -35,7 +35,7 @@
               <td>{{ flt.departure_time }}</td>
               <td>{{ flt.destination }}</td>
               <td>{{ flt.arrival_time }}</td>
-              <td>{{ flt.price }}</td>
+              <td>{{ formatPrice(flt.price) }}</td>
             </tr>
           </tbody>
         </table>
@@ -93,6 +93,10 @@ const openModalForCreate = async () => {
   if (flightState.countries.length > 0 && flightState.isEditing) {
     flightState.isModalOpen = true;
   }
+};
+
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('ko-KR').format(price) + '원';
 };
 </script>
 
