@@ -10,7 +10,6 @@ import { useToast } from 'vue-toast-notification';
 const toast = useToast();
 const empId = sessionStorage.getItem('empId') || 'EMP30002';
 const flights = ref([]);
-const countryCode = ref('');
 
 const CRUDStateEnum = Object.freeze({
   CREATE: 'create',
@@ -35,6 +34,7 @@ const initialFlightState = {
   },
   countries: [],
 };
+
 const flightState = reactive({ ...initialFlightState });
 
 const initialPaginationState = {
@@ -47,7 +47,20 @@ const initialPaginationState = {
 const paginationState = reactive({ ...initialPaginationState });
 
 const resetFlightState = () => {
-  Object.assign(flightState, initialFlightState);
+  flightState.isModalOpen = false;
+  flightState.flightCode = '';
+  flightState.isEditing = false;
+  flightState.crudState = CRUDStateEnum.CREATE;
+  flightState.flightDetail = {
+    flight_number: '',
+    airline: '',
+    phone: '',
+    departure: '',
+    departure_time: '',
+    destination: '',
+    arrival_time: '',
+    price: '',
+  };
 };
 
 const setCurrentPage = (page) => {
