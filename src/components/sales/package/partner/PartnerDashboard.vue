@@ -59,6 +59,7 @@ const selectPartner = (row) => {
   const isRowSelected = selectRow(row);
   if (isRowSelected) {
     const category = partnerState.selectedCategory;
+    // 동적 row 선언
     const detailMap = {
       flight: ['flightCode', 'airline', 'flightCountry', 'destination', 'flightPrice', 'flightDisable'],
       hotel: ['hotelCode', 'hotelName', 'hotelCountry', 'hotelRegion', 'hotelPrice', 'hotelDisable'],
@@ -74,14 +75,11 @@ const selectPartner = (row) => {
       packageState.packageDetail[price] = parseInt(row.price) || 0;
       partnerDisable[disable] = true;
     }
-    console.log(packageState.packageDetail.flightPrice)
-  console.log(packageState.packageDetail.hotelPrice)
-  console.log(packageState.packageDetail.agencyPrice)
     updateTotalPrice();
     partnerState.isSmallModalOpen = false;
   }
 };
-
+// 날짜를 선택하고 각 협력사를 선택했을때 총 금액을 계산
 watch(
   () => [
     packageState.packageDetail.flightPrice,
@@ -92,7 +90,6 @@ watch(
   ],
   updateTotalPrice
 );
-
 
 </script>
 
