@@ -15,8 +15,13 @@ export default createStore({
   state: {
     loginInfo: JSON.parse(sessionStorage.getItem("loginInfo")) || {
       empId: "20240001",
+<<<<<<< Updated upstream
       empName: "천우희",
       deptCode: "2000",
+=======
+      deptCode: "2000",
+      empName: "천우희",
+>>>>>>> Stashed changes
       posCode: "1300",
     },
     userDetails: null,
