@@ -37,5 +37,5 @@ module.exports = defineConfig({
       },
     },
   },
-  outputDir: '../happytravel_spring/src/main/webapp',
+  outputDir: '../happytravel_spring/src/main/resources/static',
 });
