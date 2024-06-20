@@ -14,10 +14,10 @@ import {
 export default createStore({
   state: {
     loginInfo: JSON.parse(sessionStorage.getItem("loginInfo")) || {
-      empId: "",
-      deptCode: "",
-      empName: "",
-      posCode: "",
+      empId: "20240001",
+      empName: "천우희",
+      deptCode: "2000",
+      posCode: "1300",
     },
     userDetails: null,
     notifications: [],
