@@ -62,7 +62,7 @@ export default {
         empName: "변우석",
         posCode: "1000",
       };
-      this.$store.commit("setLoginInfo", testLoginInfo);
+      // this.$store.commit("setLoginInfo", testLoginInfo);
     },
     async fetchAllData() {
       try {

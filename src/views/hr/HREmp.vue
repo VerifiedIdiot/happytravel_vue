@@ -131,6 +131,16 @@ export default {
         employee.value = empInfo.employee;
         imgSrc.value = `data:image/jpeg;base64,${empInfo.imageData}`;
         onEmpForm.value = true;
+
+        sessionStorage.setItem("loginInfo",JSON.stringify({
+          empId: employee.value.emp_id,
+          empName: employee.value.emp_name,
+          deptCode: employee.value.dept_code,
+          posCode: employee.value.pos_code,
+        }));
+
+        console.log(sessionStorage.getItem("loginInfo"));
+
       } catch (error) {
         console.error("Error fetching emp info: ", error);
       }
