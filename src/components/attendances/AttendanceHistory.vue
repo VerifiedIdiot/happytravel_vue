@@ -57,11 +57,14 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue';
+import { useStore } from 'vuex';
 import { getAttendanceHistory } from '@/api/attendances/AttendanceManagementApi.js';
 
 export default {
   name: 'AttendanceDashboard',
   setup() {
+    const store = useStore();
+    const loginInfo = store.state.loginInfo;
     const attendanceHistory = ref([]);
     const currentPage = ref(1);
     const itemsPerPage = 5; 
@@ -70,7 +73,7 @@ export default {
     const fetchAttendanceHistory = async () => {
       try {
         attendanceHistory.value = [];  // 페이지 전환 시 데이터 초기화
-        const data = await getAttendanceHistory(itemsPerPage, (currentPage.value - 1) * itemsPerPage);
+        const data = await getAttendanceHistory(loginInfo.deptCode, itemsPerPage, (currentPage.value - 1) * itemsPerPage);
         if (Array.isArray(data.attendanceConfirmResponseList) && typeof data.total === 'number') {
           attendanceHistory.value = data.attendanceConfirmResponseList.map(item => ({
             ...item,

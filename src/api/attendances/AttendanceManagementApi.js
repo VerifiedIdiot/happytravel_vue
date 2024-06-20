@@ -1,9 +1,11 @@
 import apiClient from "../axios";
 
 // GET
-export const getAttendanceManagementList = async () => {
+export const getAttendanceManagementList = async (deptCode) => {
   try {
-    const response = await apiClient.get("/attendance/attendanceManagement");
+    const response = await apiClient.get("/attendance/attendanceManagement", {
+      params: { deptCode },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching attendanceManagement list:", error);
@@ -33,10 +35,10 @@ export const rejectRequest = async (attendanceCode, status) => {
   }
 };
 
-export const getAttendanceHistory = async (limit, offset) => {
+export const getAttendanceHistory = async (deptCode, limit, offset) => {
   try {
     const response = await apiClient.get("/attendance/attendanceConfirm", {
-      params: { limit, offset },
+      params: { deptCode ,limit, offset },
     });
     return response.data;
   } catch (error) {
