@@ -101,12 +101,12 @@
 </template>
 
 <script>
-import { ref } from 'vue';
 import {
   insertAttendanceManagement,
-  getMaxAttendanceTypeCode,
 } from "../../api/attendances/AttendanceManagementApi";
+import { useStore } from "vuex";
 import { getManagerIdByDeptCode } from "../../api/attendances/EmployeeInfoApi";
+
 
 export default {
   name: "AttendancePopup",
@@ -118,13 +118,20 @@ export default {
       endDate: "",
       reason: "",
       errors: {}, // 오류 메시지 상태 추가
-      user: {
-        empId: "EMP00006",
-        empName: "김",
-        deptCode: "12",
-        posCode: "1200",
-      },
     };
+  },
+  computed: {
+    user() {
+      return {
+        empId: this.loginInfo.empId,
+        empName: this.loginInfo.empName,
+        deptCode: this.loginInfo.deptCode,
+        posCode: this.loginInfo.posCode,
+      };
+    },
+    loginInfo() {
+      return this.$store.state.loginInfo;
+    },
   },
   methods: {
     validateForm() {
@@ -189,7 +196,7 @@ export default {
         start_date: startDateUTC.toISOString(), // UTC 시간으로 변환된 문자열
         end_date: endDateUTC.toISOString(), // UTC 시간으로 변환된 문자열
         assign_code: "1000",
-        assign_emp_id: "EMP30004",
+        assign_emp_id: "",
         title: this.title,
         reason: this.reason,
         creation_date: creationDate,
