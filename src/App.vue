@@ -23,9 +23,7 @@ export default {
       showHeader,
     };
   },
-}
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

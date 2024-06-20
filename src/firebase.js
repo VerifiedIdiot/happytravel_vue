@@ -1,12 +1,6 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, updateDoc } from "firebase/firestore";
-import {
-  getStorage,
-  ref,
-  getDownloadURL,
-  uploadBytes,
-  deleteObject,
-} from "firebase/storage";
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, getDownloadURL, uploadBytes, deleteObject } from 'firebase/storage';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -33,13 +27,13 @@ const uploadImage = async (file, path) => {
 
 // 호텔 Img를 Firebase에 저장하는 함수
 const saveHotelImageUrl = async (hotelCode, imageUrl) => {
-  const hotelRef = doc(db, "hotels", hotelCode);
+  const hotelRef = doc(db, 'hotels', hotelCode);
   await setDoc(hotelRef, { imageUrl }, { merge: true });
 };
 
 // 에이전시 Img를 Firebase에 저장하는 함수
 const saveAgencyImageUrl = async (agencyCode, imageUrl) => {
-  const agencyRef = doc(db, "agencies", agencyCode);
+  const agencyRef = doc(db, 'agencies', agencyCode);
   await setDoc(agencyRef, { imageUrl }, { merge: true });
 };
 
@@ -48,30 +42,23 @@ const deleteImage = async (imageUrl) => {
 
   try {
     await deleteObject(fileRef);
-    console.log("File deleted successfully");
+    console.log('File deleted successfully');
   } catch (error) {
-    console.error("Error deleting file:", error);
+    console.error('Error deleting file:', error);
   }
 };
 
 const removeImageUrl = async (agencyCode) => {
-  const agencyRef = doc(db, "agencies", agencyCode);
+  const agencyRef = doc(db, 'agencies', agencyCode);
 
   try {
     await updateDoc(agencyRef, {
-      image_url: "",
+      image_url: '',
     });
-    console.log("Image URL removed successfully");
+    console.log('Image URL removed successfully');
   } catch (error) {
-    console.error("Error removing image URL:", error);
+    console.error('Error removing image URL:', error);
   }
 };
 
-export {
-  uploadImage,
-  saveHotelImageUrl,
-  saveAgencyImageUrl,
-  deleteImage,
-  removeImageUrl,
-  db,
-};
+export { uploadImage, saveHotelImageUrl, saveAgencyImageUrl, deleteImage, removeImageUrl, db };
