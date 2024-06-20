@@ -17,6 +17,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import { insertAttendance, updateAttendance } from '../../api/attendances/AttendanceApi';
 import { getAttendanceCount } from '@/api/attendances/AttendanceManagementApi';
 import AttendancePopup from '@/components/attendances/AttendancePopup.vue';
@@ -27,6 +28,8 @@ export default {
     AttendancePopup,
   },
   setup() {
+    const store = useStore();
+    const loginInfo = store.state.loginInfo;
     const showLeavePopup = ref(false);
     const isClockedIn = ref(false);
     const attendanceCount = ref(0);
@@ -42,7 +45,7 @@ export default {
 
     const fetchAttendanceCount = async () => {
       try {
-        const empId = 'EMP00006';
+        const empId = loginInfo.empId;
         const count = await getAttendanceCount(empId);
         attendanceCount.value = count;
       } catch (error) {
@@ -52,7 +55,7 @@ export default {
 
     const toggleClockInOut = () => {
       const now = new Date();
-      const empId = 'EMP00006';
+      const empId = loginInfo.empId;
 
       if (!isClockedIn.value) {
         // 출근 기록 삽입
