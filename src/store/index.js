@@ -1,4 +1,8 @@
+// src/store/index.js
 import { createStore } from "vuex";
+
+
+import AuthApi from "@/api/auth/AuthApi";
 
 import {
   getMyPageUserInfo,
@@ -24,6 +28,9 @@ export default createStore({
     positions: [],
   },
   getters: {
+    isAuthenticated(state) {
+      return !!state.loginInfo.empId;
+    },
     getLoginInfo(state) {
       return state.loginInfo;
     },
@@ -35,27 +42,20 @@ export default createStore({
       const pos = state.positions.find((p) => p.posCode === posCode);
       return pos ? pos.posName : "";
     },
-    isAuthenticated(state) { // 추가된 getter
-      return !!state.loginInfo.empId;
-    },
-    user(state) {
-      return state.user;
-    },
   },
   mutations: {
     setLoginInfo(state, payload) {
       state.loginInfo = payload;
       sessionStorage.setItem("loginInfo", JSON.stringify(payload));
     },
-    setUser(state, payload) { // 추가된 mutation
-      state.user = payload;
-      sessionStorage.setItem("user", JSON.stringify(payload));
-    },
     setLogout(state) {
-      state.loginInfo = null;
-      state.user = null; // 추가된 코드
+      state.loginInfo = {
+        empId: "",
+        deptCode: "",
+        empName: "",
+        posCode: "",
+      };
       sessionStorage.removeItem("loginInfo");
-      sessionStorage.removeItem("user"); // 추가된 코드
     },
     setUserDetails(state, userDetails) {
       state.userDetails = userDetails;
@@ -77,6 +77,21 @@ export default createStore({
     },
   },
   actions: {
+    async login({ commit }, { username, password }) {
+      try {
+        const response = await AuthApi.login(username, password);
+        if (response.data) {
+          commit("setLoginInfo", response.data);
+          return true;
+        }
+      } catch (error) {
+        console.error("Login failed:", error);
+        return false;
+      }
+    },
+    logout({ commit }) {
+      commit("setLogout");
+    },
     async fetchAllData({ commit, state }) {
       try {
         const empId = state.loginInfo.empId;

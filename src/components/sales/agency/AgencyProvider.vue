@@ -39,7 +39,18 @@ const initialPaginationState = {
 const paginationState = reactive({ ...initialPaginationState });
 
 const resetAgencyState = () => {
-  Object.assign(agencyState, initialAgencyState);
+  agencyState.isModalOpen = false;
+  agencyState.hotelCode = '';
+  agencyState.isEditing = false;
+  agencyState.crudState = CRUDStateEnum.CREATE;
+  agencyState.hotelDetail = {
+    agency_name: '',
+    phone: '',
+    country: '',
+    address: '',
+    price: '',
+  };
+  agencyState.countries = [];
 };
 
 const setCurrentPage = (page) => {
