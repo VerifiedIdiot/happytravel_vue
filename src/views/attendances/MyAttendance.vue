@@ -50,6 +50,7 @@
 import AttendanceInfo from "@/components/attendances/AttendanceInfo.vue"
 import AttendancePopup from "@/components/attendances/AttendancePopup.vue"
 import { ref, onMounted, computed } from "vue";
+import { useStore } from "vuex";
 import { getAttendance, getVacation } from "@/api/attendances/MyAttendanceApi.js";
 
 export default {
@@ -58,6 +59,8 @@ export default {
     AttendancePopup,
   },
   setup() {
+    const store = useStore();
+    const loginInfo = store.state.loginInfo;
     const attendance = ref([]);
     const vacations = ref([]);
     const modalCheck = ref(false);
@@ -77,7 +80,7 @@ export default {
 
     const fetchAttendance = async () => {
       try {
-        const data = await getAttendance("EMP30001");
+        const data = await getAttendance(loginInfo.empId);
         attendance.value = data;
       } catch (error) {
         console.error("Error fetching attendance data:", error);
@@ -86,7 +89,7 @@ export default {
 
     const fetchVacation = async () => {
       try {
-        const data = await getVacation("EMP30001");
+        const data = await getVacation(loginInfo.empId);
         vacations.value = data;
       } catch (error) {
         console.error("Error fetching vacation data:", error);
