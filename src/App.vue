@@ -13,7 +13,14 @@ export default {
   components: {
     Header,
   },
+<<<<<<< HEAD
   data() {
+=======
+  setup() {
+    const route = useRoute();
+    const showHeader = computed(() => route.name !== 'Login'  , route.name !== 'Root');
+
+>>>>>>> 1190e45571186c6e2715e5d08e62c10bcbbf587a
     return {
       showHeader: true,
     };
