@@ -1,15 +1,12 @@
-import axios from 'axios';
+import apiClient from '@/api/axios';
 
-const API_URL = '/auth';
 
-class AuthApi {
-  static login(username, password) {
-    return axios.post(`${API_URL}/login`, { username, password });
+export const login = async (param) => {
+  try {
+    const response = await apiClient.post(`/auth/login`, param);
+    return response.data;
+  } catch (error) {
+    console.error('Error inserting batchInitLoginData:', error);
+    throw error;
   }
-
-  static logout() {
-    return axios.post(`${API_URL}/logout`);
-  }
-}
-
-export default AuthApi;
+};

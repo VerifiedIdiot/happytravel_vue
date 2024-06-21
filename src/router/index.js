@@ -16,11 +16,6 @@ import MainPage from "../views/main/MainPage.vue";
 const routes = [
   {
     path: "/",
-    name: "Root",
-    component: LoginMain,
-  },
-  {
-    path: "/login",
     name: "Login",
     component: LoginMain,
   },
@@ -48,19 +43,19 @@ const routes = [
     path: "/sales",
     name: "SalesMain",
     component: SalesMain,
-    meta: { requiresAuth: true },
+    // meta: { requiresAuth: true },
     children: [
       {
         path: "partner",
         name: "SalesPartner",
         component: SalesPartner,
-        meta: { requiresAuth: true },
+        // meta: { requiresAuth: true },
       },
       {
         path: "package",
         name: "SalesPackage",
         component: SalesPackage,
-        meta: { requiresAuth: true },
+        // meta: { requiresAuth: true },
       },
     ],
   },

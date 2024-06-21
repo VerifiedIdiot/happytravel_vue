@@ -23,7 +23,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import { useToast } from 'vue-toast-notification';
 
 const toast = useToast();
-const empId = sessionStorage.getItem('empId') || 'EMP30002';
+const loginInfo = sessionStorage.getItem('loginInfo') || 'EMP30002';
+const empId = loginInfo.empId;
 
 const packages = ref([]);
 
