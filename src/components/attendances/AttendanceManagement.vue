@@ -49,6 +49,7 @@
 
 <script>
 import { onMounted, ref } from 'vue';
+import { useStore } from 'vuex';
 import { getAttendanceManagementList, approveRequest, rejectRequest } from '@/api/attendances/AttendanceManagementApi.js';
 import ConfirmModal from '@/components/attendances/ConfirmModal'; // 실제 파일 경로를 설정하세요
 
@@ -58,6 +59,8 @@ export default {
     ConfirmModal,
   },
   setup() {
+    const store = useStore();
+    const loginInfo = store.state.loginInfo;
     const leaveRequests = ref([]);
     const isModalVisible = ref(false);
     const currentRequest = ref(null);
@@ -95,7 +98,7 @@ export default {
 
     const fetchLeaveRequests = async () => {
       try {
-        const data = await getAttendanceManagementList();
+        const data = await getAttendanceManagementList(loginInfo.deptCode);
         leaveRequests.value = data.map(item => ({
           ...item,
           creationDate: formatDate(item.creationDate),

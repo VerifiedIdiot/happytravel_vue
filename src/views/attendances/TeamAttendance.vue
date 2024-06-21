@@ -43,6 +43,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import { getTeamAttendance } from "@/api/attendances/TeamAttendanceApi.js";
 import TeamAttendanceDetail from "@/components/attendances/TeamAttendanceDetail.vue";
 
@@ -64,6 +65,8 @@ export default {
     TeamAttendanceDetail,
   },
   setup() {
+    const store = useStore();
+    const loginInfo = store.state.loginInfo;
     const modalCheck = ref(false);
     const currentYear = ref(new Date().getUTCFullYear());
     const currentMonth = ref(new Date().getUTCMonth());
@@ -102,7 +105,7 @@ export default {
     };
 
     const fetchTeamAttendance = async () => {
-      department.value = '3000';
+      department.value = loginInfo.deptCode;
       if (!department.value) {
         error.value = "Department is required";
         return;
