@@ -9,8 +9,8 @@ import { useToast } from 'vue-toast-notification';
 
 const toast = useToast();
 
-const loginInfo = sessionStorage.getItem('loginInfo') || '20240002';
-const empId = loginInfo.empId;
+const loginState = JSON.parse(sessionStorage.getItem('loginInfo'));
+const empId = loginState?.loginInfo.empId || '20240002'
 
 const hotels = ref([]);
 const countryCode = ref('');
