@@ -111,7 +111,14 @@ export default createStore({
   },
   plugins: [
     createPersistedState({
-      paths: ['loginInfo'],
+      key: 'vuex-session',
+      storage: window.sessionStorage, 
+      paths: ['loginInfo'], 
+    }),
+    createPersistedState({
+      key: 'vuex',
+      storage: window.localStorage, 
+      paths: ['loginInfo'], 
     }),
   ],
 });

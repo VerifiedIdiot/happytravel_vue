@@ -45,7 +45,7 @@
           <button
             type="button"
             class="btn-update"
-            v-if="!packageState.isEditing"
+            v-if="!packageState.isEditing && parseInt(posCode) >= 1200"
             @click="toggleEditing()">
             수정
           </button>
@@ -76,6 +76,8 @@ const props = defineProps({
   },
 });
 
+const posCode = inject('posCode')
+
 const packageState = inject('packageState');
 const partnerState = inject('partnerState');
 const resetAllState = inject('resetAllState');
@@ -88,6 +90,7 @@ const filterState = inject('filterState');
 const resetFilterState = inject('resetFilterState');
 
 const toggleEditing = async () => {
+  console.log(posCode)
   const countryData = await getCountries();
   packageState.crudState = CRUDStateEnum.UPDATE;
   packageState.countries = countryData;
@@ -120,6 +123,7 @@ const handleAssign = async (value) => {
 };
 
 const handleClose = () => {
+  console.log(posCode)
   resetAllState();
 };
 

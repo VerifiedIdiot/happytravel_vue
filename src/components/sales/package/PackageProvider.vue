@@ -23,8 +23,9 @@ import cloneDeep from 'lodash/cloneDeep';
 import { useToast } from 'vue-toast-notification';
 
 const toast = useToast();
-const loginInfo = sessionStorage.getItem('loginInfo') || 'EMP30002';
-const empId = loginInfo.empId;
+const loginState = JSON.parse(sessionStorage.getItem('vuex-session'));
+const empId = loginState?.loginInfo.empId
+const posCode = loginState?.loginInfo.posCode
 
 const packages = ref([]);
 
@@ -155,6 +156,9 @@ const resetFilterState = () => {
 };
 
 const fetchPackages = async (assignCode = '1000') => {
+  console.log(loginState)
+  console.log(empId)
+  console.log(posCode)
   const params = {
     empId,
     assignCode: assignCode,
@@ -376,11 +380,12 @@ const validateForm = () => {
 };
 
 const submitForm = async () => {
+  console.log(empId)
   try {
     if (!validateForm()) {
       return;
     }
-
+    
     const requestParams = {
       packageCode: packageState.packageDetail.packageCode || null,
       agencyCode: packageState.packageDetail.agencyCode,
@@ -393,7 +398,7 @@ const submitForm = async () => {
       saleStartDate: packageState.packageDetail.saleStartDate,
       saleEndDate: packageState.packageDetail.saleEndDate,
     };
-
+    console.log({...requestParams})
     const params = {
       empId,
       ...requestParams,
@@ -494,6 +499,7 @@ const submitAssign = async (assignCode) => {
 };
 
 provide('empId', empId);
+provide('posCode', posCode)
 provide('CRUDStateEnum', CRUDStateEnum);
 
 provide('packages', packages);

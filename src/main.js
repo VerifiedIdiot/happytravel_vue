@@ -20,3 +20,5 @@ app.config.productionTip = false;
 
 // 숫자(원화 형식 적용: 3자리수 콤마)
 app.config.globalProperties.formatNumber = formatNumber;
+
+
