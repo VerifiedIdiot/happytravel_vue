@@ -6,8 +6,6 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
 import Header from './components/header/Header.vue';
 
 export default {
@@ -15,15 +13,18 @@ export default {
   components: {
     Header,
   },
-  setup() {
-    const route = useRoute();
-    const showHeader = computed(() => route.name !== 'Login');
-
+  data() {
     return {
-      showHeader,
+      showHeader: true,
     };
+  },
+  watch: {
+    $route(to) {
+      this.showHeader = to.name !== 'Login';
+    },
+  },
+  created() {
+    this.showHeader = this.$route.name !== 'Login';
   },
 };
 </script>
-
-<style></style>

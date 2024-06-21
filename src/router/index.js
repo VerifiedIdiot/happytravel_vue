@@ -16,11 +16,6 @@ import MainPage from "../views/main/MainPage.vue";
 const routes = [
   {
     path: "/",
-    name: "Root",
-    component: LoginMain,
-  },
-  {
-    path: "/login",
     name: "Login",
     component: LoginMain,
   },

@@ -7,7 +7,7 @@
         </router-link>
       </div>
       <div class="header-box status-box">
-        <h1 class="status-text">{{ someVar }} 님</h1>
+        <h1 class="status-text">{{ empName }} 님</h1>
         <router-link to="/mypage">
           <img src="@/assets/img/pepe.png" alt="Profile-img" class="profile-img" />
         </router-link>
@@ -19,7 +19,7 @@
       <nav>
         <ul class="nav-list">
           <li @mouseenter="toggleDropdown('hr')" @mouseleave="toggleDropdown(null)">
-            <router-link to="/#" class="nav-link">인사/급여</router-link>
+            <router-link to="/main" class="nav-link">인사/급여</router-link>
             <div v-if="dropdown === 'hr'" class="dropdown-content">
               <router-link to="/hr">사원 관리</router-link>
               <router-link to="/salary/data">급여 내역</router-link>
@@ -27,21 +27,21 @@
             </div>
           </li>
           <li @mouseenter="toggleDropdown('accounting')" @mouseleave="toggleDropdown(null)">
-            <router-link to="/#" class="nav-link">회계/총무</router-link>
+            <router-link to="/main" class="nav-link">회계/총무</router-link>
             <div v-if="dropdown === 'accounting'" class="dropdown-content">
-              <router-link to="/#">전표</router-link>
-              <router-link to="/#">전표</router-link>
+              <router-link to="/main">전표</router-link>
+              <router-link to="/main">전표</router-link>
             </div>
           </li>
           <li @mouseenter="toggleDropdown('sales')" @mouseleave="toggleDropdown(null)">
-            <router-link to="/#" class="nav-link">영업관리</router-link>
+            <router-link to="/main" class="nav-link">영업관리</router-link>
             <div v-if="dropdown === 'sales'" class="dropdown-content">
               <router-link to="/sales/partner">협력사관리</router-link>
               <router-link to="/sales/package">여행상품관리</router-link>
             </div>
           </li>
           <li @mouseenter="toggleDropdown('attendance')" @mouseleave="toggleDropdown(null)">
-            <router-link to="/#" class="nav-link">근태</router-link>
+            <router-link to="/main" class="nav-link">근태</router-link>
             <div v-if="dropdown === 'attendance'" class="dropdown-content">
               <router-link to="/attendance/myAttendance">나의 근테</router-link>
               <router-link to="/attendance/teamAttendance">팀원 근태</router-link>
@@ -71,8 +71,10 @@ export default {
     }),
   },
   mounted() {
-    this.someVar = this.empName;
-  },
+  // Vuex 상태 확인을 위해 콘솔 로그 추가
+  console.log('Vuex State in Header:', this.$store.state);
+  console.log('EmpName in Header:', this.empName);
+},
   methods: {
     toggleDropdown(menu) {
       this.dropdown = menu;
