@@ -1,109 +1,56 @@
 <template>
-  <div class="login-container">
-    <div class="login-logo">
-      <div class="logo-circle">
-        <span class="logo-text">LOGO</span>
+  <div class="flex h-screen items-center justify-center" id="login-container">
+    <div class="w-full max-w-md p-8 bg-white rounded shadow-md" id="login-group">
+      <div class="mb-6 text-center" id="logo">
+        <!-- 여기에 로고 이미지를 넣으세요 -->
+        <img src="@/assets/img/logo.png" alt="Logo" class="mx-auto w-48 h-48" />
+      </div>
+      <h2 class="mb-6 text-2xl font-semibold text-center">로 그 인</h2>
+      <div class="flex flex-col items-center space-y-4">
+        <input type="text" v-model="empId" placeholder="사원번호" required maxlength="8" class="w-full px-4 py-2 rounded focus:outline-none ring-2 focus:ring-blue-500 focus:border-transparent" />
+        <input type="password" v-model="password" placeholder="비밀번호" required class="w-full px-4 py-2 rounded focus:outline-none ring-2 focus:ring-blue-500 focus:border-transparent" />
+        <div v-if="errorMessage" class="w-full text-center text-red-500">{{ errorMessage }}</div>
+        <button @click="login" class="w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          로그인
+        </button>
       </div>
     </div>
-    <h1>로그인</h1>
-    <form @submit.prevent="login">
-      <div class="input-group">
-        <input type="text" v-model="username" placeholder="사원번호" required>
-      </div>
-      <div class="input-group">
-        <input type="password" v-model="password" placeholder="비밀번호" required>
-      </div>
-      <div v-if="error" class="error-message">
-        사원번호 또는 비밀번호를 확인해주세요.
-      </div>
-      <button type="submit">로그인</button>
-    </form>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { login } from '@/api/auth/AuthApi';
+import { mapState } from "vuex";
 
 export default {
   name: 'LoginMain',
   data() {
     return {
-      username: '',
+      empId: '',
       password: '',
-      error: false
+      errorMessage: '',
     };
   },
   methods: {
-    ...mapActions(['login']),
     async login() {
-      const success = await this.login({ username: this.username, password: this.password });
-      if (success) {
+      try {
+      const data = await login({empId: this.empId, password: this.password});
+      if (data) {
+        console.log(data);
+        this.$store.commit("setLoginInfo", {
+        empId: data.emp_id,
+        empName: data.emp_name,
+        deptCode: data.dept_code,
+        posCode: data.pos_code,
+      });
         this.$router.push('/main');
       } else {
-        this.error = true;
+        this.errorMessage = '사원번호 또는 비밀번호를 확인해주세요.';
+      }
+    } catch (error) {
+        console.error('Error fetching login data:', error);
       }
     }
-  }
+  },
 };
 </script>
-
-<style scoped>
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
-
-.login-logo .logo-circle {
-  width: 200px;
-  height: 200px;
-  background-color: #007bff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.login-logo .logo-text {
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-h1 {
-  margin-bottom: 20px;
-}
-
-.input-group {
-  margin-bottom: 15px;
-}
-
-input {
-  width: 300px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button {
-  width: 300px;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.error-message {
-  color: red;
-  margin-bottom: 10px;
-}
-</style>
