@@ -8,9 +8,11 @@ import { getAgencyList, getAgencyCnt, insertAgency, updateAgency, updateAgencyYN
 import { useToast } from 'vue-toast-notification';
 
 const toast = useToast();
-const empId = sessionStorage.getItem('empId') || 'EMP30002';
+
+const loginInfo = sessionStorage.getItem('loginInfo') || '20240002';
+const empId = loginInfo.empId;
+
 const agencies = ref([]);
-const countryCode = ref('');
 
 const CRUDStateEnum = Object.freeze({
   CREATE: 'create',
