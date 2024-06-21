@@ -48,19 +48,19 @@ const routes = [
     path: "/sales",
     name: "SalesMain",
     component: SalesMain,
-    meta: { requiresAuth: true },
+    // meta: { requiresAuth: true },
     children: [
       {
         path: "partner",
         name: "SalesPartner",
         component: SalesPartner,
-        meta: { requiresAuth: true },
+        // meta: { requiresAuth: true },
       },
       {
         path: "package",
         name: "SalesPackage",
         component: SalesPackage,
-        meta: { requiresAuth: true },
+        // meta: { requiresAuth: true },
       },
     ],
   },

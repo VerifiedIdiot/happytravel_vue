@@ -17,7 +17,7 @@ export default {
   },
   setup() {
     const route = useRoute();
-    const showHeader = computed(() => route.name !== 'Login');
+    const showHeader = computed(() => route.name !== 'Login'  , route.name !== 'Root');
 
     return {
       showHeader,
