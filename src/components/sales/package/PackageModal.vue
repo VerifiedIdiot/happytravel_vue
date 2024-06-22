@@ -90,7 +90,6 @@ const filterState = inject('filterState');
 const resetFilterState = inject('resetFilterState');
 
 const toggleEditing = async () => {
-  console.log(posCode)
   const countryData = await getCountries();
   packageState.crudState = CRUDStateEnum.UPDATE;
   packageState.countries = countryData;
@@ -102,7 +101,7 @@ const handleYN = async () => {
 };
 
 const handleSave = async (value) => {
-  await submitForm();
+  await submitForm(value);
   if (value === assignState.waited) {
     resetFilterState();
     filterState.waited = true;

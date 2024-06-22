@@ -379,8 +379,8 @@ const validateForm = () => {
   return true;
 };
 
-const submitForm = async () => {
-  console.log(empId)
+const submitForm = async (assignCode) => {
+  
   try {
     if (!validateForm()) {
       return;
@@ -397,8 +397,9 @@ const submitForm = async () => {
       endDate: packageState.packageDetail.endDate,
       saleStartDate: packageState.packageDetail.saleStartDate,
       saleEndDate: packageState.packageDetail.saleEndDate,
+      assignCode: assignCode
     };
-    console.log({...requestParams})
+    
     const params = {
       empId,
       ...requestParams,

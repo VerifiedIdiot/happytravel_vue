@@ -276,9 +276,30 @@
           <label for="assignCode"><legend>승인상태</legend></label>
         </div>
         <div class="form-under-item-value">
-          <span v-if="!packageState.isEditing">{{
-            packageState.packageDetail.assignCode
-          }}</span>
+          <span
+          v-if="
+            !packageState.isEditing &&
+            packageState.packageDetail.assignCode === '1000'
+          "
+          class="status-waited"
+          >진행중</span
+        >
+        <span
+          v-else-if="
+            !packageState.isEditing &&
+            packageState.packageDetail.assignCode === '2000'
+          "
+          class="status-assigned"
+          >완료</span
+        >
+        <span
+          v-else-if="
+            !packageState.isEditing &&
+            packageState.packageDetail.assignCode === '3000'
+          "
+          class="status-rejected"
+          >반려</span
+        >
         </div>
       </div>
     </div>
@@ -412,6 +433,9 @@ const handleSearch = async (category) => {
     console.error(`${category} 카테고리 입력값을 확인하세요`);
   }
 };
+
+
+
 </script>
 
 <style scoped lang="scss">
@@ -507,6 +531,7 @@ legend {
       display: flex;
       justify-content: center;
       align-items: center;
+      @apply overflow-hidden overflow-ellipsis
     }
   }
 }
@@ -564,6 +589,33 @@ legend {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.status-waited {
+  @apply bg-orange-400 text-white font-bold rounded px-2 py-1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 80%;
+}
+
+.status-assigned {
+  @apply bg-green-500 text-white font-bold rounded px-2 py-1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 80%;
+}
+
+.status-rejected {
+  @apply bg-red-600 text-white font-bold rounded px-2 py-1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 80%;
 }
 
 .custom-select {
