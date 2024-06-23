@@ -36,6 +36,16 @@
             </button>
           </div>
           <div class="top-buttons">
+            <input
+              type="text"
+              v-model="searchQuery"
+              @keyup.enter="searchPackages"
+              placeholder="검색어 입력"
+              class="search-input"
+            />
+            <button class="btn-search" @click="searchPackages">
+              검색
+            </button>
             <button class="btn-create" @click="openModalForCreate()">
               <p>신규등록</p>
             </button>
@@ -99,7 +109,7 @@
 </template>
 
 <script setup>
-import { inject, onMounted } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { getPackage, getCountries } from '@/api/sales/PackageApi';
 import PackageDetail from '@/components/sales/package/PackageDetail.vue';
 import PackageModal from '@/components/sales/package/PackageModal.vue';
@@ -116,13 +126,17 @@ const resetAllState = inject('resetAllState');
 const filterState = inject('filterState');
 const resetFilterState = inject('resetFilterState');
 
+const searchQuery = ref('');
+const currentAssignState = ref(assignState.waited);
+
 onMounted(() => {
   fetchPackages();
   filterState.waited = true;
 });
 
 const selectFilter = (value) => {
-  fetchPackages(value);
+  currentAssignState.value = value;
+  fetchPackages(currentAssignState.value, searchQuery.value);
   if (value === assignState.waited) {
     resetFilterState();
     filterState.waited = true;
@@ -180,6 +194,10 @@ const openModalForCreate = async () => {
 const closeModal = () => {
   resetAllState();
 };
+
+const searchPackages = () => {
+  fetchPackages(currentAssignState.value, searchQuery.value);
+};
 </script>
 
 <style scoped lang="scss">
@@ -222,6 +240,21 @@ const closeModal = () => {
   align-items: center;
   width: 50%;
   height: 100%;
+}
+
+.search-input {
+  @apply border rounded px-2 py-1 mr-2;
+}
+
+.btn-search {
+  @apply bg-blue-700 text-white font-bold rounded;
+  transition: background-color 0.3s ease;
+  width: 100px;
+  height: 40px;
+  margin-right: 5px;
+  &:hover {
+    @apply bg-blue-900 transition ease-out;
+  }
 }
 
 .btn-filter {

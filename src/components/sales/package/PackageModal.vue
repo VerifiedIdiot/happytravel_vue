@@ -3,10 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-header-item">
-          <!-- <img
-            src="@/assets/icons/flight.png"
-            alt="flight image"
-            loading="lazy" /> -->
+          <img src="@/assets/icons/flight.png" alt="package image" width="150" height="150" loading="lazy" />
         </div>
         <h1>{{ title }}</h1>
       </div>
@@ -196,7 +193,7 @@ onUnmounted(() => {
   border-radius: 4px 0px 0px 0px;
   img {
     object-fit: contain;
-    height: 70%;
+    height: 80%;
     width: auto;
   }
 }

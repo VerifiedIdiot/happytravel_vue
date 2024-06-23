@@ -10,6 +10,16 @@ export const getPackageList = async (params) => {
     throw error;
   }
 };
+// GET Package List with queryParms for search
+export const searchPackageList = async (params) => {
+  try {
+    const response = await customApiClient.get('/sales/package-list-search', { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching package list:', error);
+    throw error;
+  }
+}
 
 // GET Single Package
 export const getPackage = async (params) => {

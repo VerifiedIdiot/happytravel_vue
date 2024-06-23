@@ -2,25 +2,18 @@
   <div class="small-modal-overlay">
     <div class="small-modal-content">
       <div class="small-modal-header">
-        <div class="small-modal-header-item"></div>
-        <h1>{{ title }} 검색결과</h1>
+        <div class="small-modal-header-item">
+          <img
+            :src="imageSrc"
+            alt="package image"
+            width="120"
+            height="120"
+            loading="lazy" />
+        </div>
+        <h1>{{ modalTitle }} 검색결과</h1>
       </div>
       <slot></slot>
       <div class="small-button-container">
-        <!-- <button
-          type="button"
-          class="btn-update"
-          v-if="!packageState.isEditing"
-          @click="toggleEditing()">
-          수정하기
-        </button>
-        <button
-          type="submit"
-          class="btn-update"
-          v-if="packageState.isEditing"
-          @click="handleSave()">
-          저장
-        </button> -->
         <button type="button" class="btn-close" @click="handleClose()">
           닫기
         </button>
@@ -30,7 +23,7 @@
 </template>
 
 <script setup>
-import { inject, onMounted, onUnmounted } from 'vue';
+import { computed, inject, onMounted, onUnmounted } from 'vue';
 
 const partnerState = inject('partnerState');
 const resetAllPartnerState = inject('resetAllPartnerState');
@@ -38,6 +31,30 @@ const props = defineProps({
   title: {
     type: String,
   },
+});
+
+const imageSrc = computed(() => {
+  const category = partnerState.selectedCategory;
+  if (category === 'flight') {
+    return require('@/assets/icons/passport.png');
+  } else if (category === 'hotel') {
+    return require('@/assets/icons/hotel2.png');
+  } else if (category === 'agency') {
+    return require('@/assets/icons/agency.png');
+  }
+  return '';
+});
+
+const modalTitle = computed(() => {
+  const category = partnerState.selectedCategory;
+  if (category === 'flight') {
+    return '항공사';
+  } else if (category === 'hotel') {
+    return '호텔';
+  } else if (category === 'agency') {
+    return '여행사';
+  }
+  return '';
 });
 // 모달 비활성화
 const handleClose = () => {
@@ -116,7 +133,7 @@ onUnmounted(() => {
   border-radius: 4px 0px 0px 0px;
   img {
     object-fit: contain;
-    height: 70%;
+    height: 60%;
     width: auto;
   }
 }
