@@ -16,7 +16,6 @@ export const getHotel = async (params) => {
   try {
     const response = await apiClient.get('/sales/hotel-detail', { params });
     if(response)
-    console.log(response.data)
     return response.data;
   } catch (error) {
     console.error('Error fetching hotel:', error);

@@ -109,16 +109,10 @@ tbody tr:hover {
   }
 }
 
-
-
 .modal-header-title {
   width: auto;
   font-size: x-small;
 }
-
-
-
-
 
 .form-img {
   position: relative;
@@ -146,9 +140,6 @@ tbody tr:hover {
 .delete-btn:hover {
   background-color: #555;
 }
-
-
-
 
 .btn-create {
   @apply bg-blue-700 text-white font-bold rounded;

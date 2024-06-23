@@ -15,9 +15,6 @@ export const getAgencyList = async (params) => {
 export const getAgency = async (params) => {
   try {
     const response = await apiClient.get("/sales/agency-detail", { params });
-    if (response) {
-      console.log(response.data)
-    }
     return response.data;
   } catch (error) {
     console.error("Error fetching agency :", error);

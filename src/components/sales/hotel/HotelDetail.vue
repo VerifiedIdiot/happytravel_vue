@@ -97,7 +97,6 @@ export default {
       );
       if (data) {
         hotelState.hotelDetail.country_code = data.country_code;
-        console.log(hotelState.hotelDetail);
       }
     };
 

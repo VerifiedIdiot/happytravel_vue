@@ -20,7 +20,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="agy in agencies" :key="agy.agency_code" @click="openModal(agy.agency_code)">
+            <tr
+              v-for="agy in agencies"
+              :key="agy.agency_code"
+              @click="openModal(agy.agency_code)"
+            >
               <td>{{ agy.agency_name }}</td>
               <td>{{ agy.phone }}</td>
               <td>{{ agy.country }}</td>
@@ -29,7 +33,6 @@
             </tr>
           </tbody>
         </table>
-
       </div>
       <AgencyModal v-if="agencyState.isModalOpen" @close="closeModal">
         <AgencyDetail />
@@ -46,10 +49,10 @@ import AgencyDetail from "@/components/sales/agency/AgencyDetail.vue";
 import AgencyModal from "@/components/sales/agency/AgencyModal.vue";
 import Pagination from "@/components/sales/agency/AgencyPagination.vue";
 
-const agencies = inject("agencies")
-const agencyState = inject("agencyState")
+const agencies = inject("agencies");
+const agencyState = inject("agencyState");
 const resetAgencyState = inject("resetAgencyState");
-const fetchAgencies = inject("fetchAgencies")
+const fetchAgencies = inject("fetchAgencies");
 const empId = inject("empId");
 
 onMounted(fetchAgencies);
@@ -91,9 +94,8 @@ const closeModal = () => {
 };
 
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('ko-KR').format(price) + '원';
+  return new Intl.NumberFormat("ko-KR").format(price) + "원";
 };
-
 </script>
 
 <style src="./AgencyDashboard.css"></style>
