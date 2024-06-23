@@ -72,8 +72,8 @@ export default {
   },
   mounted() {
   // Vuex 상태 확인을 위해 콘솔 로그 추가
-  console.log('Vuex State in Header:', this.$store.state);
-  console.log('EmpName in Header:', this.empName);
+  //console.log('Vuex State in Header:', this.$store.state);
+  //console.log('EmpName in Header:', this.empName);
 },
   methods: {
     toggleDropdown(menu) {
