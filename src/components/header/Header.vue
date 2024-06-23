@@ -26,13 +26,13 @@
               <router-link to="/salary/payment">급여 지급 내역</router-link>
             </div>
           </li>
-          <li @mouseenter="toggleDropdown('accounting')" @mouseleave="toggleDropdown(null)">
+          <!-- <li @mouseenter="toggleDropdown('accounting')" @mouseleave="toggleDropdown(null)">
             <router-link to="/main" class="nav-link">회계/총무</router-link>
             <div v-if="dropdown === 'accounting'" class="dropdown-content">
               <router-link to="/main">전표</router-link>
               <router-link to="/main">전표</router-link>
             </div>
-          </li>
+          </li> -->
           <li @mouseenter="toggleDropdown('sales')" @mouseleave="toggleDropdown(null)">
             <router-link to="/main" class="nav-link">영업관리</router-link>
             <div v-if="dropdown === 'sales'" class="dropdown-content">
@@ -41,11 +41,11 @@
             </div>
           </li>
           <li @mouseenter="toggleDropdown('attendance')" @mouseleave="toggleDropdown(null)">
-            <router-link to="/main" class="nav-link">근태</router-link>
+            <router-link to="/main" class="nav-link">근태관리</router-link>
             <div v-if="dropdown === 'attendance'" class="dropdown-content">
-              <router-link to="/attendance/myAttendance">나의 근테</router-link>
-              <router-link to="/attendance/teamAttendance">팀원 근태</router-link>
-              <router-link to="/attendance/adminAttendance">근태 관리</router-link>
+              <router-link to="/attendance/myAttendance">나의근태</router-link>
+              <router-link to="/attendance/teamAttendance">팀원근태</router-link>
+              <router-link to="/attendance/adminAttendance">근태관리</router-link>
             </div>
           </li>
         </ul>
