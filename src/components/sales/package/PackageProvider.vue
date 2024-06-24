@@ -39,6 +39,7 @@ const initialPackageState = {
   isModalOpen: false,
   packageCode: '',
   isEditing: false,
+  isCreating: false,
   crudState: CRUDStateEnum.CREATE,
   packageDetail: {
     flightCountry: undefined,
@@ -253,7 +254,6 @@ const fetchAgencies = async () => {
 const selectRow = (row) => {
   if (partnerState.selectedCategory === 'flight') {
     packageState.packageDetail.flightCode = row.code;
-    console.log(packageState.packageDetail.flightCode);
     return true;
   } else if (partnerState.selectedCategory === 'hotel') {
     packageState.packageDetail.hotelCode = row.code;
@@ -343,7 +343,7 @@ const validateForm = () => {
   ];
 
   for (const field of requiredFields) {
-    if (!packageState.packageDetail[field]) {
+    if (packageState.packageDetail[field] == '' || !packageState.packageDetail[field]) {
       toast.open({
         message: `입력값이 누락되었습니다. 확인해주세요.`,
         type: 'warning',
@@ -390,7 +390,7 @@ const submitForm = async (assignCode) => {
     if (!validateForm()) {
       return;
     }
-
+    console.log(packageState.packageDetail.agencyCode)
     const requestParams = {
       packageCode: packageState.packageDetail.packageCode || null,
       agencyCode: packageState.packageDetail.agencyCode,

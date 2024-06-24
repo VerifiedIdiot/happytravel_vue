@@ -13,7 +13,7 @@
           <button
             type="button"
             class="btn-delete"
-            v-if="packageState.isEditing"
+            v-if="packageState.isEditing && !packageState.isCreating"
             @click="handleYN()">
             삭제
           </button>
@@ -21,7 +21,7 @@
             type="button"
             class="btn-reject"
             v-if="
-              packageState.isEditing &&
+              (packageState.isEditing && !packageState.isCreating) &&
               packageState.packageDetail.assignCode == '1000'
             "
             @click="handleAssign(assignState.rejected)">
@@ -33,7 +33,7 @@
             type="button"
             class="btn-assingn"
             v-if="
-              packageState.isEditing &&
+              (packageState.isEditing && !packageState.isCreating) &&
               packageState.packageDetail.assignCode == '1000'
             "
             @click="handleAssign(assignState.assigned)">
@@ -106,7 +106,7 @@ const handleSave = async (value) => {
 };
 
 const handleAssign = async (value) => {
-  if (value) console.log(value);
+  if (value) 
   await submitAssign(value);
 
   if (value === assignState.assigned) {
@@ -119,7 +119,6 @@ const handleAssign = async (value) => {
 };
 
 const handleClose = () => {
-  console.log(posCode)
   resetAllState();
 };
 

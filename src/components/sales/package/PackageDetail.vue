@@ -387,6 +387,9 @@ const setCountryCode = () => {
     Object.keys(partnerDisable).forEach((key) => {
       partnerDisable[key] = false;
     });
+    packageState.packageDetail.flightCode = ''
+    packageState.packageDetail.hoteltCode = ''
+    packageState.packageDetail.agencyCode = ''
     packageState.packageDetail.flightPrice = 0;
     packageState.packageDetail.hotelPrice = 0;
     packageState.packageDetail.agencyPrice = 0;

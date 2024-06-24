@@ -81,7 +81,7 @@
                   class="status"
                   :class="{
                     'status-waited':
-                      pkg.assignCode === '1000' && !packageState.isEditing,
+                      pkg.assignCode === '1000' ,
                     'status-assigned': pkg.assignCode === '2000',
                     'status-rejected': pkg.assignCode === '3000',
                   }">
@@ -184,6 +184,7 @@ const openModal = async (pkgCode = '') => {
 const openModalForCreate = async () => {
   resetPackageState();
   packageState.isEditing = true;
+  packageState.isCreating = true;
   const countryData = await getCountries();
   packageState.countries = countryData;
   if (packageState.countries.length > 0 && packageState.isEditing) {
